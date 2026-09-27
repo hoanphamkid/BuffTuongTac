@@ -1,0 +1,1 @@
+import {StaticPage} from '../_components/data-pages'; export default function Page(){return <StaticPage title="Hỗ trợ" text="Kênh hỗ trợ sẽ được cập nhật. Vui lòng liên hệ quản trị viên khi cần trợ giúp."/>}

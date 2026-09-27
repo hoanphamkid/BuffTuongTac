@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Role {
+  USER
+  ADMIN
+}
+enum DepositStatus {
+  PENDING
+  PAID
+  FAILED
+}
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  IN_PROGRESS
+  COMPLETED
+  PARTIAL
+  CANCELED
+  FAILED
+  REFUNDED
+}
+model User {
+  id String @id @default(cuid())
+  username String @unique
+  email String @unique
+  passwordHash String
+  fullName String
+  avatar String?
+  balance Decimal @default(0) @db.Decimal(18,0)
+  totalDeposited Decimal @default(0) @db.Decimal(18,0)
+  level String @default("Thành viên")
+  role Role @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[]
+  deposits Deposit[]
+  transactions BalanceTransaction[]
+}
+model Platform {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  icon String
+  active Boolean @default(true)
+  services Service[]
+}
+model Service {
+  id String @id @default(cuid())
+  platformId String
+  platform Platform @relation(fields:[platformId], references:[id])
+  name String
+  slug String
+  active Boolean @default(true)
+  servers Server[]
+  orders Order[]
+  @@unique([platformId, slug])
+}
+model Server {
+  id String @id @default(cuid())
+  serviceId String
+  service Service @relation(fields:[serviceId], references:[id])
+  providerServiceId String?
+  name String
+  description String?
+  speed String
+  min Int
+  max Int
+  pricePer1000 Decimal @db.Decimal(18,0)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[]
+}
+model Order {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields:[userId], references:[id])
+  platformId String
+  serviceId String
+  service Service @relation(fields:[serviceId], references:[id])
+  serverId String
+  server Server @relation(fields:[serverId], references:[id])
+  link String
+  quantity Int
+  price Decimal @db.Decimal(18,0)
+  status OrderStatus @default(PENDING)
+  providerOrderId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Deposit {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields:[userId], references:[id])
+  amount Decimal @db.Decimal(18,0)
+  paymentCode String @unique
+  transactionId String? @unique
+  paymentMethod String
+  status DepositStatus @default(PENDING)
+  rawPayload Json?
+  createdAt DateTime @default(now())
+  paidAt DateTime?
+}
+model BalanceTransaction {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields:[userId], references:[id])
+  type String
+  amount Decimal @db.Decimal(18,0)
+  balanceBefore Decimal @db.Decimal(18,0)
+  balanceAfter Decimal @db.Decimal(18,0)
+  referenceType String
+  referenceId String
+  description String
+  createdAt DateTime @default(now())
+}

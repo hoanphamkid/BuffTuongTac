@@ -1,0 +1,1 @@
+import {StaticPage} from '../_components/data-pages'; export default function Page(){return <StaticPage title="Đơn hàng hàng loạt" text="Tính năng đặt đơn hàng loạt đang được hoàn thiện để bảo đảm an toàn số dư."/>}

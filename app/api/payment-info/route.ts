@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server'; export async function GET(){return NextResponse.json({success:true,data:{bankId:process.env.BANK_ID||null,accountNumber:process.env.BANK_ACCOUNT_NUMBER||null,accountName:process.env.BANK_ACCOUNT_NAME||null,configured:Boolean(process.env.BANK_ID&&process.env.BANK_ACCOUNT_NUMBER&&process.env.BANK_ACCOUNT_NAME)}});}
