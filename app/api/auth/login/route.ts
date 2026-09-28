@@ -3,6 +3,8 @@ import {z} from 'zod';
 import {prisma} from '@/lib/prisma';
 import {sessionCookie,verifyPassword} from '@/lib/auth';
 
+export const runtime = 'nodejs';
+
 export async function POST(req:Request){
   const d=z.object({identifier:z.string().trim().min(1),password:z.string().min(1)}).safeParse(await req.json().catch(()=>null));
   if(!d.success)return NextResponse.json({success:false,error:'Thông tin đăng nhập không hợp lệ'},{status:400});
