@@ -1,0 +1,1 @@
+'use client';import {useEffect,useState} from 'react';export function MobileSidebarToggle(){const [open,setOpen]=useState(false);useEffect(()=>{document.body.classList.toggle('mobile-sidebar-open',open);return()=>document.body.classList.remove('mobile-sidebar-open')},[open]);return <button className="mobile-sidebar-toggle" onClick={()=>setOpen(v=>!v)}>{open?'×':'☰'}</button>}
