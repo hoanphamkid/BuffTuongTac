@@ -141,7 +141,7 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                       </td>
                       <td>
                         <div className="service-title">
-                          🎵 - {serviceName}
+                          {(x.service?.platform?.icon === 'facebook' ? '🔵' : x.service?.platform?.icon === 'tiktok' ? '🎵' : x.service?.platform?.icon === 'instagram' ? '📷' : x.service?.platform?.icon === 'youtube' ? '▶️' : '◈')} - {serviceName}
                           <span className="tag-green">✕</span>
                         </div>
                       </td>
