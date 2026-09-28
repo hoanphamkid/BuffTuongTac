@@ -1,5 +1,5 @@
 import {prisma} from '@/lib/prisma';
-export type NormalizedTransaction={transactionId:string;amount:number;description:string;paidAt:Date};
+export type NormalizedTransaction={transactionId:string;amount:number;description:string;paidAt:Date;senderName?:string;senderAccount?:string};
 export async function processPaymentTransaction(t:NormalizedTransaction){
   if(!t.transactionId||!t.amount||!t.description)throw new Error('INVALID_TRANSACTION');
   // SePay may prepend its own transfer code, so extract our username + suffix code anywhere in the description.
