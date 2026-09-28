@@ -11,17 +11,19 @@
 .amount-label::after{content:'Số tiền tối thiểu: 5.000đ';display:block;margin-top:6px;color:#7d8ba5;font-size:12px}
 @media(max-width:800px){
   .shell{display:block;min-height:100vh}
-  aside{position:fixed;left:0;top:0;bottom:0;width:158px;padding:14px 9px;z-index:30;overflow-y:auto;box-shadow:2px 0 12px #07132133}
-  .brand{display:block;font-size:0!important;padding:5px 2px 20px;text-align:center;white-space:nowrap}
-  .brand::after{font-size:19px}
-  .user{justify-content:flex-start;padding:8px 7px;gap:7px}
+  aside{position:fixed;left:0;top:0;bottom:0;width:54px;padding:14px 7px;z-index:30;overflow-y:auto;box-shadow:2px 0 12px #07132133;transition:width .18s ease}
+  aside:hover,aside:focus-within{width:158px}
+  .brand{display:block;font-size:0!important;padding:5px 2px 20px;text-align:center;white-space:nowrap;overflow:hidden}
+  .brand::after{content:'K';font-size:19px}
+  aside:hover .brand::after,aside:focus-within .brand::after{content:'KID Social';font-size:19px}
+  .user{justify-content:center;padding:8px 4px;gap:7px;overflow:hidden}
   .avatar{width:32px;height:32px;flex:0 0 32px;font-size:12px}
-  .user div:nth-child(2){display:block;min-width:0}.user b{font-size:11px}.user small{font-size:9px;white-space:nowrap}
+  .user div:nth-child(2){display:none;min-width:0}.user b{font-size:11px}.user small{font-size:9px;white-space:nowrap}aside:hover .user,aside:focus-within .user{justify-content:flex-start;padding:8px 7px}aside:hover .user div:nth-child(2),aside:focus-within .user div:nth-child(2){display:block}
   nav{display:grid;gap:4px;margin-top:18px}
-  nav label{display:block;font-size:8px;padding:13px 5px 5px;white-space:nowrap}
-  nav button{font-size:10px;white-space:nowrap;padding:10px 6px;overflow:hidden;text-overflow:ellipsis}
+  nav label{display:none;font-size:8px;padding:13px 5px 5px;white-space:nowrap}aside:hover nav label,aside:focus-within nav label{display:block}
+  nav button{font-size:0;text-align:center;white-space:nowrap;padding:10px 6px;overflow:hidden;text-overflow:ellipsis}aside:hover nav button,aside:focus-within nav button{font-size:10px;text-align:left}
   nav button:first-letter{font-size:10px}
-  main{width:calc(100% - 158px);min-width:0;margin-left:158px}
+  main{width:calc(100% - 54px);min-width:0;margin-left:54px}
   header{height:auto;min-height:78px;padding:16px 18px}
   header h1{font-size:20px}
   .card{margin:14px 12px;padding:16px;border-radius:12px}
