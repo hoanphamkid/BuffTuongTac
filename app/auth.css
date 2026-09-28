@@ -86,6 +86,6 @@
   font-size: 12px;
 }
 @media(max-width:600px){
-  .auth{min-height:100dvh;padding:20px 14px;background-position:center top;background-attachment:scroll}
+  main.auth{width:100%;max-width:none;margin-left:0!important;min-height:100dvh;padding:20px 14px;background-position:center top;background-attachment:scroll}
   .auth form{width:100%;max-width:420px;padding:30px 22px;border-radius:15px}
 }
