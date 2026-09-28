@@ -6,3 +6,28 @@
 .funds-top{grid-template-columns:1fr!important}.usdt-card{display:none!important}
 .bank-qr img{width:280px!important;height:280px!important}
 .amount-label::after{content:'Số tiền tối thiểu: 5.000đ';display:block;margin-top:6px;color:#7d8ba5;font-size:12px}
+@media(max-width:800px){
+  .shell{display:block;min-height:100vh}
+  aside{width:100%;padding:12px 14px 10px;position:relative;z-index:30;box-shadow:0 2px 12px #07132133}
+  .brand{display:block;font-size:0!important;padding:4px 8px 14px;text-align:center}
+  .brand::after{font-size:23px}
+  .user{max-width:100%;justify-content:flex-start;padding:9px 12px}
+  .user div:nth-child(2){display:block}
+  nav{display:flex;gap:7px;margin-top:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav label{display:none}
+  nav button{flex:0 0 auto;font-size:12px;white-space:nowrap;padding:10px 12px;background:#1d3048;color:#d6e0ec}
+  nav button:first-letter{font-size:12px}
+  main{width:100%;min-width:0}
+  header{height:auto;min-height:78px;padding:16px 18px}
+  header h1{font-size:20px}
+  .card{margin:14px 12px;padding:16px;border-radius:12px}
+  .grid2{grid-template-columns:1fr;gap:4px}
+  .field{margin-top:18px}
+  .servers{height:auto;max-height:360px;overflow-y:auto}
+  .server{align-items:flex-start;gap:8px;padding:10px 8px}
+  .server strong{font-size:12px}
+  .server p{font-size:10px;line-height:1.25}
+  .server>b{font-size:10px;max-width:58px;overflow-wrap:anywhere}
+  .total strong{font-size:22px}
+}
