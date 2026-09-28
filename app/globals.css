@@ -2,6 +2,8 @@
 .brand,.auth-logo{font-size:0}
 .shell nav button:nth-of-type(9){display:none}
 .shell nav button:nth-of-type(2),.shell nav button:nth-of-type(4){display:none}
+.zalo-float{position:fixed;right:22px;bottom:22px;z-index:1000;width:62px;height:62px;border-radius:50%;background:#087ff5;color:#fff;text-decoration:none;display:grid;place-items:center;box-shadow:0 5px 18px #087ff566;border:3px solid #fff}.zalo-float span{font:bold 30px Arial}.zalo-float small{position:absolute;right:0;bottom:-23px;color:#087ff5;background:#fff;border-radius:10px;padding:2px 7px;font:11px Arial;white-space:nowrap;box-shadow:0 2px 8px #0002}
+@media(max-width:800px){.zalo-float{right:14px;bottom:16px;width:54px;height:54px}.zalo-float span{font-size:26px}}
 .brand::after,.auth-logo::after{content:'KID Social';font-size:24px;font-weight:700;letter-spacing:.2px;color:#fff}
 .brand,.brand span{color:transparent!important}
 .funds-top{grid-template-columns:1fr!important}.usdt-card{display:none!important}
