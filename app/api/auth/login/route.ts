@@ -11,7 +11,7 @@ export async function POST(req:Request){
   try{
     const u=await prisma.user.findFirst({where:{OR:[{email:d.data.identifier},{username:d.data.identifier}]}});
     if(!u||!verifyPassword(d.data.password,u.passwordHash))return NextResponse.json({success:false,error:'Sai tài khoản hoặc mật khẩu'},{status:401});
-    const res=NextResponse.json({success:true});
+    const res=NextResponse.json({success:true,data:{id:u.id,username:u.username,role:u.role}});
     res.cookies.set('smm_session',sessionCookie(u.id),{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:60*60*24*30,path:'/'});
     return res;
   }catch(error){
