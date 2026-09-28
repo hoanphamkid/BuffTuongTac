@@ -4,9 +4,12 @@
   place-items: center;
   position: relative;
   isolation: isolate;
-  background: url('/black-clover-bg.jpeg') center center/cover no-repeat;
+  background: radial-gradient(circle at 18% 18%, #27c4d855 0, transparent 28%), radial-gradient(circle at 86% 82%, #4268e955 0, transparent 30%), linear-gradient(135deg,#07172d 0%,#102e50 48%,#07162e 100%);
+  overflow:hidden;
   padding: 20px;
 }
+.auth::before{content:"";position:absolute;inset:-20%;z-index:-1;background:linear-gradient(115deg,transparent 35%,#43d5e51c 45%,transparent 56%),url('/black-clover-bg.jpeg') center/cover no-repeat;opacity:.22;transform:rotate(-4deg) scale(1.08)}
+.auth::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 0,#fff1 0,transparent 36%),linear-gradient(90deg,#06152b55,#22bdd414,#06152b55);pointer-events:none}
 .auth form {
   width: min(420px, 100%);
   background: #fff;
@@ -14,6 +17,8 @@
   border-radius: 16px;
   padding: 34px;
   box-shadow: 0 18px 48px #0008;
+  position:relative;
+  z-index:1;
 }
 .auth-logo {
   font-size: 23px;
