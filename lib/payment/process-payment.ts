@@ -2,7 +2,7 @@ import {prisma} from '@/lib/prisma';
 export type NormalizedTransaction={transactionId:string;amount:number;description:string;paidAt:Date};
 export async function processPaymentTransaction(t:NormalizedTransaction){
   if(!t.transactionId||!t.amount||!t.description)throw new Error('INVALID_TRANSACTION');
-  const code=t.description.match(/NHSV\d+/)?.[0]; if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
+  const code=t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
   return prisma.$transaction(async tx=>{
     const deposit=await tx.deposit.findUnique({where:{paymentCode:code}}); if(!deposit)throw new Error('DEPOSIT_NOT_FOUND');
     if(deposit.transactionId===t.transactionId||deposit.status==='PAID')return {idempotent:true,depositId:deposit.id};

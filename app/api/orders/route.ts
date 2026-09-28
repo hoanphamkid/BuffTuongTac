@@ -11,7 +11,8 @@ export async function POST(req:Request){
   const server=await prisma.server.findUnique({where:{id:input.data.serverId},include:{service:true}});
   if(!server||!server.active)return NextResponse.json({success:false,error:'Máy chủ không khả dụng'},{status:400});
   if(input.data.quantity<server.min||input.data.quantity>server.max)return NextResponse.json({success:false,error:`Số lượng phải từ ${server.min} đến ${server.max}`},{status:400});
-  const total=Math.ceil(input.data.quantity*Number(server.pricePer1000)/1000);
+  const pricePer1000=Number(server.pricePer1000);
+  const total=Math.ceil(input.data.quantity*pricePer1000/1000);
   let order;
   try{order=await prisma.$transaction(async tx=>{const debit=await tx.user.updateMany({where:{id:user.id,balance:{gte:total}},data:{balance:{decrement:total}}});if(debit.count!==1)throw new Error('INSUFFICIENT_BALANCE');const after=await tx.user.findUniqueOrThrow({where:{id:user.id},select:{balance:true}});const o=await tx.order.create({data:{userId:user.id,platformId:server.service.platformId,serviceId:server.serviceId,serverId:server.id,link:input.data.link,quantity:input.data.quantity,price:total}});await tx.balanceTransaction.create({data:{userId:user.id,type:'ORDER',amount:-total,balanceBefore:Number(after.balance)+total,balanceAfter:Number(after.balance),referenceType:'Order',referenceId:o.id,description:`Tạo đơn #${o.id}`}});return o;});}catch(e){return NextResponse.json({success:false,code:'INSUFFICIENT_BALANCE',error:'Số dư không đủ. Vui lòng nạp thêm tiền.'},{status:400});}
   try{const provider=getSmmProvider();const result=await provider.createOrder({serviceId:server.providerServiceId||server.serviceId,link:input.data.link,quantity:input.data.quantity});const updated=await prisma.order.update({where:{id:order.id},data:{providerOrderId:result.orderId,status:'PROCESSING'}});return NextResponse.json({success:true,data:updated});}
