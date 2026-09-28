@@ -8,17 +8,17 @@
 .amount-label::after{content:'Số tiền tối thiểu: 5.000đ';display:block;margin-top:6px;color:#7d8ba5;font-size:12px}
 @media(max-width:800px){
   .shell{display:block;min-height:100vh}
-  aside{width:100%;padding:12px 14px 10px;position:relative;z-index:30;box-shadow:0 2px 12px #07132133}
-  .brand{display:block;font-size:0!important;padding:4px 8px 14px;text-align:center}
-  .brand::after{font-size:23px}
-  .user{max-width:100%;justify-content:flex-start;padding:9px 12px}
-  .user div:nth-child(2){display:block}
-  nav{display:flex;gap:7px;margin-top:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-  nav::-webkit-scrollbar{display:none}
-  nav label{display:none}
-  nav button{flex:0 0 auto;font-size:12px;white-space:nowrap;padding:10px 12px;background:#1d3048;color:#d6e0ec}
-  nav button:first-letter{font-size:12px}
-  main{width:100%;min-width:0}
+  aside{position:fixed;left:0;top:0;bottom:0;width:158px;padding:14px 9px;z-index:30;overflow-y:auto;box-shadow:2px 0 12px #07132133}
+  .brand{display:block;font-size:0!important;padding:5px 2px 20px;text-align:center;white-space:nowrap}
+  .brand::after{font-size:19px}
+  .user{justify-content:flex-start;padding:8px 7px;gap:7px}
+  .avatar{width:32px;height:32px;flex:0 0 32px;font-size:12px}
+  .user div:nth-child(2){display:block;min-width:0}.user b{font-size:11px}.user small{font-size:9px;white-space:nowrap}
+  nav{display:grid;gap:4px;margin-top:18px}
+  nav label{display:block;font-size:8px;padding:13px 5px 5px;white-space:nowrap}
+  nav button{font-size:10px;white-space:nowrap;padding:10px 6px;overflow:hidden;text-overflow:ellipsis}
+  nav button:first-letter{font-size:10px}
+  main{width:calc(100% - 158px);min-width:0;margin-left:158px}
   header{height:auto;min-height:78px;padding:16px 18px}
   header h1{font-size:20px}
   .card{margin:14px 12px;padding:16px;border-radius:12px}
