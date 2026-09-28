@@ -1,0 +1,1 @@
+'use client';import {useEffect} from 'react';export function BrandNavigation(){useEffect(()=>{const onClick=(e:MouseEvent)=>{const el=(e.target as HTMLElement).closest('.brand');if(el){e.preventDefault();window.location.href='/account'}};document.addEventListener('click',onClick);return()=>document.removeEventListener('click',onClick)},[]);return null}
