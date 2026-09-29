@@ -1,6 +1,7 @@
 'use client';
 import '../data-pages.css';
 import { useEffect, useState } from 'react';
+import { PlatformLogo } from './PlatformPicker';
 
 const money = (n: any) => new Intl.NumberFormat('vi-VN').format(Number(n) || 0);
 
@@ -141,7 +142,12 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                       </td>
                       <td>
                         <div className="service-title">
-                          {(x.service?.platform?.icon === 'facebook' ? '🔵' : x.service?.platform?.icon === 'tiktok' ? '🎵' : x.service?.platform?.icon === 'instagram' ? '📷' : x.service?.platform?.icon === 'youtube' ? '▶️' : '◈')} - {serviceName}
+                          <PlatformLogo platform={x.service?.platform ? {
+                            id: x.service.platform.id || x.service.platform.slug || x.service.platform.icon || 'platform',
+                            name: x.service.platform.name || '',
+                            slug: x.service.platform.slug || x.service.platform.icon,
+                          } : null} />
+                          <span>{serviceName}</span>
                           <span className="tag-green">✕</span>
                         </div>
                       </td>
