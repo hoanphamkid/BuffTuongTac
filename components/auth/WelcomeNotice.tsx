@@ -10,7 +10,6 @@ export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:bo
   const close=()=>{setOpen(false);onClose?.()};
   return <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
     <div className="welcome-modal">
-      <button className="welcome-close" aria-label="Đóng" onClick={close}>×</button>
       <div className="welcome-sparkles">✦　☾　✦</div>
       <div className="welcome-kicker">KID SOCIAL</div>
       <h2 id="welcome-title">📢 THÔNG BÁO</h2>
