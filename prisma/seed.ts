@@ -4,7 +4,7 @@ type ServerSpec = { code: string; price: number };
 const platforms = [['Facebook','facebook'],['TikTok','tiktok'],['Instagram','instagram'],['YouTube','youtube']] as const;
 const tiktok = [
   ['TikTok Likes','tiktok-likes',[['SV1',9000],['SV2',11400],['SV3',10200]]],
-  ['TikTok Followers','tiktok-followers',[['SV1',22800],['SV2',60000],['SV3',42000]]],
+  ['TikTok Followers','tiktok-followers',[['SV1',25000]]],
   ['TikTok Views','tiktok-views',[['SV1',360],['SV2',2400]]],
   ['TikTok Livestream Views','tiktok-livestream-views',[['SV1',60000]]],
   ['TikTok Comments','tiktok-comments',[['SV1',168000],['SV2',600000]]],
@@ -16,6 +16,15 @@ async function server(serviceId:string, serviceName:string, spec:ServerSpec){
   const data = { name, pricePer1000: spec.price, description:'Toc do on dinh', speed:'50K/ngay', min:10, max:100000, active:true };
   const old = await prisma.server.findFirst({where:{serviceId,name}});
   if(old) await prisma.server.update({where:{id:old.id},data}); else await prisma.server.create({data:{serviceId,...data}});
+}
+async function pruneServers(serviceId: string, allowedNames: string[]) {
+  await prisma.server.updateMany({
+    where: { serviceId, name: { notIn: allowedNames } },
+    data: { active: false },
+  });
+  await prisma.server.deleteMany({
+    where: { serviceId, name: { notIn: allowedNames }, orders: { none: {} } },
+  });
 }
 async function main(){
   for(const [platformName,slug] of platforms){
@@ -30,7 +39,7 @@ async function main(){
           ? await prisma.service.update({where:{id:old[i].id},data:{name,slug:serviceSlug,active:true}})
           : await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
         for(const [code,price] of raw) await server(service.id,name,{code,price});
-        await prisma.server.deleteMany({ where: { serviceId: service.id, name: { notIn: raw.map((item) => `${name} [${item[0]}]`)}, orders: { none: {} } } });
+        await pruneServers(service.id, raw.map((item) => `${name} [${item[0]}]`));
       }
     }else{
       const name=`${platformName} Services`;
