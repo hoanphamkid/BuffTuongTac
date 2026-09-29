@@ -42,9 +42,12 @@ async function main(){
         await pruneServers(service.id, raw.map((item) => `${name} [${item[0]}]`));
       }
     }else{
-      const name=`${platformName} Services`;
-      const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:`${slug}-services`}},update:{name,active:true},create:{platformId:platform.id,name,slug:`${slug}-services`}});
-      await server(service.id,name,{code:'SV1',price:2900});
+      const name=platformName==='Instagram'?'Người theo dõi Instagram':`${platformName} Services`;
+      const serviceSlug=platformName==='Instagram'?'instagram-followers':`${slug}-services`;
+      const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
+      if(platformName==='Instagram') await prisma.service.updateMany({where:{platformId:platform.id,id:{not:service.id}},data:{active:false}});
+      await server(service.id,name,{code:'SV1',price:platformName==='Instagram'?50000:2900});
+      await pruneServers(service.id,[`${name} [SV1]`]);
     }
   }
 }
