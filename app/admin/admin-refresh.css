@@ -1,0 +1,5 @@
+.admin-header-actions{display:flex;align-items:center;gap:8px}
+.admin-refresh{display:inline-flex;align-items:center;gap:5px;border:1px solid #d7e3f2;border-radius:7px;background:#fff;color:#1769d8;padding:6px 9px;font-size:10px;font-weight:700;cursor:pointer;transition:.18s}
+.admin-refresh:hover{border-color:#1769d8;background:#eef6ff}
+.admin-refresh:disabled{opacity:.65;cursor:wait}
+@media(max-width:800px){.admin-refresh{padding:7px 8px;font-size:0}.admin-refresh:first-letter{font-size:17px}}
