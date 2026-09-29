@@ -4,7 +4,7 @@ export async function processPaymentTransaction(t:NormalizedTransaction){
   if(!t.transactionId||!t.amount||!t.description)throw new Error('INVALID_TRANSACTION');
   // SePay may prepend its own transfer code. Usernames can contain email
   // characters, so keep dots, @, %, +, _, and hyphens in the payment code.
-  const code=t.description.match(/[A-Za-z0-9._%+@-]+2924111\d{4}/)?.[0] ?? t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
+  const code=t.description.match(/[A-Za-z0-9._%+@-]+2924111\d{4,}/)?.[0] ?? t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
   return prisma.$transaction(async tx=>{
     // Bank notification content can include its own reference before or after
     // the customer's payment code. Match against pending deposits by amount
