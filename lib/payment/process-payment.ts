@@ -2,8 +2,9 @@ import {prisma} from '@/lib/prisma';
 export type NormalizedTransaction={transactionId:string;amount:number;description:string;paidAt:Date;senderName?:string;senderAccount?:string};
 export async function processPaymentTransaction(t:NormalizedTransaction){
   if(!t.transactionId||!t.amount||!t.description)throw new Error('INVALID_TRANSACTION');
-  // SePay may prepend its own transfer code, so extract our username + suffix code anywhere in the description.
-  const code=t.description.match(/[A-Za-z0-9]+2924111\d{4}/)?.[0] ?? t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
+  // SePay may prepend its own transfer code. Usernames can contain email
+  // characters, so keep dots, @, %, +, _, and hyphens in the payment code.
+  const code=t.description.match(/[A-Za-z0-9._%+@-]+2924111\d{4}/)?.[0] ?? t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
   return prisma.$transaction(async tx=>{
     const deposit=await tx.deposit.findUnique({where:{paymentCode:code}}); if(!deposit)throw new Error('DEPOSIT_NOT_FOUND');
     if(deposit.transactionId===t.transactionId||deposit.status==='PAID')return {idempotent:true,depositId:deposit.id};
