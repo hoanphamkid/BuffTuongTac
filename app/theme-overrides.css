@@ -1,0 +1,14 @@
+/* Distinct plum/lavender theme for the customer dashboard. */
+body{background:#f8f5ff}
+.shell>aside{background:linear-gradient(180deg,#2a1748 0%,#17102d 100%);border-right-color:#4b2c70}
+.shell .brand{color:#fff}
+.shell .brand span{color:#e2a8ff}
+.shell .user{background:linear-gradient(135deg,#432568,#2f1b50);border-color:#65458b}
+.shell .user:hover{border-color:#d08cff;box-shadow:0 8px 20px #160c2c99}
+.shell>aside>nav label{color:#c09bdd}
+.shell>aside>nav button{color:#dfd0ef}
+.shell>aside>nav button:hover,.shell>aside>nav button.active{background:#55307d;color:#fff}
+.shell>main{background:#f8f5ff}
+header{background:#fff;border-bottom-color:#e7dff2}
+.card{border-color:#e7ddf2;box-shadow:0 4px 16px #3c216b12}
+@media(max-width:800px){.shell>aside{background:linear-gradient(180deg,#2a1748 0%,#17102d 100%)}body.mobile-sidebar-open .shell>aside{box-shadow:8px 0 30px #160c2c99}}
