@@ -2,6 +2,7 @@
 import '../data-pages.css';
 import { useEffect, useState } from 'react';
 import { PlatformLogo } from './PlatformPicker';
+import { statusLabel } from '@/lib/status-label';
 
 const money = (n: any) => new Intl.NumberFormat('vi-VN').format(Number(n) || 0);
 
@@ -113,6 +114,7 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                   <th>Số lượng</th>
                   <th>Tổng tiền</th>
                   <th>Link order</th>
+                  <th>Trạng thái</th>
                   <th>Thời gian mua</th>
                 </tr>
               </thead>
@@ -161,6 +163,7 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                           {x.link}
                         </a>
                       </td>
+                      <td><span className={'order-status status-' + String(x.status || 'PENDING').toLowerCase()}>{statusLabel(x.status || 'PENDING')}</span></td>
                       <td>{formatDate(x.createdAt)}</td>
                     </tr>
                   );

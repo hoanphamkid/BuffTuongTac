@@ -26,6 +26,13 @@ export default function AdminOrders() {
       .then((r) => r.json())
       .then((d) => setRows(d.data || []));
   }, []);
+  async function updateStatus(id: string, nextStatus: string) {
+    const response = await fetch('/api/admin/orders', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id, status: nextStatus }) });
+    if (!response.ok) return;
+    const result = await response.json();
+    setRows((items) => items.map((item) => item.id === id ? result.data : item));
+    setSelected((item: any) => item?.id === id ? result.data : item);
+  }
   const list = useMemo(
     () =>
       rows.filter(
@@ -133,11 +140,11 @@ export default function AdminOrders() {
                     <b>{money(x.price)}</b>
                   </td>
                   <td>
-                    <span
-                      className={"order-pill " + String(x.status).toLowerCase()}
-                    >
-                      {statusLabel(x.status)}
-                    </span>
+                    <select className="admin-order-status" value={x.status} onChange={(e) => updateStatus(x.id, e.target.value)}>
+                      <option value="PENDING">Chờ xử lý</option>
+                      <option value="PROCESSING">Đang xử lý</option>
+                      <option value="COMPLETED">Đã hoàn thành</option>
+                    </select>
                   </td>
                   <td>{new Date(x.createdAt).toLocaleString("vi-VN")}</td>
                   <td>
