@@ -6,7 +6,12 @@ export async function processPaymentTransaction(t:NormalizedTransaction){
   // characters, so keep dots, @, %, +, _, and hyphens in the payment code.
   const code=t.description.match(/[A-Za-z0-9._%+@-]+2924111\d{4}/)?.[0] ?? t.description.match(/NHSV\d+/)?.[0] ?? t.description.trim(); if(!code)throw new Error('PAYMENT_CODE_NOT_FOUND');
   return prisma.$transaction(async tx=>{
-    const deposit=await tx.deposit.findUnique({where:{paymentCode:code}}); if(!deposit)throw new Error('DEPOSIT_NOT_FOUND');
+    // Bank notification content can include its own reference before or after
+    // the customer's payment code. Match against pending deposits by amount
+    // and then locate the exact stored code anywhere in that content.
+    let deposit=await tx.deposit.findUnique({where:{paymentCode:code}});
+    if(!deposit){const normalized=t.description.toLowerCase().replace(/\s+/g,'');const candidates=await tx.deposit.findMany({where:{amount:t.amount},orderBy:{createdAt:'desc'},take:100});deposit=candidates.find(x=>normalized.includes(x.paymentCode.toLowerCase().replace(/\s+/g,'')))??null;}
+    if(!deposit)throw new Error('DEPOSIT_NOT_FOUND');
     if(deposit.transactionId===t.transactionId||deposit.status==='PAID')return {idempotent:true,depositId:deposit.id};
     if(deposit.status!=='PENDING'||Number(deposit.amount)!==Number(t.amount))throw new Error('INVALID_DEPOSIT');
     const duplicate=await tx.deposit.findUnique({where:{transactionId:t.transactionId}});if(duplicate)return {idempotent:true,depositId:duplicate.id};
