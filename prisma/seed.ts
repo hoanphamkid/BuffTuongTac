@@ -7,7 +7,7 @@ const tiktok = [
   ['TikTok Followers','tiktok-followers',[['SV1',25000]]],
   ['TikTok Views','tiktok-views',[['SV1',360],['SV2',2400]]],
   ['TikTok Livestream Views','tiktok-livestream-views',[['SV1',60000]]],
-  ['TikTok Comments','tiktok-comments',[['SV1',168000],['SV2',600000]]],
+  ['TikTok Comments','tiktok-comments',[['SV1',170000]]],
   ['TikTok Shares','tiktok-shares',[['SV2',4200]]],
   ['TikTok PK Battle Points','tiktok-pk-battle-points',[['SV1',6000]]],
 ] as const;

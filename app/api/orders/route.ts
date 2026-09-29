@@ -6,7 +6,7 @@ import {getSmmProvider} from '@/lib/smm/provider';
 import {refundOrder} from '@/lib/orders/refund-order';
 import {sendOrderEmail} from '@/lib/send-order-email';
 
-const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive()});
+const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive(),comments:z.array(z.string().trim().min(1).max(1000)).max(100000).optional()});
 
 export async function POST(req:Request){
   const user=await currentUser();
@@ -16,6 +16,7 @@ export async function POST(req:Request){
   const server=await prisma.server.findUnique({where:{id:input.data.serverId},include:{service:true}});
   if(!server||!server.active)return NextResponse.json({success:false,error:'Máy chủ không khả dụng'},{status:400});
   if(input.data.quantity<server.min||input.data.quantity>server.max)return NextResponse.json({success:false,error:`Số lượng phải từ ${server.min} đến ${server.max}`},{status:400});
+  if(server.service.slug==='tiktok-comments' && (!input.data.comments?.length || input.data.comments.length!==input.data.quantity))return NextResponse.json({success:false,error:'Vui lòng nhập mỗi comment trên một dòng.'},{status:400});
   const total=Math.ceil(input.data.quantity*Number(server.pricePer1000)/1000);
   let order;
   try{
@@ -32,7 +33,7 @@ export async function POST(req:Request){
   let updated;
   try{
     const provider=getSmmProvider();
-    const result=await provider.createOrder({serviceId:server.providerServiceId||server.serviceId,link:input.data.link,quantity:input.data.quantity});
+      const result=await provider.createOrder({serviceId:server.providerServiceId||server.serviceId,link:input.data.link,quantity:input.data.quantity,comments:input.data.comments});
     updated=await prisma.order.update({where:{id:order.id},data:{providerOrderId:result.orderId,status:'PROCESSING'}});
   }catch{
     await prisma.order.update({where:{id:order.id},data:{status:'FAILED'}}).catch(()=>{});
