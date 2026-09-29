@@ -18,7 +18,8 @@ export async function PATCH(req:Request){
   if(b.action==='role')await prisma.user.update({where:{id:u.id},data:{role:b.role==='ADMIN'?'ADMIN':'USER'}});
   else if(b.action==='profile')await prisma.user.update({where:{id:u.id},data:{fullName:b.fullName||u.fullName,email:b.email||u.email}});
   else if(b.action==='balance'){
-    const delta=Number(b.amount);
+    const rawAmount=typeof b.amount==='string'?b.amount.replace(/[^0-9-]/g,''):b.amount;
+    const delta=Number(rawAmount);
     if(!Number.isFinite(delta)||!delta)return NextResponse.json({error:'Số tiền không hợp lệ'},{status:400});
     const adjustment=await prisma.$transaction(async tx=>{
       const beforeUser=await tx.user.findUniqueOrThrow({where:{id:u.id},select:{balance:true}});
