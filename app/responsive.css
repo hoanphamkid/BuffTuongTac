@@ -1,0 +1,45 @@
+/* Content cards must never inherit the navigation rail's positioning. */
+.account-page { width: 100%; min-width: 0; margin: 0; }
+.account-page .security-card { position: static; width: auto; min-width: 0; background: #fff; color: #102542; }
+.account-page .account-stat, .account-page .account-panel, .account-page .security-card { margin: 0; }
+.account-profile > div, .account-stat > div, .security-row span { min-width: 0; }
+.account-profile p, .account-name h2, .account-stat strong { overflow-wrap: anywhere; }
+.account-avatar { flex-shrink: 0; }
+.account-columns { grid-template-columns: minmax(0,2fr) minmax(0,1fr); }
+.account-stats { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.account-tabs button { flex-shrink: 0; min-height: 44px; }
+.shell > aside .user b { overflow-wrap: anywhere; }
+.mobile-sidebar-backdrop { display: none; }
+@media(max-width:800px) {
+  .account-page .account-title { height: auto; min-height: 0; padding: 18px 14px; }
+  .account-page .account-title h1 { font-size: 23px; }
+  .account-title span { display: block; font-size: 14px; line-height: 1.5; }
+  .account-page .account-columns, .account-page .account-stats, .account-form-grid { grid-template-columns: minmax(0,1fr); gap: 14px; }
+  .account-page .account-profile { flex-wrap: wrap; gap: 14px; padding: 16px; }
+  .account-profile > div:last-child { flex: 1 1 180px; }
+  .account-page .account-name h2 { font-size: 20px; }
+  .account-profile p { font-size: 14px; line-height: 1.5; }
+  .account-page .account-stat { padding: 16px; gap: 14px; }
+  .account-page .account-stat strong { font-size: 24px; }
+  .account-page .account-tabs { gap: 4px; overflow-x: auto; }
+  .account-page .account-tabs button { padding: 12px; font-size: 14px; }
+  .account-page .security-card, .account-page .account-panel { padding: 18px; }
+  .shell > aside, .shell > aside:hover, .shell > aside:focus-within { width: 54px; }
+  .shell > aside { padding-top: 58px; }
+  .shell > aside > nav button { min-height: 44px; }
+  body.mobile-sidebar-open .shell > aside { width: min(280px,85vw); z-index: 120; }
+  body.mobile-sidebar-open .shell > aside > nav button { font-size: 14px; white-space: normal; }
+  body.mobile-sidebar-open .shell > aside > nav label { font-size: 11px; }
+  .mobile-sidebar-toggle, body.mobile-sidebar-open .mobile-sidebar-toggle { left: 6px; top: 8px; width: 42px; height: 42px; z-index: 130; }
+  .mobile-sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 110; background: #07132180; border: 0; }
+  .bank-card { min-width: 0; }
+  .bank-qr img { max-width: 100%; height: auto !important; }
+  .info-row b { min-width: 0; overflow-wrap: anywhere; }
+  .deposits-card .table-scroll { min-width: 0; max-width: 100%; overflow-x: auto; }
+  .table-footer, .history-footer { flex-wrap: wrap; gap: 12px; }
+  .shell input, .shell select, .shell textarea { font-size: 16px; }
+  .zalo-float { bottom: calc(30px + env(safe-area-inset-bottom)); width: 46px; height: 46px; }
+}
+@media(hover:none) {
+  .card:hover, .server:hover, .account-stat:hover, .security-card:hover { transform: none; }
+}
