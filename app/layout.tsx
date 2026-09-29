@@ -2,5 +2,6 @@ import './globals.css';import './mobile-sidebar.css';import {CurrentUserProvider
 import {BrandNavigation} from './_components/BrandNavigation';
 import './responsive.css';import './theme-overrides.css';
 import {WelcomeNotice} from '@/components/auth/WelcomeNotice';
+import {LocalMenuEnhancements} from './_components/LocalMenuEnhancements';
 export const metadata={title:'KID Social - Bảng điều khiển dịch vụ'};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="vi"><body><CurrentUserProvider><AuthGate><AppShell>{children}</AppShell></AuthGate><WelcomeNotice/><BrandNavigation/><MobileSidebarToggle/><ZaloButton/></CurrentUserProvider></body></html>}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="vi"><body><CurrentUserProvider><AuthGate><AppShell>{children}</AppShell></AuthGate><LocalMenuEnhancements/><WelcomeNotice/><BrandNavigation/><MobileSidebarToggle/><ZaloButton/></CurrentUserProvider></body></html>}

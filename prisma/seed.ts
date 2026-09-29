@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 type ServerSpec = { code: string; price: number };
 const platforms = [['Facebook','facebook'],['TikTok','tiktok'],['Instagram','instagram'],['YouTube','youtube']] as const;
 const tiktok = [
-  ['TikTok Likes','tiktok-likes',[['SV1',9000],['SV2',11400],['SV3',10200]]],
+  ['TikTok Likes','tiktok-likes',[['SV3',15000]]],
   ['TikTok Followers','tiktok-followers',[['SV1',25000]]],
   ['TikTok Views','tiktok-views',[['SV1',360],['SV2',2400]]],
   ['TikTok Livestream Views','tiktok-livestream-views',[['SV1',60000]]],

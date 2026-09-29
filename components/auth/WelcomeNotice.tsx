@@ -1,13 +1,13 @@
 'use client';
-import {usePathname} from 'next/navigation';
 import {useEffect,useState} from 'react';
 
 export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:boolean}){
-  const path=usePathname();
-  const [open,setOpen]=useState(true);
-  useEffect(()=>setOpen(true),[path]);
-  if(!open||(!force&&(path==='/login'||path==='/register'||path.startsWith('/admin'))))return null;
-  const close=()=>{setOpen(false);onClose?.()};
+  const [open,setOpen]=useState(false);
+  useEffect(()=>{
+    if(force||sessionStorage.getItem('welcome-notice-seen')!=='true')setOpen(true);
+  },[force]);
+  if(!open)return null;
+  const close=()=>{sessionStorage.setItem('welcome-notice-seen','true');setOpen(false);onClose?.()};
   return <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
     <div className="welcome-modal notice-style-modal">
       <div className="notice-style-title">⚡ <span id="welcome-title">Thông Báo</span> ⚡</div>
