@@ -42,11 +42,25 @@ async function main(){
         await pruneServers(service.id, raw.map((item) => `${name} [${item[0]}]`));
       }
     }else{
-      const name=platformName==='Instagram'?'Người theo dõi Instagram':`${platformName} Services`;
-      const serviceSlug=platformName==='Instagram'?'instagram-followers':`${slug}-services`;
+      if(platformName==='Instagram'){
+        const instagramServices = [
+          ['Người theo dõi Instagram','instagram-followers',50000],
+          ['Lượt thích Instagram','instagram-likes',40000],
+        ] as const;
+        const allowedIds:string[]=[];
+        for(const [name,serviceSlug,price] of instagramServices){
+          const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
+          allowedIds.push(service.id);
+          await server(service.id,name,{code:'SV1',price});
+          await pruneServers(service.id,[`${name} [SV1]`]);
+        }
+        await prisma.service.updateMany({where:{platformId:platform.id,id:{notIn:allowedIds}},data:{active:false}});
+        continue;
+      }
+      const name=`${platformName} Services`;
+      const serviceSlug=`${slug}-services`;
       const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
-      if(platformName==='Instagram') await prisma.service.updateMany({where:{platformId:platform.id,id:{not:service.id}},data:{active:false}});
-      await server(service.id,name,{code:'SV1',price:platformName==='Instagram'?50000:2900});
+      await server(service.id,name,{code:'SV1',price:2900});
       await pruneServers(service.id,[`${name} [SV1]`]);
     }
   }
