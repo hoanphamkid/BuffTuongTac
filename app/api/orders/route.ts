@@ -2,8 +2,6 @@ import {NextResponse} from 'next/server';
 import {z} from 'zod';
 import {currentUser} from '@/lib/auth';
 import {prisma} from '@/lib/prisma';
-import {getSmmProvider} from '@/lib/smm/provider';
-import {refundOrder} from '@/lib/orders/refund-order';
 import {sendOrderEmail} from '@/lib/send-order-email';
 
 const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive(),comments:z.array(z.string().trim().min(1).max(1000)).max(100000).optional()});
@@ -30,16 +28,8 @@ export async function POST(req:Request){
     });
   }catch{return NextResponse.json({success:false,code:'INSUFFICIENT_BALANCE',error:'Số dư không đủ. Vui lòng nạp thêm tiền.'},{status:400});}
 
-  let updated;
-  try{
-    const provider=getSmmProvider();
-      const result=await provider.createOrder({serviceId:server.providerServiceId||server.serviceId,link:input.data.link,quantity:input.data.quantity,comments:input.data.comments});
-    updated=await prisma.order.update({where:{id:order.id},data:{providerOrderId:result.orderId,status:'PROCESSING'}});
-  }catch{
-    await prisma.order.update({where:{id:order.id},data:{status:'FAILED'}}).catch(()=>{});
-    await refundOrder(order.id).catch(()=>{});
-    return NextResponse.json({success:false,code:'PROVIDER_FAILED_REFUNDED',error:'Không thể gửi đơn đến nhà cung cấp. Số tiền đã được hoàn lại.'},{status:502});
-  }
+  // Chưa kết nối nhà cung cấp ngoài: giữ đơn ở trạng thái chờ xử lý để admin xử lý thủ công.
+  const updated=await prisma.order.update({where:{id:order.id},data:{status:'PENDING'}});
 
   try{
     await sendOrderEmail({orderId:updated.id,username:user.username,service:server.service.name,server:server.name,link:updated.link,quantity:updated.quantity,total:Number(updated.price)});
