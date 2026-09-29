@@ -1,4 +1,225 @@
-'use client';import './orders.css';import {useEffect,useMemo,useState} from 'react';
-const money=(v:any)=>new Intl.NumberFormat('vi-VN').format(Number(v)||0)+'đ';const icon=(s:string)=>s==='facebook'?'🔵':s==='tiktok'?'🎵':s==='instagram'?'📷':s==='youtube'?'▶️':'◈';
-export default function AdminOrders(){const [rows,setRows]=useState<any[]>([]),[q,setQ]=useState(''),[status,setStatus]=useState('all'),[page,setPage]=useState(1),[selected,setSelected]=useState<any>(null);const size=10;useEffect(()=>{fetch('/api/admin/orders').then(r=>r.json()).then(d=>setRows(d.data||[]))},[]);const list=useMemo(()=>rows.filter(x=>(!q||`${x.id} ${x.user?.username} ${x.link}`.toLowerCase().includes(q.toLowerCase()))&&(status==='all'||x.status===status)),[rows,q,status]);const shown=list.slice((page-1)*size,page*size),pages=Math.max(1,Math.ceil(list.length/size));return <div className="admin-body orders-page"><h2 className="admin-only-title">Đơn hàng</h2><p className="admin-only-sub">Quản lý và theo dõi tất cả đơn hàng trong hệ thống</p><div className="admin-stats"><Card t="TỔNG ĐƠN HÀNG" v={rows.length}/><Card t="ĐANG CHẠY" v={rows.filter(x=>['PROCESSING','IN_PROGRESS'].includes(x.status)).length}/><Card t="HOÀN THÀNH" v={rows.filter(x=>x.status==='COMPLETED').length}/><Card t="THẤT BẠI" v={rows.filter(x=>['FAILED','CANCELED'].includes(x.status)).length}/></div><div className="admin-card orders-card"><div className="orders-filter"><input placeholder="⌕  Tìm mã đơn, username, link..." value={q} onChange={e=>{setQ(e.target.value);setPage(1)}}/><select><option>Tất cả nền tảng</option></select><select value={status} onChange={e=>{setStatus(e.target.value);setPage(1)}}><option value="all">Tất cả trạng thái</option><option value="PROCESSING">Đang chạy</option><option value="COMPLETED">Hoàn thành</option><option value="FAILED">Thất bại</option></select><button onClick={()=>{setQ('');setStatus('all')}}>Làm mới</button></div><div className="table-scroll"><table className="admin-table orders-table"><thead><tr><th>MÃ ĐƠN</th><th>USER</th><th>NỀN TẢNG</th><th>DỊCH VỤ</th><th>SỐ LƯỢNG</th><th>THÀNH TIỀN</th><th>TRẠNG THÁI</th><th>THỜI GIAN</th><th></th></tr></thead><tbody>{shown.map(x=><tr key={x.id}><td><b>#{x.id.slice(-6)}</b><small>{x.id}</small></td><td>{x.user?.username||'—'}</td><td>{icon(x.service?.platform?.slug||'')} {x.service?.platform?.name||'—'}</td><td>{x.service?.name||'—'}</td><td>{Number(x.quantity).toLocaleString('vi-VN')}</td><td><b>{money(x.price)}</b></td><td><span className={'order-pill '+String(x.status).toLowerCase()}>{x.status}</span></td><td>{new Date(x.createdAt).toLocaleString('vi-VN')}</td><td><button className="view-order" onClick={()=>setSelected(x)}>Xem</button></td></tr>)}</tbody></table></div><div className="orders-footer">Hiển thị {shown.length?((page-1)*size+1):0}–{Math.min(page*size,list.length)} / {list.length}<div><button disabled={page===1} onClick={()=>setPage(page-1)}>‹</button><b>{page}</b><button disabled={page===pages} onClick={()=>setPage(page+1)}>›</button></div></div></div>{selected&&<aside className="order-drawer"><button className="drawer-close" onClick={()=>setSelected(null)}>×</button><h2>Chi tiết đơn hàng</h2><h1>#{selected.id.slice(-6)} <span className="order-pill processing">{selected.status}</span></h1><small>Tạo lúc: {new Date(selected.createdAt).toLocaleString('vi-VN')}</small><hr/><h3>Thông tin khách hàng</h3><p><b>{selected.user?.username}</b><br/>{selected.user?.email}</p><h3>Thông tin đơn hàng</h3><p>Nền tảng: <b>{icon(selected.service?.platform?.slug||'')} {selected.service?.platform?.name}</b><br/>Dịch vụ: <b>{selected.service?.name}</b><br/>Số lượng: <b>{Number(selected.quantity).toLocaleString('vi-VN')}</b><br/>Giá: <b>{money(selected.price)}</b></p><h3>Đối tượng buff</h3><div className="order-link">{selected.link}</div><button className="drawer-primary" onClick={()=>navigator.clipboard?.writeText(selected.link)}>Sao chép link</button></aside>}</div>}
-function Card({t,v}:{t:string;v:any}){return <div className="admin-card admin-stat"><small>{t}</small><strong>{v}</strong><span>↗ Dữ liệu thực tế</span></div>}
+"use client";
+import "./orders.css";
+import { useEffect, useMemo, useState } from "react";
+import { statusLabel } from "@/lib/status-label";
+const money = (v: any) =>
+  new Intl.NumberFormat("vi-VN").format(Number(v) || 0) + "đ";
+const icon = (s: string) =>
+  s === "facebook"
+    ? "🔵"
+    : s === "tiktok"
+      ? "🎵"
+      : s === "instagram"
+        ? "📷"
+        : s === "youtube"
+          ? "▶️"
+          : "◈";
+export default function AdminOrders() {
+  const [rows, setRows] = useState<any[]>([]),
+    [q, setQ] = useState(""),
+    [status, setStatus] = useState("all"),
+    [page, setPage] = useState(1),
+    [selected, setSelected] = useState<any>(null);
+  const size = 10;
+  useEffect(() => {
+    fetch("/api/admin/orders")
+      .then((r) => r.json())
+      .then((d) => setRows(d.data || []));
+  }, []);
+  const list = useMemo(
+    () =>
+      rows.filter(
+        (x) =>
+          (!q ||
+            `${x.id} ${x.user?.username} ${x.link}`
+              .toLowerCase()
+              .includes(q.toLowerCase())) &&
+          (status === "all" || x.status === status),
+      ),
+    [rows, q, status],
+  );
+  const shown = list.slice((page - 1) * size, page * size),
+    pages = Math.max(1, Math.ceil(list.length / size));
+  return (
+    <div className="admin-body orders-page">
+      <h2 className="admin-only-title">Đơn hàng</h2>
+      <p className="admin-only-sub">
+        Quản lý và theo dõi tất cả đơn hàng trong hệ thống
+      </p>
+      <div className="admin-stats">
+        <Card t="TỔNG ĐƠN HÀNG" v={rows.length} />
+        <Card
+          t="ĐANG CHẠY"
+          v={
+            rows.filter((x) => ["PROCESSING", "IN_PROGRESS"].includes(x.status))
+              .length
+          }
+        />
+        <Card
+          t="HOÀN THÀNH"
+          v={rows.filter((x) => x.status === "COMPLETED").length}
+        />
+        <Card
+          t="THẤT BẠI"
+          v={
+            rows.filter((x) => ["FAILED", "CANCELED"].includes(x.status)).length
+          }
+        />
+      </div>
+      <div className="admin-card orders-card">
+        <div className="orders-filter">
+          <input
+            placeholder="⌕  Tìm mã đơn, username, link..."
+            value={q}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(1);
+            }}
+          />
+          <select>
+            <option>Tất cả nền tảng</option>
+          </select>
+          <select
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="all">Tất cả trạng thái</option>
+            <option value="PROCESSING">Đang chạy</option>
+            <option value="COMPLETED">Hoàn thành</option>
+            <option value="FAILED">Thất bại</option>
+          </select>
+          <button
+            onClick={() => {
+              setQ("");
+              setStatus("all");
+            }}
+          >
+            Làm mới
+          </button>
+        </div>
+        <div className="table-scroll">
+          <table className="admin-table orders-table">
+            <thead>
+              <tr>
+                <th>MÃ ĐƠN</th>
+                <th>USER</th>
+                <th>NỀN TẢNG</th>
+                <th>DỊCH VỤ</th>
+                <th>SỐ LƯỢNG</th>
+                <th>THÀNH TIỀN</th>
+                <th>TRẠNG THÁI</th>
+                <th>THỜI GIAN</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((x) => (
+                <tr key={x.id}>
+                  <td>
+                    <b>#{x.id.slice(-6)}</b>
+                    <small>{x.id}</small>
+                  </td>
+                  <td>{x.user?.username || "—"}</td>
+                  <td>
+                    {icon(x.service?.platform?.slug || "")}{" "}
+                    {x.service?.platform?.name || "—"}
+                  </td>
+                  <td>{x.service?.name || "—"}</td>
+                  <td>{Number(x.quantity).toLocaleString("vi-VN")}</td>
+                  <td>
+                    <b>{money(x.price)}</b>
+                  </td>
+                  <td>
+                    <span
+                      className={"order-pill " + String(x.status).toLowerCase()}
+                    >
+                      {statusLabel(x.status)}
+                    </span>
+                  </td>
+                  <td>{new Date(x.createdAt).toLocaleString("vi-VN")}</td>
+                  <td>
+                    <button
+                      className="view-order"
+                      onClick={() => setSelected(x)}
+                    >
+                      Xem
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="orders-footer">
+          Hiển thị {shown.length ? (page - 1) * size + 1 : 0}–
+          {Math.min(page * size, list.length)} / {list.length}
+          <div>
+            <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              ‹
+            </button>
+            <b>{page}</b>
+            <button disabled={page === pages} onClick={() => setPage(page + 1)}>
+              ›
+            </button>
+          </div>
+        </div>
+      </div>
+      {selected && (
+        <aside className="order-drawer">
+          <button className="drawer-close" onClick={() => setSelected(null)}>
+            ×
+          </button>
+          <h2>Chi tiết đơn hàng</h2>
+          <h1>
+            #{selected.id.slice(-6)}{" "}
+        <span className="order-pill processing">{statusLabel(selected.status)}</span>
+          </h1>
+          <small>
+            Tạo lúc: {new Date(selected.createdAt).toLocaleString("vi-VN")}
+          </small>
+          <hr />
+          <h3>Thông tin khách hàng</h3>
+          <p>
+            <b>{selected.user?.username}</b>
+            <br />
+            {selected.user?.email}
+          </p>
+          <h3>Thông tin đơn hàng</h3>
+          <p>
+            Nền tảng:{" "}
+            <b>
+              {icon(selected.service?.platform?.slug || "")}{" "}
+              {selected.service?.platform?.name}
+            </b>
+            <br />
+            Dịch vụ: <b>{selected.service?.name}</b>
+            <br />
+            Số lượng: <b>{Number(selected.quantity).toLocaleString("vi-VN")}</b>
+            <br />
+            Giá: <b>{money(selected.price)}</b>
+          </p>
+          <h3>Đối tượng buff</h3>
+          <div className="order-link">{selected.link}</div>
+          <button
+            className="drawer-primary"
+            onClick={() => navigator.clipboard?.writeText(selected.link)}
+          >
+            Sao chép link
+          </button>
+        </aside>
+      )}
+    </div>
+  );
+}
+function Card({ t, v }: { t: string; v: any }) {
+  return (
+    <div className="admin-card admin-stat">
+      <small>{t}</small>
+      <strong>{v}</strong>
+      <span>↗ Dữ liệu thực tế</span>
+    </div>
+  );
+}
