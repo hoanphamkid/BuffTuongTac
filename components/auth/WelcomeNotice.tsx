@@ -18,7 +18,7 @@ export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:bo
       <p className="notice-style-thanks"><strong>Chúc bạn có trải nghiệm tốt tại KID Social!</strong></p>
       <div className="notice-links">
         <a className="contact-icon zalo-icon" href="https://zalo.me/0945459491" target="_blank" rel="noreferrer" aria-label="Liên hệ Zalo" title="Zalo">Z</a>
-        <a className="contact-icon tiktok-icon" href="https://www.tiktok.com/@Kidzdayy" target="_blank" rel="noreferrer" aria-label="TikTok" title="TikTok">♪</a>
+        <a className="contact-icon tiktok-icon" href="https://www.tiktok.com/@kidzdayy" target="_blank" rel="noreferrer" aria-label="TikTok" title="TikTok">♪</a>
         <a className="contact-icon gmail-icon" href="mailto:phamthanhhoan2401@gmail.com" aria-label="Gửi email" title="Gmail">✉</a>
       </div>
       <button className="welcome-confirm" onClick={close}>Đã hiểu</button>
