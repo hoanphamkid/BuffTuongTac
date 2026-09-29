@@ -90,12 +90,12 @@
   color: #d34c4c;
   font-size: 12px;
 }
-.welcome-overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:#02040dcc;backdrop-filter:blur(6px)}
+.welcome-overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:#02030dd9;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .welcome-modal{position:relative;width:min(590px,100%);padding:42px 52px 38px;border:1px solid #8c5ec4;border-radius:22px;background:linear-gradient(145deg,#201735,#0e0b1b);box-shadow:0 24px 80px #000b;color:#f4eefa;text-align:center}
 .welcome-close{position:absolute;right:14px;top:10px;width:48px;height:48px;border:2px solid #d5b86b;border-radius:50%;background:#171026;color:#d9c9e5;font-size:28px;line-height:1;cursor:pointer}
 .welcome-sparkles{color:#e5c879;font-size:20px;letter-spacing:3px}.welcome-kicker{margin-top:17px;color:#d8bb6f;font-size:10px;font-weight:bold;letter-spacing:2px}.welcome-modal h2{margin:20px 0 24px;color:#fff5eb;font-size:28px}.welcome-modal p{margin:14px auto;color:#c9bdd3;font-size:15px;line-height:1.65;max-width:470px}.welcome-modal strong{color:#f4e4bd}.welcome-confirm{width:min(230px,100%);height:48px;margin-top:20px;border:0;border-radius:7px;background:#dfbd76;color:#24182d;font-weight:bold;cursor:pointer}.welcome-confirm:hover{background:#f0d18f}
 @media(max-width:600px){
   main.auth{width:100%;max-width:none;margin-left:0!important;min-height:100dvh;padding:20px 14px;background-position:center top;background-attachment:scroll}
   .auth form{width:100%;max-width:420px;padding:30px 22px;border-radius:15px}
-  .welcome-modal{padding:36px 22px 28px;border-radius:18px}.welcome-modal h2{font-size:22px}.welcome-modal p{font-size:14px}
+  .welcome-overlay{padding:24px 14px}.welcome-modal{padding:42px 25px 30px;border-radius:20px;max-height:calc(100dvh - 48px);overflow:auto}.welcome-modal h2{font-size:25px;line-height:1.25;margin:18px 30px 22px}.welcome-modal p{font-size:14px;line-height:1.55;margin:12px auto}.welcome-confirm{height:48px;margin-top:16px}
 }

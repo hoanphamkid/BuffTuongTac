@@ -1,10 +1,11 @@
 'use client';
 import {usePathname} from 'next/navigation';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 
 export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:boolean}){
   const path=usePathname();
   const [open,setOpen]=useState(true);
+  useEffect(()=>setOpen(true),[path]);
   if(!open||(!force&&(path==='/login'||path==='/register'||path.startsWith('/admin'))))return null;
   const close=()=>{setOpen(false);onClose?.()};
   return <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
