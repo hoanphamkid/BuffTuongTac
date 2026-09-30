@@ -13,3 +13,16 @@
 .deposits-page .qr-panel{grid-template-columns:minmax(0,1fr);width:100%}
 .deposits-page .detail-bottom{grid-template-columns:minmax(0,1fr)}
 @media(max-width:1250px){.admin-main .deposits-page .deposit-workspace{grid-template-columns:minmax(0,1fr)!important}.admin-main .deposits-page aside.deposit-detail{width:100%!important;margin-top:12px!important;height:auto}}
+.deposits-page.deposit-detail-mode .deposit-summary,.deposits-page.deposit-detail-mode .deposit-list-card,.deposits-page.deposit-detail-mode .deposit-head-tools{display:none}
+.admin-main .deposits-page.deposit-detail-mode .deposit-workspace{display:block;width:100%}
+.admin-main .deposits-page.deposit-detail-mode aside.deposit-detail{display:flex;width:100%!important;min-height:calc(100vh - 150px);margin:0!important}
+.deposit-detail-mode .detail-back{align-self:flex-end;margin:0 0 12px;padding:10px 16px;border:1px solid #dce5f2;border-radius:7px;background:#fff;color:#45617f;font-weight:700;cursor:pointer}
+.deposit-detail-mode .detail-hero{border-radius:10px 10px 0 0;padding:24px 28px}
+.deposit-detail-mode .detail-body{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(380px,1fr);grid-template-areas:"info payment" "info actions";gap:16px;padding:20px;overflow:visible}
+.deposit-detail-mode .detail-grid{grid-area:info;display:grid;grid-template-columns:1fr 1fr;align-content:start}
+.deposit-detail-mode .detail-grid section,.deposit-detail-mode .detail-grid section+section{order:initial;border-top:0;padding:20px}
+.deposit-detail-mode .detail-grid section+section{border-left:1px solid #e4eaf3}
+.deposit-detail-mode .payment-info{grid-area:payment;margin:0;padding:18px}
+.deposit-detail-mode .detail-bottom{grid-area:actions;margin:0;display:grid;grid-template-columns:1fr 1fr;align-self:stretch}
+.deposit-detail-mode .qr-panel{grid-template-columns:minmax(150px,.8fr) minmax(0,1.2fr)}
+@media(max-width:1000px){.deposit-detail-mode .detail-body{grid-template-columns:1fr;grid-template-areas:"info" "payment" "actions"}.deposit-detail-mode .detail-grid,.deposit-detail-mode .detail-bottom{grid-template-columns:1fr}.deposit-detail-mode .detail-grid section+section,.deposit-detail-mode .detail-bottom section+section{border-left:0;border-top:1px solid #e4eaf3}}

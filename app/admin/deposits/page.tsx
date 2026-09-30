@@ -61,7 +61,11 @@ export default function AdminDeposits() {
       const bankData = await b.json();
       setRows(data.data || []);
       setBank(bankData.data || {});
-      setSelectedId((current) => current || data.data?.[0]?.id || "");
+      setSelectedId((current) =>
+        current && data.data?.some((item: Deposit) => item.id === current)
+          ? current
+          : "",
+      );
     } finally {
       setLoading(false);
     }
@@ -103,7 +107,7 @@ export default function AdminDeposits() {
     if (page > pages) setPage(pages);
   }, [page, pages]);
   const shown = filtered.slice((page - 1) * size, page * size);
-  const selected = rows.find((x) => x.id === selectedId) || shown[0] || null;
+  const selected = rows.find((x) => x.id === selectedId) || null;
   const qr = selected
     ? `https://img.vietqr.io/image/${bank.bankId || "MB"}-${bank.accountNumber || ""}-compact2.png?amount=${Number(selected.amount)}&addInfo=${encodeURIComponent(selected.paymentCode)}`
     : "";
@@ -173,11 +177,11 @@ export default function AdminDeposits() {
     }
   };
   return (
-    <div className="admin-body deposits-page">
+    <div className={"admin-body deposits-page " + (selected ? "deposit-detail-mode" : "")}>
       <div className="deposit-page-head">
         <div>
-          <h2>Nạp tiền</h2>
-          <p>Quản lý và xử lý các giao dịch nạp tiền của người dùng</p>
+          <h2>{selected ? "Chi tiết giao dịch nạp tiền" : "Nạp tiền"}</h2>
+          <p>{selected ? "Thông tin chi tiết về giao dịch nạp tiền của người dùng" : "Quản lý và xử lý các giao dịch nạp tiền của người dùng"}</p>
         </div>
         <div className="deposit-head-tools">
           <label>
@@ -425,6 +429,7 @@ export default function AdminDeposits() {
           busy={busy}
           updateStatus={updateStatus}
           reload={load}
+          close={() => setSelectedId("")}
         />
       </div>
       {notice && <div className="deposit-toast">{notice}</div>}
@@ -474,6 +479,7 @@ function Detail({
   busy,
   updateStatus,
   reload,
+  close,
 }: {
   deposit: Deposit | null;
   bank: any;
@@ -484,6 +490,7 @@ function Detail({
   busy: boolean;
   updateStatus: (x: "paid" | "cancel") => void;
   reload: () => void;
+  close: () => void;
 }) {
   if (!deposit)
     return (
@@ -493,6 +500,7 @@ function Detail({
     );
   return (
     <aside className="deposit-detail">
+      <button className="detail-back" onClick={close}>← Quay lại danh sách</button>
       <div className="detail-hero">
         <div>
           <h3>▣　Chi tiết giao dịch</h3>
