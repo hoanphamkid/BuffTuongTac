@@ -2,3 +2,14 @@
 @media(max-width:1250px){.deposit-summary{grid-template-columns:repeat(4,1fr)}.total-paid-card{grid-column:1/-1}.deposit-workspace{grid-template-columns:1fr}.deposit-detail{display:block}.deposit-detail.empty{display:none}}
 @media(max-width:800px){.deposits-page{padding:12px 9px}.deposit-page-head{align-items:flex-start;flex-direction:column}.deposit-head-tools{width:100%;flex-wrap:wrap}.deposit-head-tools label{flex:1}.deposit-head-tools input{min-width:0;width:100%}.deposit-summary{grid-template-columns:1fr 1fr;gap:8px}.summary-card{min-height:88px;padding:10px;grid-template-columns:40px 1fr}.summary-card>i{width:38px;height:38px}.summary-card strong{font-size:20px}.summary-card em{display:none}.total-paid-card{grid-column:1/-1}.deposit-workspace{display:block}.deposit-detail{margin-top:12px}.list-filters{grid-template-columns:1fr}.deposit-pagination{flex-wrap:wrap}.detail-grid,.detail-bottom{grid-template-columns:1fr}.detail-grid section+section,.detail-bottom section+section{border-left:0;border-top:1px solid #e4eaf3}.qr-panel{grid-template-columns:1fr}.qr-panel img{width:150px;height:150px}}
 @media(max-width:480px){.deposit-summary{grid-template-columns:1fr}.total-paid-card{grid-column:auto}.deposit-page-head h2{font-size:19px}.status-tabs{padding-left:10px}.list-title{padding:12px 10px}.list-title h3{font-size:12px}.deposit-table{min-width:720px}.detail-body{padding:8px}.detail-hero{padding:14px}.deposit-toast{left:70px;right:12px;bottom:18px;text-align:center}}
+.admin-body.deposits-page{width:100%;max-width:none;margin:0}
+.deposits-page .deposit-workspace{width:100%;grid-template-columns:minmax(0,72fr) minmax(360px,28fr);gap:16px;align-items:stretch}
+.deposits-page aside.deposit-detail{width:100%;max-width:none;min-width:0;padding:0;margin:0;color:#14213d;justify-self:stretch;box-sizing:border-box}
+.deposits-page .detail-hero>div{min-width:0}
+.deposits-page .detail-hero h2{overflow-wrap:anywhere}
+.deposits-page .detail-hero .deposit-status{flex-shrink:0}
+.deposits-page .detail-user>i{flex-shrink:0}
+.deposits-page .detail-user>div{min-width:0}
+.deposits-page .qr-panel{grid-template-columns:minmax(0,1fr);width:100%}
+.deposits-page .detail-bottom{grid-template-columns:minmax(0,1fr)}
+@media(max-width:800px){.deposits-page .deposit-workspace{grid-template-columns:minmax(0,1fr)}.deposits-page aside.deposit-detail{margin-top:12px;height:auto}}
