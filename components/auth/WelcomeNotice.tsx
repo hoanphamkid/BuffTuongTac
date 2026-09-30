@@ -1,13 +1,21 @@
 'use client';
 import {useEffect,useState} from 'react';
+import {usePathname} from 'next/navigation';
+import {useCurrentUser} from '@/providers/CurrentUserProvider';
+import './welcome-support.css';
 
 export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:boolean}){
   const [open,setOpen]=useState(false);
+  const {user,loading}=useCurrentUser();
+  const pathname=usePathname();
+  const key='welcome-notice-seen:'+user?.id;
+  const eligible=!!user&&!loading&&pathname!=='/login'&&pathname!=='/register'&&!pathname.startsWith('/admin');
   useEffect(()=>{
-    if(force||sessionStorage.getItem('welcome-notice-seen')!=='true')setOpen(true);
-  },[force]);
-  if(!open)return null;
-  const close=()=>{sessionStorage.setItem('welcome-notice-seen','true');setOpen(false);onClose?.()};
+    if(!eligible&&!force){setOpen(false);return}
+    try{setOpen(force||sessionStorage.getItem(key)!=='true')}catch{setOpen(true)}
+  },[force,eligible,key]);
+  if(!open||(!eligible&&!force))return null;
+  const close=()=>{try{sessionStorage.setItem(key,'true')}catch{}setOpen(false);onClose?.()};
   return <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
     <div className="welcome-modal notice-style-modal">
       <div className="notice-style-title">⚡ <span id="welcome-title">Thông Báo</span> ⚡</div>

@@ -19,6 +19,7 @@ export default function Login(){
       const r=await fetch('/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(f)});
       const d=await r.json().catch(()=>null);
       if(!r.ok||!d?.success){setError(d?.error||'Đăng nhập thất bại');return}
+      try{sessionStorage.removeItem('welcome-notice-seen:'+d.data.id)}catch{}
       await refreshUser();
       router.replace(d.data?.role==='ADMIN'?'/admin':'/');
       router.refresh();
