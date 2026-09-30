@@ -15,6 +15,7 @@ type Order = {
   createdAt: string;
   service?: { name: string; platform?: { name: string } };
   server?: { name: string };
+  label?: string | null;
 };
 type Row = {
   id: string;
@@ -480,6 +481,8 @@ function Info({
   );
 }
 function OrderCard({ order, title }: { order: Order; title?: string }) {
+  const [label,setLabel]=useState(order.label||'');const [editing,setEditing]=useState(false);const [saving,setSaving]=useState(false);const [error,setError]=useState('');
+  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label})});const d=await r.json().catch(()=>({}));if(r.ok){setLabel(d.data?.label||'');setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
   return (
     <div className="related-order">
       {title && <h4>{title}</h4>}
@@ -489,6 +492,7 @@ function OrderCard({ order, title }: { order: Order; title?: string }) {
           {order.status}
         </span>
       </div>
+      {order.status === "COMPLETED" && <div className="order-label-editor">{editing ? <><input value={label} maxLength={120} onChange={e=>setLabel(e.target.value)} placeholder="Nhãn đơn hàng"/><button onClick={save} disabled={saving}>{saving?'Đang lưu...':'Lưu'}</button><button onClick={()=>setEditing(false)}>Hủy</button></> : <><span className="order-label">{label||'Chưa có nhãn'}</span><button onClick={()=>setEditing(true)}>Sửa nhãn</button></>}{error&&<small className="label-error">{error}</small>}</div>}
       <p>
         {order.service?.platform?.name || "Nền tảng"} ·{" "}
         {order.service?.name || "Dịch vụ"}

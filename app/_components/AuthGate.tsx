@@ -9,7 +9,7 @@ export function AuthGate({children}:{children:React.ReactNode}){
   const router=useRouter();
   const {user,loading,clearUser}=useCurrentUser();
   const publicPage=path==='/login'||path==='/register';
-  const localPreview=process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
+  const localPreview=process.env.NODE_ENV!=='production'||process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
 
   useEffect(()=>{
     if(!localPreview&&!publicPage&&!loading&&!user){

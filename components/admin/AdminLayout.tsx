@@ -3,7 +3,7 @@ import Link from 'next/link';
 import {useEffect,useState} from 'react';
 import {usePathname,useRouter} from 'next/navigation';
 
-const items=[['Tổng quan','/admin','⌂'],['Đơn hàng','/admin/orders','▣'],['Người dùng','/admin/users','♙'],['Nạp tiền','/admin/deposits','▤'],['Giao dịch','/admin/transactions','↔'],['Hoàn tiền','/admin/refunds','↶'],['Dịch vụ','/admin/services','◉'],['Thông báo','/admin/notifications','♧'],['Nhà cung cấp','/admin/provider','◫'],['Cài đặt','/admin/settings','⚙']];
+const items=[['Tổng quan','/admin','⌂'],['Người dùng','/admin/users','♙'],['Nạp tiền','/admin/deposits','▤'],['Giao dịch','/admin/transactions','↔'],['Hoàn tiền','/admin/refunds','↶'],['Dịch vụ','/admin/services','◉'],['Thông báo','/admin/notifications','♧'],['Nhà cung cấp','/admin/provider','◫'],['Cài đặt','/admin/settings','⚙']];
 export function AdminLayout({children,admin}:{children:React.ReactNode;admin:{username:string;email:string}}){
  const path=usePathname(),router=useRouter();const [menuOpen,setMenuOpen]=useState(false),[refreshing,setRefreshing]=useState(false);
  useEffect(()=>setMenuOpen(false),[path]);

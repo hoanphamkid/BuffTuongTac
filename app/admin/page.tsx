@@ -30,7 +30,7 @@ export default function AdminDashboard() {
       </div>
       <div className="dashboard-stats">
         <Stat
-          href="/admin/orders"
+          href="/admin/transactions"
           icon="🛒"
           title="Tổng đơn hàng"
           value={d.orders}
@@ -51,7 +51,7 @@ export default function AdminDashboard() {
           color="orange"
         />
         <Stat
-          href="/admin/orders"
+          href="/admin/transactions"
           icon="▣"
           title="Đang xử lý"
           value={d.processing}
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
         />
       </div>
       <div className="dashboard-grid">
-        <Link href="/admin/orders" className="dashboard-panel chart-panel">
+        <Link href="/admin/transactions" className="dashboard-panel chart-panel">
           <h2>▣　Doanh thu & Đơn hàng</h2>
           <div className="fake-chart">
             {[35, 52, 42, 70, 48, 88, 62, 96, 75, 100, 68, 84].map((h, i) => (
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
             <span>24:00</span>
           </div>
         </Link>
-        <Link href="/admin/orders" className="dashboard-panel status-panel">
+        <Link href="/admin/transactions" className="dashboard-panel status-panel">
           <h2>◉　Trạng thái đơn hàng</h2>
           <div className="donut">
             <b>
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
             <h2>Đơn hàng mới nhất</h2>
             <p>Dữ liệu lấy trực tiếp từ database</p>
           </div>
-          <Link href="/admin/orders">Xem tất cả →</Link>
+          <Link href="/admin/transactions">Xem tất cả →</Link>
         </div>
         <div className="table-scroll">
           <table className="admin-table">

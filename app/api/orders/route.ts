@@ -4,17 +4,18 @@ import {currentUser} from '@/lib/auth';
 import {prisma} from '@/lib/prisma';
 import {sendOrderEmail} from '@/lib/send-order-email';
 
-const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive(),comments:z.array(z.string().trim().min(1).max(1000)).max(100000).optional()});
+const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive(),comments:z.array(z.string().trim().min(1).max(1000)).max(100000).optional(),reaction:z.string().trim().max(30).optional()});
 
 export async function POST(req:Request){
   const user=await currentUser();
   if(!user)return NextResponse.json({success:false,error:'Chưa đăng nhập'},{status:401});
   const input=schema.safeParse(await req.json());
   if(!input.success)return NextResponse.json({success:false,error:'Thông tin đơn hàng không hợp lệ'},{status:400});
-  const server=await prisma.server.findUnique({where:{id:input.data.serverId},include:{service:true}});
+  const server=await prisma.server.findUnique({where:{id:input.data.serverId},include:{service:{include:{platform:true}}}});
   if(!server||!server.active)return NextResponse.json({success:false,error:'Máy chủ không khả dụng'},{status:400});
   if(input.data.quantity<server.min||input.data.quantity>server.max)return NextResponse.json({success:false,error:`Số lượng phải từ ${server.min} đến ${server.max}`},{status:400});
   if(server.service.slug==='tiktok-comments' && (!input.data.comments?.length || input.data.comments.length!==input.data.quantity))return NextResponse.json({success:false,error:'Vui lòng nhập mỗi comment trên một dòng.'},{status:400});
+  if(server.service.platform.slug==='facebook' && server.name.includes('[SV2]') && !input.data.reaction)return NextResponse.json({success:false,error:'Vui lòng chọn cảm xúc.'},{status:400});
   const total=Math.ceil(input.data.quantity*Number(server.pricePer1000)/1000);
   let order;
   try{
@@ -22,7 +23,7 @@ export async function POST(req:Request){
       const debit=await tx.user.updateMany({where:{id:user.id,balance:{gte:total}},data:{balance:{decrement:total}}});
       if(debit.count!==1)throw new Error('INSUFFICIENT_BALANCE');
       const after=await tx.user.findUniqueOrThrow({where:{id:user.id},select:{balance:true}});
-      const created=await tx.order.create({data:{userId:user.id,platformId:server.service.platformId,serviceId:server.serviceId,serverId:server.id,link:input.data.link,quantity:input.data.quantity,price:total}});
+      const created=await tx.order.create({data:{userId:user.id,platformId:server.service.platformId,serviceId:server.serviceId,serverId:server.id,link:input.data.link,quantity:input.data.quantity,price:total,reaction:input.data.reaction||null}});
       await tx.balanceTransaction.create({data:{userId:user.id,type:'ORDER',amount:-total,balanceBefore:Number(after.balance)+total,balanceAfter:Number(after.balance),referenceType:'Order',referenceId:created.id,description:`Tạo đơn #${created.id}`}});
       return created;
     });

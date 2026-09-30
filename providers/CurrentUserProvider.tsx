@@ -6,7 +6,7 @@ type Ctx={user:CurrentUser|null;loading:boolean;error:string;refreshUser:(silent
 const UserContext=createContext<Ctx>({user:null,loading:true,error:'',refreshUser:async()=>{},clearUser:()=>{}});
 
 export function CurrentUserProvider({children}:{children:React.ReactNode}){
- const localPreview=process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
+ const localPreview=process.env.NODE_ENV!=='production'||process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
  const previewUser:CurrentUser={id:'local-preview',username:'preview',fullName:'Local Preview',email:'preview@local.test',avatar:null,balance:'7179',totalDeposited:'0',level:'Thành viên',createdAt:new Date().toISOString()};
  const [user,setUser]=useState<CurrentUser|null>(localPreview?previewUser:null);const [loading,setLoading]=useState(!localPreview);const [error,setError]=useState('');
  const refreshUser=useCallback(async(silent=false)=>{
@@ -22,7 +22,7 @@ export function CurrentUserProvider({children}:{children:React.ReactNode}){
  },[]);
  useEffect(()=>{refreshUser()},[refreshUser]);
  useEffect(()=>{
-  const sync=()=>{if(document.visibilityState==='visible')refreshUser(true)};
+  const sync=()=>{if(document.visibilityState==='visible'){refreshUser(true);fetch('/api/presence',{method:'POST',keepalive:true})}};
   const timer=window.setInterval(sync,10000);
   window.addEventListener('focus',sync);document.addEventListener('visibilitychange',sync);
   return()=>{window.clearInterval(timer);window.removeEventListener('focus',sync);document.removeEventListener('visibilitychange',sync)};

@@ -4,12 +4,12 @@ type ServerSpec = { code: string; price: number };
 const platforms = [['Facebook','facebook'],['TikTok','tiktok'],['Instagram','instagram'],['YouTube','youtube']] as const;
 const tiktok = [
   ['TikTok Likes','tiktok-likes',[['SV3',15000]]],
-  ['TikTok Followers','tiktok-followers',[['SV1',25000]]],
-  ['TikTok Views','tiktok-views',[['SV1',360],['SV2',2400]]],
+  ['TikTok Followers','tiktok-followers',[['SV1',40000]]],
+  ['TikTok Views','tiktok-views',[['SV1',2000],['SV2',2400]]],
   ['TikTok Livestream Views','tiktok-livestream-views',[['SV1',60000]]],
-  ['TikTok Comments','tiktok-comments',[['SV1',170000]]],
-  ['TikTok Shares','tiktok-shares',[['SV2',4200]]],
-  ['TikTok PK Battle Points','tiktok-pk-battle-points',[['SV1',6000]]],
+  ['TikTok Comments','tiktok-comments',[['SV1',300000]]],
+  ['TikTok Shares','tiktok-shares',[['SV2',5000]]],
+  ['TikTok PK Battle Points','tiktok-pk-battle-points',[['SV1',8000]]],
 ] as const;
 async function server(serviceId:string, serviceName:string, spec:ServerSpec){
   const name = `${serviceName} [${spec.code}]`;
@@ -57,11 +57,17 @@ async function main(){
         await prisma.service.updateMany({where:{platformId:platform.id,id:{notIn:allowedIds}},data:{active:false}});
         continue;
       }
-      const name=`${platformName} Services`;
+      const name=platformName==='Facebook'?'Cảm xúc bài viết Facebook':`${platformName} Services`;
       const serviceSlug=`${slug}-services`;
       const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
-      await server(service.id,name,{code:'SV1',price:2900});
-      await pruneServers(service.id,[`${name} [SV1]`]);
+      await server(service.id,platformName==='Facebook'?'Lượt thích bài viết Facebook':name,{code:'SV1',price:2900});
+      if(platformName==='Facebook'){
+        await server(service.id,'Cảm xúc bài viết Facebook',{code:'SV2',price:15000});
+        await pruneServers(service.id,[`Lượt thích bài viết Facebook [SV1]`,`Cảm xúc bài viết Facebook [SV2]`]);
+        await prisma.service.updateMany({where:{platformId:platform.id,id:{not:service.id}},data:{active:false}});
+      }else{
+        await pruneServers(service.id,[`${name} [SV1]`]);
+      }
     }
   }
 }
