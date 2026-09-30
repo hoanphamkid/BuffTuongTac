@@ -177,11 +177,11 @@ export default function AdminDeposits() {
     }
   };
   return (
-    <div className={"admin-body deposits-page " + (selected ? "deposit-detail-mode" : "")}>
+    <div className="admin-body deposits-page">
       <div className="deposit-page-head">
         <div>
-          <h2>{selected ? "Chi tiết giao dịch nạp tiền" : "Nạp tiền"}</h2>
-          <p>{selected ? "Thông tin chi tiết về giao dịch nạp tiền của người dùng" : "Quản lý và xử lý các giao dịch nạp tiền của người dùng"}</p>
+          <h2>Nạp tiền</h2>
+          <p>Quản lý và xử lý các giao dịch nạp tiền của người dùng</p>
         </div>
         <div className="deposit-head-tools">
           <label>
@@ -500,7 +500,6 @@ function Detail({
     );
   return (
     <aside className="deposit-detail">
-      <button className="detail-back" onClick={close}>← Quay lại danh sách</button>
       <div className="detail-hero">
         <div>
           <h3>▣　Chi tiết giao dịch</h3>
