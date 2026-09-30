@@ -241,8 +241,14 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
         <button onClick={save} disabled={saving}>{saving ? "Đang lưu..." : "Lưu"}</button>
         <button onClick={() => { setLabel(order.label || ""); setStatus(order.status); setEditing(false); }}>Hủy</button>
       </> : <>
-        <span className={"order-label " + order.status.toLowerCase()}>{label || statusLabel(order.status)}</span>
-        <button onClick={() => setEditing(true)}>Sửa nhãn</button>
+        <button
+          type="button"
+          className={"order-label " + order.status.toLowerCase()}
+          onClick={() => setEditing(true)}
+          title="Bấm để sửa nhãn và trạng thái"
+        >
+          {label || statusLabel(order.status)}
+        </button>
       </>}
       {error && <small className="label-error">{error}</small>}
     </div>
