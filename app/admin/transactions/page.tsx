@@ -390,7 +390,7 @@ function TransactionDetail({
   copied: string;
 }) {
   return (
-    <aside className="transaction-detail">
+    <div className="transaction-detail" role="region" aria-label="Chi tiết giao dịch">
       <div className="tx-detail-head">
         <h3>Chi tiết giao dịch</h3>
         <button onClick={close}>×</button>
@@ -457,7 +457,7 @@ function TransactionDetail({
           <small>{row.status === "PENDING" ? "Đang chờ..." : "Hoàn tất"}</small>
         </p>
       </section>
-    </aside>
+    </div>
   );
 }
 function Info({
