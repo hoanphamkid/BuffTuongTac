@@ -136,9 +136,7 @@ export default function TransactionsPage() {
   const pages = Math.max(1, Math.ceil(filtered.length / size)),
     shown = filtered.slice((page - 1) * size, page * size),
     selected = rows.find((x) => x.id === selectedId) || null;
-  const userOrders = selected
-    ? orders.filter((o) => o.userId === selected.user.id)
-    : [];
+  const userOrders = selected?.order ? [selected.order] : [];
   const copy = async (v: string) => {
     await navigator.clipboard.writeText(v);
     setCopied(v);
@@ -444,17 +442,17 @@ function TransactionDetail({
         <Info k="Nội dung" v={row.content} />
         {copied && <small className="copied">Đã sao chép</small>}
       </section>
-      {row.order && <OrderCard order={row.order} title="Đơn hàng liên quan" onUpdated={onOrderUpdated} />}
-      <section className="user-orders">
-        <h4>
-          Các đơn hàng người dùng đã tạo <b>{orders.length}</b>
-        </h4>
-        {orders.length ? (
-          orders.map((order) => <OrderCard key={order.id} order={order} onUpdated={onOrderUpdated} />)
-        ) : (
-          <div className="no-orders">Người dùng chưa tạo đơn hàng nào</div>
-        )}
-      </section>
+      {row.order ? (
+        <section className="user-orders">
+          <h4>Đơn hàng liên quan</h4>
+          <OrderCard order={row.order} onUpdated={onOrderUpdated} />
+        </section>
+      ) : row.kind === "ORDER" ? (
+        <section className="user-orders">
+          <h4>Đơn hàng liên quan</h4>
+          <div className="no-orders">Không tìm thấy đơn hàng cho giao dịch này.</div>
+        </section>
+      ) : null}
       <section className="tx-history">
         <h4>Lịch sử xử lý</h4>
         <p>
@@ -502,8 +500,26 @@ function OrderCard({ order, title, onUpdated }: { order: Order; title?: string; 
           {status === 'PENDING' ? 'Chờ xử lý' : status === 'PROCESSING' ? 'Đang xử lý' : 'Hoàn thành'}
         </span>
       </div>
-      {order.status === "COMPLETED" && <div className="order-label-editor">{editing ? <><input value={label} maxLength={120} onChange={e=>setLabel(e.target.value)} placeholder="Nhãn đơn hàng"/><button onClick={save} disabled={saving}>{saving?'Đang lưu...':'Lưu'}</button><button onClick={()=>setEditing(false)}>Hủy</button></> : <><span className="order-label">{label||'Chưa có nhãn'}</span><button onClick={()=>setEditing(true)}>Sửa nhãn</button></>}{error&&<small className="label-error">{error}</small>}</div>}
-      <div className="order-status-editor"><select value={status} onChange={e=>setStatus(e.target.value as Order['status'])}><option value="PENDING">Chờ xử lý</option><option value="PROCESSING">Đang xử lý</option><option value="COMPLETED">Hoàn thành</option></select><button onClick={save} disabled={saving}>{saving ? 'Đang lưu...' : 'Lưu trạng thái'}</button></div>
+      <div className="order-label-editor">
+        {editing ? (
+          <>
+            <input value={label} maxLength={120} onChange={e=>setLabel(e.target.value)} placeholder="Nhãn đơn hàng"/>
+            <select aria-label="Trạng thái đơn hàng" value={status} onChange={e=>setStatus(e.target.value as Order['status'])}>
+              <option value="PENDING">Chờ xử lý</option>
+              <option value="PROCESSING">Đang xử lý</option>
+              <option value="COMPLETED">Hoàn thành</option>
+            </select>
+            <button onClick={save} disabled={saving}>{saving?'Đang lưu...':'Lưu'}</button>
+            <button onClick={()=>{setLabel(order.label||'');setStatus(order.status);setEditing(false)}}>Hủy</button>
+          </>
+        ) : (
+          <>
+            <span className={"order-label " + status.toLowerCase()}>{label || 'Chưa có nhãn'}</span>
+            <button onClick={()=>setEditing(true)}>Sửa nhãn</button>
+          </>
+        )}
+        {error&&<small className="label-error">{error}</small>}
+      </div>
       <p>
         {order.service?.platform?.name || "Nền tảng"} ·{" "}
         {order.service?.name || "Dịch vụ"}
