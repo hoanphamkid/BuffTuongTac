@@ -346,6 +346,14 @@ export default function TransactionsPage() {
             close={() => setSelectedId("")}
             copy={copy}
             copied={copied}
+            onOrderUpdated={(id, status, label) => {
+              setPayload((current: any) => ({
+                ...current,
+                orders: (current.orders || []).map((order: Order) =>
+                  order.id === id ? { ...order, status, label } : order,
+                ),
+              }));
+            }}
           />
         )}
       </div>
@@ -382,12 +390,14 @@ function TransactionDetail({
   close,
   copy,
   copied,
+  onOrderUpdated,
 }: {
   row: Row;
   orders: Order[];
   close: () => void;
   copy: (v: string) => void;
   copied: string;
+  onOrderUpdated: (id: string, status: string, label: string | null) => void;
 }) {
   return (
     <div className="transaction-detail" role="region" aria-label="Chi tiết giao dịch">
@@ -434,13 +444,13 @@ function TransactionDetail({
         <Info k="Nội dung" v={row.content} />
         {copied && <small className="copied">Đã sao chép</small>}
       </section>
-      {row.order && <OrderCard order={row.order} title="Đơn hàng liên quan" />}
+      {row.order && <OrderCard order={row.order} title="Đơn hàng liên quan" onUpdated={onOrderUpdated} />}
       <section className="user-orders">
         <h4>
           Các đơn hàng người dùng đã tạo <b>{orders.length}</b>
         </h4>
         {orders.length ? (
-          orders.map((order) => <OrderCard key={order.id} order={order} />)
+          orders.map((order) => <OrderCard key={order.id} order={order} onUpdated={onOrderUpdated} />)
         ) : (
           <div className="no-orders">Người dùng chưa tạo đơn hàng nào</div>
         )}
@@ -480,9 +490,9 @@ function Info({
     </p>
   );
 }
-function OrderCard({ order, title }: { order: Order; title?: string }) {
+function OrderCard({ order, title, onUpdated }: { order: Order; title?: string; onUpdated?: (id: string, status: string, label: string | null) => void }) {
   const [label,setLabel]=useState(order.label||'');const [status,setStatus]=useState(order.status);const [editing,setEditing]=useState(false);const [saving,setSaving]=useState(false);const [error,setError]=useState('');
-  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label,status})});const d=await r.json().catch(()=>({}));if(r.ok){setLabel(d.data?.label||'');setStatus(d.data?.status||status);setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
+  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label,status})});const d=await r.json().catch(()=>({}));if(r.ok){const nextLabel=d.data?.label||'';const nextStatus=d.data?.status||status;setLabel(nextLabel);setStatus(nextStatus);onUpdated?.(order.id,nextStatus,nextLabel||null);setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
   return (
     <div className="related-order">
       {title && <h4>{title}</h4>}
