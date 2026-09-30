@@ -202,25 +202,34 @@ function Info({ label, value }: { label: string; value: string }) {
 function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Order) => void }) {
   const [label, setLabel] = useState(order.label || "");
   const [status, setStatus] = useState(order.status);
-  const [editing, setEditing] = useState(false);
+  const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  useEffect(() => { setLabel(order.label || ""); setStatus(order.status); }, [order.id, order.label, order.status]);
+  useEffect(() => { setLabel(order.label || ""); setStatus(order.status); setOpen(false); }, [order.id, order.label, order.status]);
 
-  async function save() {
+  async function chooseStatus(nextStatus: string) {
+    if (saving || nextStatus === status) {
+      setOpen(false);
+      return;
+    }
+    const nextLabel = statusLabel(nextStatus);
+    setStatus(nextStatus);
+    setLabel(nextLabel);
+    setOpen(false);
     setSaving(true);
     setError("");
     try {
       const response = await fetch("/api/admin/transactions", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ orderId: order.id, label, status }),
+        body: JSON.stringify({ orderId: order.id, label: nextLabel, status: nextStatus }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Không thể cập nhật đơn hàng");
       onUpdated({ ...order, ...result.data });
-      setEditing(false);
     } catch (reason) {
+      setStatus(order.status);
+      setLabel(order.label || "");
       setError(reason instanceof Error ? reason.message : "Có lỗi xảy ra");
     } finally {
       setSaving(false);
@@ -228,28 +237,38 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
   }
   return (
     <div className="order-label-editor">
-      {editing ? <>
-        <input value={label} maxLength={120} onChange={(event) => setLabel(event.target.value)} placeholder="Nhãn đơn hàng" />
-        <select aria-label="Trạng thái đơn hàng" value={status} onChange={(event) => setStatus(event.target.value)}>
-          <option value="PENDING">Chờ xử lý</option><option value="PROCESSING">Đang xử lý</option><option value="COMPLETED">Hoàn thành</option>
-          {status === "IN_PROGRESS" && <option value="IN_PROGRESS">Đang chạy</option>}
-          {status === "PARTIAL" && <option value="PARTIAL">Hoàn thành một phần</option>}
-          {status === "CANCELED" && <option value="CANCELED">Đã hủy</option>}
-          {status === "FAILED" && <option value="FAILED">Thất bại</option>}
-          {status === "REFUNDED" && <option value="REFUNDED">Đã hoàn tiền</option>}
-        </select>
-        <button onClick={save} disabled={saving}>{saving ? "Đang lưu..." : "Lưu"}</button>
-        <button onClick={() => { setLabel(order.label || ""); setStatus(order.status); setEditing(false); }}>Hủy</button>
-      </> : <>
-        <button
-          type="button"
-          className={"order-label " + order.status.toLowerCase()}
-          onClick={() => setEditing(true)}
-          title="Bấm để sửa nhãn và trạng thái"
-        >
-          {label || statusLabel(order.status)}
-        </button>
-      </>}
+      <button
+        type="button"
+        className={"order-label " + status.toLowerCase()}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+        disabled={saving}
+        title="Chọn trạng thái đơn hàng"
+      >
+        {saving ? "Đang lưu..." : label || statusLabel(status)} <span aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <div className="order-status-menu" role="listbox" aria-label="Trạng thái đơn hàng">
+          {[
+            ["PENDING", "Chờ xử lý"],
+            ["PROCESSING", "Đang xử lý"],
+            ["COMPLETED", "Hoàn thành"],
+          ].map(([value, text]) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={status === value}
+              className={status === value ? "selected" : ""}
+              key={value}
+              onClick={() => chooseStatus(value)}
+            >
+              <span className={"order-status-dot " + value.toLowerCase()} />
+              {text}
+            </button>
+          ))}
+        </div>
+      )}
       {error && <small className="label-error">{error}</small>}
     </div>
   );

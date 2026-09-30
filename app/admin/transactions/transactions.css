@@ -34,7 +34,15 @@
 .order-detail-editor{margin-top:auto}
 .order-detail-editor .order-label-editor{align-items:flex-start}
 .order-detail-editor .order-label-editor input{flex:1 1 120px}
-.order-label-editor button.order-label{border:0;padding:7px 13px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.order-label-editor{position:relative}
+.order-label-editor button.order-label{display:inline-flex;align-items:center;gap:10px;border:0;padding:7px 13px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .order-label-editor button.order-label:focus-visible{outline:2px solid #0872ef;outline-offset:2px}
+.order-status-menu{position:absolute;z-index:30;top:calc(100% + 6px);left:0;min-width:190px;padding:5px;background:#fff;border:1px solid #dce5f2;border-radius:9px;box-shadow:0 12px 28px #17375d24}
+.order-label-editor .order-status-menu button{display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border:0;border-radius:6px;background:#fff;color:#243954;text-align:left;font-size:12px}
+.order-label-editor .order-status-menu button:hover,.order-label-editor .order-status-menu button.selected{background:#f1f6fc}
+.order-status-dot{width:9px;height:9px;border-radius:50%;background:#8a9bb1}
+.order-status-dot.pending{background:#e99a00}
+.order-status-dot.processing{background:#287bea}
+.order-status-dot.completed{background:#00a773}
 @media(max-width:1250px){.order-detail{position:static}}
 @media(max-width:800px){.order-table{min-width:1050px}.order-detail{margin-top:12px}}
