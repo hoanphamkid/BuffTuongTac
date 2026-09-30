@@ -17,10 +17,11 @@ export async function PATCH(req:Request){
   const body=await req.json().catch(()=>({}));
   const id=typeof body.orderId==='string'?body.orderId:'';
   const label=typeof body.label==='string'?body.label.trim().slice(0,120):'';
-  const status=typeof body.status==='string'&&['PENDING','PROCESSING','COMPLETED'].includes(body.status)?body.status:'PENDING';
+  const validStatuses=['PENDING','PROCESSING','IN_PROGRESS','COMPLETED','PARTIAL','CANCELED','FAILED','REFUNDED'];
+  const status=typeof body.status==='string'&&validStatuses.includes(body.status)?body.status:null;
   if(!id)return NextResponse.json({success:false,error:'Thiếu mã đơn hàng'},{status:400});
   const order=await prisma.order.findUnique({where:{id}});
   if(!order)return NextResponse.json({success:false,error:'Không tìm thấy đơn hàng'},{status:404});
-  const updated=await prisma.order.update({where:{id},data:{label:label||null,status:status as 'PENDING'|'PROCESSING'|'COMPLETED'},include:{user:true,service:{include:{platform:true}},server:true}});
+  const updated=await prisma.order.update({where:{id},data:{label:label||null,...(status?{status:status as 'PENDING'|'PROCESSING'|'IN_PROGRESS'|'COMPLETED'|'PARTIAL'|'CANCELED'|'FAILED'|'REFUNDED'}:{})},include:{user:true,service:{include:{platform:true}},server:true}});
   return NextResponse.json({success:true,data:updated});
 }

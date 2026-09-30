@@ -8,531 +8,243 @@ type User = { id: string; username: string; email: string };
 type Order = {
   id: string;
   userId: string;
+  user: User;
   link: string;
   quantity: number;
   price: string | number;
   status: string;
+  label?: string | null;
+  reaction?: string | null;
   createdAt: string;
   service?: { name: string; platform?: { name: string } };
   server?: { name: string };
-  label?: string | null;
-};
-type Row = {
-  id: string;
-  kind: "DEPOSIT" | "ORDER" | "REFUND" | "ADJUSTMENT";
-  amount: number;
-  method: string;
-  content: string;
-  status: string;
-  createdAt: string;
-  user: User;
-  referenceId: string;
-  deposit?: any;
-  order?: Order;
-};
-const money = (n: unknown) =>
-  (Number(n) >= 0 ? "+" : "-") +
-  new Intl.NumberFormat("vi-VN").format(Math.abs(Number(n) || 0)) +
-  "đ";
-const dt = (v: string) => new Date(v).toLocaleString("vi-VN");
-const kindName = {
-  DEPOSIT: "Nạp tiền",
-  ORDER: "Trừ tiền",
-  REFUND: "Hoàn tiền",
-  ADJUSTMENT: "Điều chỉnh",
 };
 
+const dateTime = (value: string) => new Date(value).toLocaleString("vi-VN");
+const currency = (value: number) =>
+  new Intl.NumberFormat("vi-VN").format(value) + "đ";
+const statusTabs = [
+  ["ALL", "Tất cả"],
+  ["PENDING", "Chờ xử lý"],
+  ["PROCESSING", "Đang xử lý"],
+  ["COMPLETED", "Hoàn thành"],
+] as const;
+
 export default function TransactionsPage() {
-  const [payload, setPayload] = useState<any>({
-      deposits: [],
-      transactions: [],
-      orders: [],
-    }),
-    [selectedId, setSelectedId] = useState(""),
-    [type, setType] = useState("ALL"),
-    [q, setQ] = useState(""),
-    [method, setMethod] = useState("ALL"),
-    [state, setState] = useState("ALL"),
-    [page, setPage] = useState(1),
-    [size, setSize] = useState(10),
-    [copied, setCopied] = useState("");
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [query, setQuery] = useState("");
+  const [state, setState] = useState("ALL");
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     fetch("/api/admin/transactions", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((x) => {
-        setPayload(x.data || { deposits: [], transactions: [], orders: [] });
-        const first =
-          x.data?.deposits?.[0]?.id || x.data?.transactions?.[0]?.id || "";
-        setSelectedId(first);
-      });
+      .then((response) => response.json())
+      .then((result) => {
+        if (!result.success) throw new Error(result.error || "Không tải được đơn hàng");
+        const latest: Order[] = result.data?.orders || [];
+        setOrders(latest);
+        setSelectedId((current) =>
+          current && latest.some((order) => order.id === current)
+            ? current
+            : latest[0]?.id || "",
+        );
+      })
+      .catch((reason) => setError(reason instanceof Error ? reason.message : "Có lỗi xảy ra"))
+      .finally(() => setLoading(false));
   }, []);
-  const orders: Order[] = payload.orders || [];
-  const rows: Row[] = useMemo(() => {
-    const deposits = (payload.deposits || []).map((x: any) => ({
-      id: x.id,
-      kind: "DEPOSIT",
-      amount: Number(x.amount),
-      method: "VietQR",
-      content: x.paymentCode,
-      status: x.status,
-      createdAt: x.createdAt,
-      user: x.user,
-      referenceId: x.id,
-      deposit: x,
-    }));
-    const txs = (payload.transactions || []).map((x: any) => {
-      const kind =
-        x.type === "ORDER"
-          ? "ORDER"
-          : x.type === "REFUND"
-            ? "REFUND"
-            : "ADJUSTMENT";
-      const order = orders.find((o) => o.id === x.referenceId);
-      const signed =
-        x.type === "ADMIN_DEBIT"
-          ? -Math.abs(Number(x.amount))
-          : Number(x.amount);
-      return {
-        id: x.id,
-        kind,
-        amount: signed,
-        method: kind === "ADJUSTMENT" ? "Admin" : "Ví tài khoản",
-        content: x.description,
-        status: order?.status || "PAID",
-        createdAt: x.createdAt,
-        user: x.user,
-        referenceId: x.referenceId,
-        order,
-      };
-    });
-    return [...deposits, ...txs].sort(
-      (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
-    ) as Row[];
-  }, [payload, orders]);
-  const counts = useMemo(
-    () => ({
-      ALL: rows.length,
-      DEPOSIT: rows.filter((x) => x.kind === "DEPOSIT").length,
-      ORDER: rows.filter((x) => x.kind === "ORDER").length,
-      REFUND: rows.filter((x) => x.kind === "REFUND").length,
-      ADJUSTMENT: rows.filter((x) => x.kind === "ADJUSTMENT").length,
-    }),
-    [rows],
-  );
-  const filtered = useMemo(
-    () =>
-      rows.filter(
-        (x) =>
-          (type === "ALL" || x.kind === type) &&
-          (method === "ALL" || x.method === method) &&
-          (state === "ALL" || x.status === state) &&
-          (!q ||
-            `${x.id} ${x.user?.username} ${x.user?.email} ${x.content}`
-              .toLowerCase()
-              .includes(q.toLowerCase())),
-      ),
-    [rows, type, method, state, q],
-  );
-  const pages = Math.max(1, Math.ceil(filtered.length / size)),
-    shown = filtered.slice((page - 1) * size, page * size),
-    selected = rows.find((x) => x.id === selectedId) || null;
-  const userOrders = selected?.order ? [selected.order] : [];
-  const copy = async (v: string) => {
-    await navigator.clipboard.writeText(v);
-    setCopied(v);
-    setTimeout(() => setCopied(""), 1200);
+
+  const counts = useMemo(() => ({
+    ALL: orders.length,
+    PENDING: orders.filter((order) => order.status === "PENDING").length,
+    PROCESSING: orders.filter((order) => ["PROCESSING", "IN_PROGRESS"].includes(order.status)).length,
+    COMPLETED: orders.filter((order) => order.status === "COMPLETED").length,
+  }), [orders]);
+  const filtered = useMemo(() => orders.filter((order) => {
+    const matchesStatus = state === "ALL" ||
+      (state === "PROCESSING" ? ["PROCESSING", "IN_PROGRESS"].includes(order.status) : order.status === state);
+    const haystack = [
+      order.id, order.user?.username, order.user?.email, order.link,
+      order.service?.name, order.service?.platform?.name, order.server?.name,
+    ].join(" ").toLowerCase();
+    return matchesStatus && (!query || haystack.includes(query.toLowerCase()));
+  }), [orders, query, state]);
+  const pages = Math.max(1, Math.ceil(filtered.length / size));
+  const shown = filtered.slice((page - 1) * size, page * size);
+  const selected = orders.find((order) => order.id === selectedId) || null;
+  const updateOrder = (updated: Order) => {
+    setOrders((current) => current.map((order) => order.id === updated.id ? { ...order, ...updated } : order));
   };
-  const selectType = (v: string) => {
-    setType(v);
-    setPage(1);
-  };
+
   return (
     <div className="admin-body transactions-page">
-      <div className="transactions-head">
+      <header className="transactions-head">
         <div>
-          <h2>Giao dịch</h2>
-          <p>
-            Quản lý tất cả giao dịch nạp tiền, trừ tiền và liên kết với đơn hàng
-          </p>
+          <h2>Đơn hàng</h2>
+          <p>Danh sách các đơn dịch vụ khách hàng đã mua</p>
         </div>
         <label>
           ⌕
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Tìm giao dịch..."
-          />
+          <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Tìm mã đơn, khách hàng, dịch vụ..." />
         </label>
-      </div>
+      </header>
+
       <div className="transaction-stats">
-        <Stat tone="blue" icon="▤" title="Tổng giao dịch" value={counts.ALL} />
-        <Stat tone="green" icon="↟" title="Nạp tiền" value={counts.DEPOSIT} />
-        <Stat
-          tone="red"
-          icon="↡"
-          title="Trừ tiền (đơn hàng)"
-          value={counts.ORDER}
-        />
-        <Stat tone="purple" icon="↶" title="Hoàn tiền" value={counts.REFUND} />
+        <Stat tone="blue" icon="▤" title="Tổng đơn hàng" value={counts.ALL} />
+        <Stat tone="orange" icon="◷" title="Chờ xử lý" value={counts.PENDING} />
+        <Stat tone="purple" icon="↻" title="Đang xử lý" value={counts.PROCESSING} />
+        <Stat tone="green" icon="✓" title="Hoàn thành" value={counts.COMPLETED} />
       </div>
+
       <div className={"transactions-shell " + (selected ? "has-detail" : "")}>
         <section className="transactions-card">
           <div className="transaction-tabs">
-            {[
-              ["ALL", "Tất cả"],
-              ["DEPOSIT", "Nạp tiền"],
-              ["ORDER", "Trừ tiền"],
-              ["REFUND", "Hoàn tiền"],
-              ["ADJUSTMENT", "Điều chỉnh"],
-            ].map(([key, label]) => (
-              <button
-                className={type === key ? "active" : ""}
-                key={key}
-                onClick={() => selectType(key)}
-              >
-                {label} <b>{(counts as any)[key]}</b>
+            {statusTabs.map(([key, label]) => (
+              <button className={state === key ? "active" : ""} key={key} onClick={() => { setState(key); setPage(1); }}>
+                {label} <b>{counts[key]}</b>
               </button>
             ))}
           </div>
-          <div className="transaction-filters">
-            <label>
-              ⌕
-              <input
-                value={q}
-                onChange={(e) => {
-                  setQ(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Tìm theo user, email, mã giao dịch, nội dung..."
-              />
-            </label>
-            <select value={method} onChange={(e) => setMethod(e.target.value)}>
-              <option value="ALL">Tất cả phương thức</option>
-              <option>VietQR</option>
-              <option>Ví tài khoản</option>
-              <option>Admin</option>
-            </select>
-            <select value={state} onChange={(e) => setState(e.target.value)}>
-              <option value="ALL">Tất cả trạng thái</option>
-              <option value="PAID">PAID</option>
-              <option value="PENDING">PENDING</option>
-              <option value="FAILED">FAILED</option>
-              <option value="PROCESSING">PROCESSING</option>
-              <option value="COMPLETED">COMPLETED</option>
-              <option value="REFUNDED">REFUNDED</option>
-            </select>
-          </div>
           <div className="transaction-table-wrap">
-            <table className="transaction-table">
+            <table className="transaction-table order-table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Thời gian</th>
-                  <th>Người dùng</th>
-                  <th>Loại giao dịch</th>
-                  <th>Số tiền</th>
-                  <th>Phương thức</th>
-                  <th>Nội dung</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
+                  <th>#</th><th>Thời gian</th><th>Khách hàng</th><th>Dịch vụ</th>
+                  <th>Liên kết</th><th>Số lượng</th><th>Thành tiền</th><th>Trạng thái</th><th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {shown.map((x, i) => (
-                  <tr
-                    className={selected?.id === x.id ? "selected" : ""}
-                    key={x.id}
-                    onClick={() => setSelectedId(x.id)}
-                  >
-                    <td>
-                      <b>
-                        #{String((page - 1) * size + i + 1).padStart(4, "0")}
-                      </b>
-                    </td>
-                    <td>{dt(x.createdAt)}</td>
-                    <td>
-                      <div className="tx-user">
-                        <i>{x.user?.username?.[0]?.toUpperCase() || "U"}</i>
-                        <span>
-                          <b>{x.user?.username}</b>
-                          <small>{x.user?.email}</small>
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={"tx-kind " + x.kind.toLowerCase()}>
-                        {kindName[x.kind]}
-                      </span>
-                    </td>
-                    <td>
-                      <strong
-                        className={x.amount >= 0 ? "positive" : "negative"}
-                      >
-                        {money(x.amount)}
-                      </strong>
-                    </td>
-                    <td>{x.method}</td>
-                    <td className="tx-content">{x.content}</td>
-                    <td>
-                      <span className={"tx-status " + x.status.toLowerCase()}>
-                        {statusLabel(x.status)}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedId(x.id);
-                        }}
-                      >
-                        Xem
-                      </button>
-                    </td>
+                {shown.map((order, index) => (
+                  <tr key={order.id} className={selected?.id === order.id ? "selected" : ""} onClick={() => setSelectedId(order.id)}>
+                    <td><b>#{String((page - 1) * size + index + 1).padStart(4, "0")}</b></td>
+                    <td>{dateTime(order.createdAt)}</td>
+                    <td><div className="tx-user"><i>{order.user?.username?.[0]?.toUpperCase() || "U"}</i><span><b>{order.user?.username}</b><small>{order.user?.email}</small></span></div></td>
+                    <td><b>{order.service?.name || "Dịch vụ"}</b><small className="order-platform">{order.service?.platform?.name}</small></td>
+                    <td className="tx-content"><a href={order.link} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>{order.link}</a></td>
+                    <td>{Number(order.quantity).toLocaleString("vi-VN")}</td>
+                    <td><strong className="order-price">{currency(Number(order.price))}</strong></td>
+                    <td><span className={"tx-status " + order.status.toLowerCase()}>{statusLabel(order.status)}</span></td>
+                    <td><button onClick={(event) => { event.stopPropagation(); setSelectedId(order.id); }}>Xem</button></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {!shown.length && (
-              <div className="tx-empty">Không có giao dịch phù hợp.</div>
-            )}
+            {!loading && !shown.length && <div className="tx-empty">{error || "Chưa có đơn hàng phù hợp."}</div>}
+            {loading && <div className="tx-empty">Đang tải đơn hàng...</div>}
           </div>
           <div className="tx-pagination">
-            <span>
-              Hiển thị {shown.length ? (page - 1) * size + 1 : 0} -{" "}
-              {Math.min(page * size, filtered.length)} / {filtered.length} giao
-              dịch
-            </span>
+            <span>Hiển thị {shown.length ? (page - 1) * size + 1 : 0} - {Math.min(page * size, filtered.length)} / {filtered.length} đơn hàng</span>
             <div>
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                ‹
-              </button>
-              {Array.from({ length: Math.min(5, pages) }, (_, i) => i + 1).map(
-                (n) => (
-                  <button
-                    className={page === n ? "active" : ""}
-                    onClick={() => setPage(n)}
-                    key={n}
-                  >
-                    {n}
-                  </button>
-                ),
-              )}
-              <button
-                disabled={page === pages}
-                onClick={() => setPage(page + 1)}
-              >
-                ›
-              </button>
+              <button disabled={page === 1} onClick={() => setPage(page - 1)}>‹</button>
+              {Array.from({ length: Math.min(5, pages) }, (_, index) => index + 1).map((number) => (
+                <button className={page === number ? "active" : ""} onClick={() => setPage(number)} key={number}>{number}</button>
+              ))}
+              <button disabled={page === pages} onClick={() => setPage(page + 1)}>›</button>
             </div>
-            <select
-              value={size}
-              onChange={(e) => {
-                setSize(Number(e.target.value));
-                setPage(1);
-              }}
-            >
-              <option value="10">10 / trang</option>
-              <option value="25">25 / trang</option>
-              <option value="50">50 / trang</option>
+            <select value={size} onChange={(event) => { setSize(Number(event.target.value)); setPage(1); }}>
+              <option value="10">10 / trang</option><option value="25">25 / trang</option><option value="50">50 / trang</option>
             </select>
           </div>
         </section>
-        {selected && (
-          <TransactionDetail
-            row={selected}
-            orders={userOrders}
-            close={() => setSelectedId("")}
-            copy={copy}
-            copied={copied}
-            onOrderUpdated={(id, status, label) => {
-              setPayload((current: any) => ({
-                ...current,
-                orders: (current.orders || []).map((order: Order) =>
-                  order.id === id ? { ...order, status, label } : order,
-                ),
-              }));
-            }}
-          />
-        )}
+        {selected && <OrderDetail order={selected} close={() => setSelectedId("")} onUpdated={updateOrder} />}
       </div>
     </div>
   );
 }
 
-function Stat({
-  tone,
-  icon,
-  title,
-  value,
-}: {
-  tone: string;
-  icon: string;
-  title: string;
-  value: number;
-}) {
-  return (
-    <div className={"tx-stat " + tone}>
-      <i>{icon}</i>
-      <div>
-        <span>{title}</span>
-        <strong>{value}</strong>
-        <small>↑ Dữ liệu thực tế</small>
-      </div>
-      <em>⌁</em>
-    </div>
-  );
+function Stat({ tone, icon, title, value }: { tone: string; icon: string; title: string; value: number }) {
+  return <div className={"tx-stat " + tone}><i>{icon}</i><div><span>{title}</span><strong>{value}</strong><small>Dữ liệu đơn hàng</small></div><em>⌁</em></div>;
 }
-function TransactionDetail({
-  row,
-  orders,
-  close,
-  copy,
-  copied,
-  onOrderUpdated,
-}: {
-  row: Row;
-  orders: Order[];
-  close: () => void;
-  copy: (v: string) => void;
-  copied: string;
-  onOrderUpdated: (id: string, status: string, label: string | null) => void;
-}) {
+
+function OrderDetail({ order, close, onUpdated }: { order: Order; close: () => void; onUpdated: (order: Order) => void }) {
   return (
-    <div className="transaction-detail" role="region" aria-label="Chi tiết giao dịch">
-      <div className="tx-detail-head">
-        <h3>Chi tiết giao dịch</h3>
-        <button onClick={close}>×</button>
-      </div>
+    <div className="transaction-detail order-detail" role="region" aria-label="Chi tiết đơn hàng">
+      <div className="tx-detail-head"><h3>Chi tiết đơn hàng</h3><button onClick={close} aria-label="Đóng">×</button></div>
       <div className="tx-detail-id">
-        <h2>
-          #{row.id.slice(-8)} <button onClick={() => copy(row.id)}>□</button>
-        </h2>
-        <span className={"tx-status " + row.status.toLowerCase()}>
-          {statusLabel(row.status)}
-        </span>
-        <p>Thời gian: {dt(row.createdAt)}</p>
+        <h2>#{order.id.slice(-8)}</h2>
+        <span className={"tx-status " + order.status.toLowerCase()}>{statusLabel(order.status)}</span>
+        <p>Đặt lúc: {dateTime(order.createdAt)}</p>
       </div>
       <section>
-        <h4>Thông tin người dùng</h4>
+        <h4>Thông tin khách hàng</h4>
         <div className="tx-profile">
-          <i>{row.user.username[0].toUpperCase()}</i>
-          <div>
-            <b>{row.user.username}</b>
-            <small>ID: {row.user.id.slice(0, 8)}</small>
-            <small>{row.user.email}</small>
-          </div>
-          <Link href={`/admin/balance/${row.user.id}`}>Xem hồ sơ</Link>
+          <i>{order.user?.username?.[0]?.toUpperCase() || "U"}</i>
+          <div><b>{order.user?.username}</b><small>ID: {order.userId}</small><small>{order.user?.email}</small></div>
+          <Link href={order.user?.id ? `/admin/balance/${order.user.id}` : "/admin/users"}>Xem hồ sơ</Link>
         </div>
       </section>
-      <section>
-        <h4>Thông tin giao dịch</h4>
-        <Info k="Loại giao dịch" v={kindName[row.kind]} />
-        <Info
-          k="Mã giao dịch"
-          v={row.id.slice(-12)}
-          copy={() => copy(row.id)}
-        />
-        <Info
-          k="Số tiền"
-          v={money(row.amount)}
-          color={row.amount >= 0 ? "green" : "red"}
-        />
-        <Info k="Phương thức" v={row.method} />
-        <Info k="Trạng thái" v={statusLabel(row.status)} />
-        <Info k="Nội dung" v={row.content} />
-        {copied && <small className="copied">Đã sao chép</small>}
+      <section className="order-detail-info">
+        <h4>Thông tin đơn hàng</h4>
+        <Info label="Nền tảng" value={order.service?.platform?.name || "—"} />
+        <Info label="Dịch vụ" value={order.service?.name || "—"} />
+        <Info label="Máy chủ" value={order.server?.name || "—"} />
+        <Info label="Số lượng" value={Number(order.quantity).toLocaleString("vi-VN")} />
+        <Info label="Thành tiền" value={currency(Number(order.price))} />
+        {order.reaction && <Info label="Cảm xúc" value={order.reaction} />}
+        <Info label="Trạng thái" value={statusLabel(order.status)} />
+        <Info label="Liên kết" value={order.link} />
       </section>
-      {row.order ? (
-        <section className="user-orders">
-          <h4>Đơn hàng liên quan</h4>
-          <OrderCard order={row.order} onUpdated={onOrderUpdated} />
-        </section>
-      ) : row.kind === "ORDER" ? (
-        <section className="user-orders">
-          <h4>Đơn hàng liên quan</h4>
-          <div className="no-orders">Không tìm thấy đơn hàng cho giao dịch này.</div>
-        </section>
-      ) : null}
-      <section className="tx-history">
-        <h4>Lịch sử xử lý</h4>
-        <p>
-          <i />
-          Tạo giao dịch <small>{dt(row.createdAt)}</small>
-        </p>
-        <p>
-          <i />
-          Ghi nhận vào số dư{" "}
-          <small>{row.status === "PENDING" ? "Đang chờ..." : "Hoàn tất"}</small>
-        </p>
+      <section className="order-detail-editor">
+        <h4>Nhãn và trạng thái</h4>
+        <OrderEditor order={order} onUpdated={onUpdated} />
       </section>
     </div>
   );
 }
-function Info({
-  k,
-  v,
-  color,
-  copy,
-}: {
-  k: string;
-  v: string;
-  color?: string;
-  copy?: () => void;
-}) {
-  return (
-    <p className="tx-info">
-      <span>{k}:</span>
-      <b className={color}>
-        {v} {copy && <button onClick={copy}>□</button>}
-      </b>
-    </p>
-  );
+
+function Info({ label, value }: { label: string; value: string }) {
+  return <p className="tx-info"><span>{label}</span><b>{value}</b></p>;
 }
-function OrderCard({ order, title, onUpdated }: { order: Order; title?: string; onUpdated?: (id: string, status: string, label: string | null) => void }) {
-  const [label,setLabel]=useState(order.label||'');const [status,setStatus]=useState(order.status);const [editing,setEditing]=useState(false);const [saving,setSaving]=useState(false);const [error,setError]=useState('');
-  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label,status})});const d=await r.json().catch(()=>({}));if(r.ok){const nextLabel=d.data?.label||'';const nextStatus=d.data?.status||status;setLabel(nextLabel);setStatus(nextStatus);onUpdated?.(order.id,nextStatus,nextLabel||null);setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
+
+function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Order) => void }) {
+  const [label, setLabel] = useState(order.label || "");
+  const [status, setStatus] = useState(order.status);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => { setLabel(order.label || ""); setStatus(order.status); }, [order.id, order.label, order.status]);
+
+  async function save() {
+    setSaving(true);
+    setError("");
+    try {
+      const response = await fetch("/api/admin/transactions", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ orderId: order.id, label, status }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Không thể cập nhật đơn hàng");
+      onUpdated({ ...order, ...result.data });
+      setEditing(false);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Có lỗi xảy ra");
+    } finally {
+      setSaving(false);
+    }
+  }
   return (
-    <div className="related-order">
-      {title && <h4>{title}</h4>}
-      <div>
-        <b>#{order.id.slice(-8)}</b>
-        <span className={"order-state " + status.toLowerCase()}>
-          {status === 'PENDING' ? 'Chờ xử lý' : status === 'PROCESSING' ? 'Đang xử lý' : 'Hoàn thành'}
-        </span>
-      </div>
-      <div className="order-label-editor">
-        {editing ? (
-          <>
-            <input value={label} maxLength={120} onChange={e=>setLabel(e.target.value)} placeholder="Nhãn đơn hàng"/>
-            <select aria-label="Trạng thái đơn hàng" value={status} onChange={e=>setStatus(e.target.value as Order['status'])}>
-              <option value="PENDING">Chờ xử lý</option>
-              <option value="PROCESSING">Đang xử lý</option>
-              <option value="COMPLETED">Hoàn thành</option>
-            </select>
-            <button onClick={save} disabled={saving}>{saving?'Đang lưu...':'Lưu'}</button>
-            <button onClick={()=>{setLabel(order.label||'');setStatus(order.status);setEditing(false)}}>Hủy</button>
-          </>
-        ) : (
-          <>
-            <span className={"order-label " + status.toLowerCase()}>{label || 'Chưa có nhãn'}</span>
-            <button onClick={()=>setEditing(true)}>Sửa nhãn</button>
-          </>
-        )}
-        {error&&<small className="label-error">{error}</small>}
-      </div>
-      <p>
-        {order.service?.platform?.name || "Nền tảng"} ·{" "}
-        {order.service?.name || "Dịch vụ"}
-      </p>
-      <a href={order.link} target="_blank" rel="noreferrer">
-        {order.link}
-      </a>
-      <small>
-        Server: {order.server?.name || "—"} · SL:{" "}
-        {Number(order.quantity).toLocaleString("vi-VN")} ·{" "}
-        {new Intl.NumberFormat("vi-VN").format(Number(order.price))}đ
-      </small>
-      <small>{dt(order.createdAt)}</small>
+    <div className="order-label-editor">
+      {editing ? <>
+        <input value={label} maxLength={120} onChange={(event) => setLabel(event.target.value)} placeholder="Nhãn đơn hàng" />
+        <select aria-label="Trạng thái đơn hàng" value={status} onChange={(event) => setStatus(event.target.value)}>
+          <option value="PENDING">Chờ xử lý</option><option value="PROCESSING">Đang xử lý</option><option value="COMPLETED">Hoàn thành</option>
+          {status === "IN_PROGRESS" && <option value="IN_PROGRESS">Đang chạy</option>}
+          {status === "PARTIAL" && <option value="PARTIAL">Hoàn thành một phần</option>}
+          {status === "CANCELED" && <option value="CANCELED">Đã hủy</option>}
+          {status === "FAILED" && <option value="FAILED">Thất bại</option>}
+          {status === "REFUNDED" && <option value="REFUNDED">Đã hoàn tiền</option>}
+        </select>
+        <button onClick={save} disabled={saving}>{saving ? "Đang lưu..." : "Lưu"}</button>
+        <button onClick={() => { setLabel(order.label || ""); setStatus(order.status); setEditing(false); }}>Hủy</button>
+      </> : <>
+        <span className={"order-label " + order.status.toLowerCase()}>{label || statusLabel(order.status)}</span>
+        <button onClick={() => setEditing(true)}>Sửa nhãn</button>
+      </>}
+      {error && <small className="label-error">{error}</small>}
     </div>
   );
 }
