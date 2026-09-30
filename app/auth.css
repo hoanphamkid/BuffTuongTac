@@ -10,8 +10,8 @@
 }
 .auth::before{content:"";position:absolute;inset:-20%;z-index:-1;background:linear-gradient(115deg,transparent 35%,#43d5e51c 45%,transparent 56%),url('/black-clover-bg.jpeg') center/cover no-repeat;opacity:.22;transform:rotate(-4deg) scale(1.08)}
 .auth::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 0,#fff1 0,transparent 36%),linear-gradient(90deg,#06152b55,#22bdd414,#06152b55);pointer-events:none}
-.auth.auth-login{background:#0862a6 url('/doraemon-login-bg.jpg') center/cover no-repeat}
-.auth.auth-login::before,.auth.auth-login::after{content:none}
+.auth{background:#0862a6 url('/doraemon-login-bg.jpg') center/cover no-repeat}
+.auth::before,.auth::after{content:none}
 .auth form {
   width: min(420px, 100%);
   background: #fff;
