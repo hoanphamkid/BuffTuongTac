@@ -57,14 +57,19 @@ async function main(){
         await prisma.service.updateMany({where:{platformId:platform.id,id:{notIn:allowedIds}},data:{active:false}});
         continue;
       }
-      const name=platformName==='Facebook'?'Cảm xúc bài viết Facebook':`${platformName} Services`;
+      const name=platformName==='Facebook'?'Lượt thích và cảm xúc bài viết Facebook':`${platformName} Services`;
       const serviceSlug=`${slug}-services`;
       const service=await prisma.service.upsert({where:{platformId_slug:{platformId:platform.id,slug:serviceSlug}},update:{name,active:true},create:{platformId:platform.id,name,slug:serviceSlug}});
       await server(service.id,platformName==='Facebook'?'Lượt thích bài viết Facebook':name,{code:'SV1',price:2900});
       if(platformName==='Facebook'){
         await server(service.id,'Cảm xúc bài viết Facebook',{code:'SV2',price:15000});
         await pruneServers(service.id,[`Lượt thích bài viết Facebook [SV1]`,`Cảm xúc bài viết Facebook [SV2]`]);
-        await prisma.service.updateMany({where:{platformId:platform.id,id:{not:service.id}},data:{active:false}});
+        // Only hide the two legacy categories merged into this service.
+        await prisma.service.updateMany({where:{
+          platformId:platform.id,
+          id:{not:service.id},
+          slug:{in:['lượt-thích-bài-viết-facebook','cảm-xúc-bài-viết-facebook']},
+        },data:{active:false}});
       }else{
         await pruneServers(service.id,[`${name} [SV1]`]);
       }
