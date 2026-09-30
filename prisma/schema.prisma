@@ -27,7 +27,7 @@ enum OrderStatus {
 model User {
   id String @id @default(cuid())
   username String @unique
-  email String @unique
+  email String? @unique
   passwordHash String
   fullName String
   avatar String?

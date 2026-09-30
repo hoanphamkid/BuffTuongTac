@@ -1,7 +1,7 @@
 'use client';
 import {createContext,useCallback,useContext,useEffect,useState} from 'react';
 
-export type CurrentUser={id:string;username:string;fullName:string;email:string;avatar:string|null;balance:string;totalDeposited:string;level:string;createdAt:string};
+export type CurrentUser={id:string;username:string;fullName:string;email:string|null;avatar:string|null;balance:string;totalDeposited:string;level:string;createdAt:string};
 type Ctx={user:CurrentUser|null;loading:boolean;error:string;refreshUser:(silent?:boolean)=>Promise<void>;clearUser:()=>void};
 const UserContext=createContext<Ctx>({user:null,loading:true,error:'',refreshUser:async()=>{},clearUser:()=>{}});
 
