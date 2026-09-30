@@ -481,18 +481,19 @@ function Info({
   );
 }
 function OrderCard({ order, title }: { order: Order; title?: string }) {
-  const [label,setLabel]=useState(order.label||'');const [editing,setEditing]=useState(false);const [saving,setSaving]=useState(false);const [error,setError]=useState('');
-  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label})});const d=await r.json().catch(()=>({}));if(r.ok){setLabel(d.data?.label||'');setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
+  const [label,setLabel]=useState(order.label||'');const [status,setStatus]=useState(order.status);const [editing,setEditing]=useState(false);const [saving,setSaving]=useState(false);const [error,setError]=useState('');
+  async function save(){setSaving(true);setError('');const r=await fetch('/api/admin/transactions',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({orderId:order.id,label,status})});const d=await r.json().catch(()=>({}));if(r.ok){setLabel(d.data?.label||'');setStatus(d.data?.status||status);setEditing(false)}else setError(d.error||'Opslaan mislukt');setSaving(false)}
   return (
     <div className="related-order">
       {title && <h4>{title}</h4>}
       <div>
         <b>#{order.id.slice(-8)}</b>
-        <span className={"order-state " + order.status.toLowerCase()}>
-          {order.status}
+        <span className={"order-state " + status.toLowerCase()}>
+          {status === 'PENDING' ? 'Chờ xử lý' : status === 'PROCESSING' ? 'Đang xử lý' : 'Hoàn thành'}
         </span>
       </div>
       {order.status === "COMPLETED" && <div className="order-label-editor">{editing ? <><input value={label} maxLength={120} onChange={e=>setLabel(e.target.value)} placeholder="Nhãn đơn hàng"/><button onClick={save} disabled={saving}>{saving?'Đang lưu...':'Lưu'}</button><button onClick={()=>setEditing(false)}>Hủy</button></> : <><span className="order-label">{label||'Chưa có nhãn'}</span><button onClick={()=>setEditing(true)}>Sửa nhãn</button></>}{error&&<small className="label-error">{error}</small>}</div>}
+      <div className="order-status-editor"><select value={status} onChange={e=>setStatus(e.target.value as Order['status'])}><option value="PENDING">Chờ xử lý</option><option value="PROCESSING">Đang xử lý</option><option value="COMPLETED">Hoàn thành</option></select><button onClick={save} disabled={saving}>{saving ? 'Đang lưu...' : 'Lưu trạng thái'}</button></div>
       <p>
         {order.service?.platform?.name || "Nền tảng"} ·{" "}
         {order.service?.name || "Dịch vụ"}
