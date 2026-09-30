@@ -3,3 +3,20 @@
 @media(max-width:800px){.transactions-page{padding:12px 9px}.transactions-head{align-items:flex-start;flex-direction:column}.transactions-head label{width:100%}.transactions-head input{width:100%;min-width:0}.transaction-filters{grid-template-columns:1fr}.transaction-stats{gap:8px}.tx-stat{min-height:85px;padding:10px;grid-template-columns:40px 1fr}.tx-stat>i{width:38px;height:38px}.tx-stat strong{font-size:20px}.tx-stat em{display:none}.tx-pagination{flex-wrap:wrap}.transaction-detail{margin-top:12px}}
 @media(max-width:480px){.transaction-stats{grid-template-columns:1fr}.transaction-tabs{padding:10px}.transaction-table{min-width:900px}.tx-profile{grid-template-columns:40px 1fr}.tx-profile a{grid-column:1/-1;text-align:center}.tx-pagination>span{width:100%}}
 .order-label-editor{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0}.order-label{color:#536985;font-size:10px;background:#f2f6fb;border-radius:12px;padding:4px 8px}.order-label-editor input{height:28px;border:1px solid #cfdceb;border-radius:5px;padding:0 7px;font-size:11px}.order-label-editor button{border:1px solid #d4e1ef;background:#fff;color:#1675e8;border-radius:5px;padding:5px 8px;font-size:10px;cursor:pointer}.label-error{width:100%;color:#e34b58}
+.transactions-page aside.transaction-detail{width:100%;max-width:none;min-width:0;padding:0;margin:0;color:#14213d;box-sizing:border-box;justify-self:stretch}
+.transactions-page .transactions-shell:not(.has-detail){grid-template-columns:minmax(0,1fr)}
+.transactions-page .tx-profile>div{min-width:0;overflow-wrap:anywhere}
+.transactions-page .tx-info>b{min-width:0;overflow-wrap:anywhere}
+.transactions-page .transaction-filters>*{min-width:0}
+@media(max-width:1250px){.transactions-page .transactions-shell,.transactions-page .transactions-shell.has-detail{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:800px){
+  .transactions-page aside.transaction-detail{position:static;max-height:none;overflow:visible}
+  .transactions-page .tx-detail-id{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .transactions-page .tx-detail-id>.tx-status{position:static}
+  .transactions-page .tx-detail-id p{width:100%;margin:0}
+  .transactions-page .user-orders{max-height:none;overflow:visible}
+  .transactions-page .user-orders h4{position:static}
+  .transactions-page .tx-history p{grid-template-columns:15px minmax(0,1fr)}
+  .transactions-page .tx-history small{grid-column:2}
+  .transactions-page .order-label-editor input{min-width:0;max-width:100%}
+}
