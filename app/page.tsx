@@ -315,7 +315,10 @@ export default function Home() {
             <div className="trial-key-error-icon" aria-hidden="true">!</div>
             <h2>Lỗi!</h2>
             <p>Vui lòng inbox admin để nhận KEY dùng thử trước khi tạo đơn.</p>
-            <button className="trial-key-ok" onClick={() => setShowTrialKeyNotice(false)}>OK</button>
+            <div className="trial-key-actions">
+              <a className="trial-key-inbox" href="https://zalo.me/0945459491" target="_blank" rel="noreferrer" aria-label="Inbox admin trên Zalo">Inbox ngay</a>
+              <button className="trial-key-ok" onClick={() => setShowTrialKeyNotice(false)}>OK</button>
+            </div>
           </div>
         </div>
       )}
