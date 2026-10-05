@@ -1,0 +1,78 @@
+.order-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin: 16px 34px 0;
+  padding: 6px 8px 6px 12px;
+  border: 1px solid #35647e;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #142b46, #153b47);
+  box-shadow: inset 0 1px #ffffff08, 0 4px 14px #07132222;
+  color: #d5e7f7;
+}
+
+.order-notice-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #48c7ed15;
+  color: #7cddff;
+}
+
+.order-notice-viewport {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 6px 0;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.order-notice-track {
+  display: flex;
+  width: max-content;
+  animation: order-notice-scroll 30s linear infinite;
+}
+
+.order-notice-copy {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.order-notice-time { color: #ffe1a1; }
+.order-notice-contact { color: #7cddff; text-decoration: underline; text-underline-offset: 3px; }
+.order-notice-welcome { color: #8ce9c5; }
+.order-notice-divider { display: inline-block; padding: 0 28px; color: #65b3cc; }
+
+.order-notice-viewport:focus-visible { outline: 2px solid #7cddff; outline-offset: 2px; }
+.order-notice-viewport:focus-visible .order-notice-track { animation-play-state: paused; }
+
+@media (hover: hover) {
+  .order-notice-viewport:hover .order-notice-track { animation-play-state: paused; }
+}
+
+@keyframes order-notice-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 800px) {
+  .order-notice-banner { margin: 14px 18px 0; gap: 8px; padding-left: 8px; }
+  .order-notice-copy { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-notice-banner { align-items: flex-start; }
+  .order-notice-icon { margin-top: 6px; }
+  .order-notice-track { display: block; width: auto; animation: none; }
+  .order-notice-copy { white-space: normal; }
+  .order-notice-copy[aria-hidden="true"],
+  .order-notice-divider { display: none; }
+}

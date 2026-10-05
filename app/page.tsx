@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/providers/CurrentUserProvider';
 import PlatformPicker from '@/app/_components/PlatformPicker';
 import { OrderSuccessModal } from '@/components/order/OrderSuccessModal';
+import { OrderNoticeBanner } from '@/app/_components/OrderNoticeBanner';
 
 const money = (value: number | string | null | undefined) =>
   new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
@@ -215,6 +216,8 @@ export default function Home() {
           <div><span className="crumb">Bảng điều khiển</span><h1>Tạo đơn mới</h1></div>
           <div className="head-user">◉ {user?.username} <span>{money(user?.balance)}</span></div>
         </header>
+
+        <OrderNoticeBanner />
 
         <div className={'card order ' + (isComments ? 'comments-order' : '')}>
           <div className="order-mode-switch" role="tablist" aria-label="Loại đơn hàng">
