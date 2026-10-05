@@ -43,7 +43,7 @@
   body.mobile-sidebar-open .shell > aside > nav button { font-size: 14px; white-space: normal; }
   body.mobile-sidebar-open .shell > aside > nav label { font-size: 11px; }
   .mobile-sidebar-toggle, body.mobile-sidebar-open .mobile-sidebar-toggle { left: 6px; top: 8px; width: 42px; height: 42px; z-index: 130; }
-  .mobile-sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 110; background: #07132180; border: 0; }
+  .mobile-sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 110; background: #071321; border: 0; }
   .bank-card { min-width: 0; }
   .bank-qr img { max-width: 100%; height: auto !important; }
   .info-row b { min-width: 0; overflow-wrap: anywhere; }
