@@ -29,7 +29,7 @@ const accountOf = (user: UserRow) => user.username?.trim() || user.email?.trim()
 
 const emailOf = (user: UserRow) => {
   const email = user.email?.trim();
-  return email && email !== accountOf(user) ? email : '—';
+  return email || accountOf(user);
 };
 
 export default function AdminUsers() {
@@ -92,7 +92,7 @@ export default function AdminUsers() {
             <tr>
               <th>ID</th>
               <th>TÀI KHOẢN</th>
-              <th>EMAIL</th>
+              <th>EMAIL / TÀI KHOẢN</th>
               <th>SỐ DƯ</th>
               <th>VAI TRÒ</th>
               <th>HOẠT ĐỘNG LẦN CUỐI</th>
@@ -122,7 +122,7 @@ export default function AdminUsers() {
                     </button>
                     {open === user.id && (
                       <div className="user-menu">
-                        <button onClick={() => alert(`${account}${emailOf(user) !== '—' ? ` - ${emailOf(user)}` : ''}`)}>
+                        <button onClick={() => alert(`${account}${user.email?.trim() ? ` - ${user.email.trim()}` : ''}`)}>
                           ◎　Xem chi tiết
                         </button>
                         <button onClick={() => location.assign('/admin/balance/' + user.id)}>
