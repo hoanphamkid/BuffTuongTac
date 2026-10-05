@@ -10,8 +10,9 @@
 .platform-logo.logo-instagram{position:relative;font-size:0;overflow:hidden}
 .platform-logo.logo-instagram::before{content:'';position:absolute;inset:6px;border:3px solid #fff;border-radius:8px}
 .platform-logo.logo-instagram::after{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;border:3px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:8px -8px 0 -2px #fff}
-.platform-logo.logo-facebook,.platform-logo.logo-tiktok,.platform-logo.logo-instagram,.platform-logo.logo-youtube{display:inline-flex;overflow:hidden}
-.platform-logo.logo-facebook img,.platform-logo.logo-tiktok img,.platform-logo.logo-instagram img,.platform-logo.logo-youtube img{width:72%;height:72%;object-fit:contain;display:block}
+.platform-logo.logo-threads{width:32px;height:32px;flex-basis:32px;border-radius:50%;background:#101010;color:#fff}
+.platform-logo.logo-facebook,.platform-logo.logo-tiktok,.platform-logo.logo-instagram,.platform-logo.logo-youtube,.platform-logo.logo-threads{display:inline-flex;overflow:hidden}
+.platform-logo.logo-facebook img,.platform-logo.logo-tiktok img,.platform-logo.logo-instagram img,.platform-logo.logo-youtube img,.platform-logo.logo-threads img{width:72%;height:72%;object-fit:contain;display:block}
 .platform-logo.logo-tiktok img{width:78%;height:78%}
 .platform-logo.logo-instagram img{width:76%;height:76%}
 .platform-logo.logo-tiktok::before,.platform-logo.logo-tiktok::after,.platform-logo.logo-instagram::before,.platform-logo.logo-instagram::after{content:none}

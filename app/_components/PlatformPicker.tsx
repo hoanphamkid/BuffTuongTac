@@ -7,7 +7,7 @@ const clean = (name: string) => name.replace(/^\S+\s+/, '');
 
 export function PlatformLogo({ platform }: { platform: Platform | null }) {
   const slug = (platform?.slug || clean(platform?.name || '').toLowerCase()).replace(/[^a-z]/g, '');
-  const supported = ['facebook', 'tiktok', 'instagram', 'youtube'].includes(slug);
+  const supported = ['facebook', 'tiktok', 'instagram', 'youtube', 'threads'].includes(slug);
   return <span className={'platform-logo logo-' + slug} aria-hidden="true">
     {supported ? <img src={'https://cdn.simpleicons.org/' + slug + '/ffffff'} alt="" /> : '▶'}
   </span>;

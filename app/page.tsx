@@ -20,6 +20,7 @@ type Server = {
   min: number;
   max: number;
   pricePer1000: string | number;
+  previewOnly?: boolean;
 };
 
 type Service = { id: string; name: string; slug?: string; servers: Server[] };
@@ -132,6 +133,10 @@ export default function Home() {
     }
     if (!server || !service) {
       setMessage(trialMode ? 'Gói thử chưa sẵn sàng. Vui lòng thử lại.' : 'Vui lòng chọn nền tảng và dịch vụ.');
+      return;
+    }
+    if (server.previewOnly) {
+      setMessage('Threads đang ở chế độ xem trước. Chưa tạo đơn hoặc trừ số dư.');
       return;
     }
     if (isComments && !commentLines.length) {

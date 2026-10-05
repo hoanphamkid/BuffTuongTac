@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { threadsPlatform, threadsService, threadsServer } from '../lib/catalog/threads';
 const prisma = new PrismaClient();
 type ServerSpec = { code: string; price: number };
 const platforms = [['Facebook','facebook'],['TikTok','tiktok'],['Instagram','instagram'],['YouTube','youtube']] as const;
@@ -27,6 +28,21 @@ async function pruneServers(serviceId: string, allowedNames: string[]) {
   });
 }
 async function main(){
+  // Keep this addition isolated from the existing platform seed/pruning logic.
+  await prisma.$transaction(async tx => {
+    const platform = await tx.platform.upsert({
+      where: { slug: threadsPlatform.slug },
+      update: {},
+      create: threadsPlatform,
+    });
+    const service = await tx.service.upsert({
+      where: { platformId_slug: { platformId: platform.id, slug: threadsService.slug } },
+      update: {},
+      create: { ...threadsService, platformId: platform.id },
+    });
+    const existing = await tx.server.findFirst({ where: { serviceId: service.id, name: threadsServer.name } });
+    if (!existing) await tx.server.create({ data: { ...threadsServer, serviceId: service.id } });
+  });
   for(const [platformName,slug] of platforms){
     const icon=platformName==='Facebook'?'🔵':platformName==='TikTok'?'🎵':platformName==='Instagram'?'📷':'▶️';
     const displayName=`${icon} ${platformName}`;
