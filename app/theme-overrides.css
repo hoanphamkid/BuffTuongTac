@@ -16,8 +16,6 @@ header{background:#f7faff;border-bottom-color:#cfdcf2}
 .server.chosen{box-shadow:0 0 0 2px #8f5de855,0 8px 20px #6e43a51f;animation:chosen-server-glow 2.8s ease-in-out infinite}
 .primary{position:relative;overflow:hidden;background:linear-gradient(110deg,#172b48,#53308a,#172b48);background-size:220% 100%;animation:button-gradient 5s ease-in-out infinite}
 .primary::after{content:'';position:absolute;top:0;left:-45%;width:28%;height:100%;transform:skewX(-22deg);background:#ffffff33;animation:button-shine 4.5s ease-in-out infinite;pointer-events:none}
-.platform-trigger{transition:transform .2s ease,box-shadow .2s ease}
-.platform-trigger:hover{transform:translateY(-1px);box-shadow:0 6px 16px #3f28751c}
 @keyframes chosen-server-glow{0%,100%{box-shadow:0 0 0 2px #8f5de833,0 8px 20px #6e43a50f}50%{box-shadow:0 0 0 3px #8f5de877,0 10px 24px #6e43a526}}
 @keyframes button-gradient{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 @keyframes button-shine{0%,55%{left:-45%;opacity:0}65%{opacity:1}85%,100%{left:135%;opacity:0}}
@@ -32,7 +30,6 @@ header{background:#f7faff;border-bottom-color:#cfdcf2}
   .server{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
   .server.chosen{animation:mobile-server-pulse 2.8s ease-in-out infinite}
   .primary{min-height:52px;border-radius:14px;box-shadow:0 8px 18px #31205b38}
-  .platform-trigger{box-shadow:0 5px 14px #3f287514}
   .total{box-shadow:0 6px 18px #10b98118}
 }
 @keyframes mobile-server-pulse{0%,100%{box-shadow:0 0 0 2px #8f5de833,0 7px 18px #6e43a514}50%{box-shadow:0 0 0 3px #8f5de899,0 9px 24px #6e43a52b}}
