@@ -1,6 +1,7 @@
 'use client';
 import '../data-pages.css';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { PlatformLogo } from './PlatformPicker';
 import { statusLabel } from '@/lib/status-label';
 
@@ -129,7 +130,7 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                     <tr key={x.id}>
                       <td>
                         <div className="action-btns">
-                          <button className="action-btn" title="Chi tiết">!</button>
+                          <Link className="action-btn" href={'/orders/' + encodeURIComponent(x.id)} title="Chi tiết" aria-label={'Xem chi tiết đơn ' + x.id}>↗</Link>
                           <button className="action-btn" title="Hủy/Tạm dừng">∅</button>
                           <button className="action-btn" title="Hỗ trợ">⚡</button>
                         </div>

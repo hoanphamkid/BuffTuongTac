@@ -1,0 +1,27 @@
+.customer-order-detail { max-width: 1100px; }
+.customer-order-back { color: var(--customer-accent); text-decoration: none; font-size: 13px; }
+.customer-order-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 24px 0; }
+.customer-order-heading small { color: var(--customer-muted); letter-spacing: 1px; font-size: 10px; }
+.customer-order-heading h1 { color: var(--customer-text); margin: 8px 0 0; }
+.customer-order-heading button { padding: 10px 14px; min-height: 44px; background: var(--customer-raised); color: var(--customer-accent); border: 1px solid var(--customer-border); border-radius: 8px; cursor: pointer; }
+.customer-order-heading button:disabled { opacity: .6; cursor: wait; }
+.customer-order-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.customer-order-summary > div { padding: 16px; background: var(--customer-raised); border: 1px solid var(--customer-border); border-radius: 10px; min-width: 0; }
+.customer-order-summary small { display: block; margin-bottom: 10px; color: var(--customer-muted); font-size: 12px; }
+.customer-order-summary strong { color: var(--customer-success); font-size: 18px; overflow-wrap: anywhere; }
+.customer-order-summary .order-status { display: inline-block; padding: 5px 9px; border-radius: 20px; font-size: 12px; }
+.customer-order-fields { margin: 24px 0; }
+.customer-order-fields > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--customer-border); font-size: 14px; line-height: 1.6; }
+.customer-order-fields dt { color: var(--customer-muted); }
+.customer-order-fields dd { margin: 0; color: var(--customer-text); overflow-wrap: anywhere; }
+.customer-order-fields a { color: var(--customer-accent); }
+.customer-order-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.customer-order-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px; border: 1px solid var(--customer-border); border-radius: 8px; background: var(--customer-raised); color: var(--customer-text); text-decoration: none; }
+.customer-order-actions a:first-child { background: #176d79; border-color: #438f9a; }
+@media (max-width: 800px) {
+  .customer-order-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customer-order-fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .customer-order-heading { align-items: flex-start; }
+  .customer-order-heading h1 { font-size: 20px; }
+  .customer-order-heading button { flex-shrink: 0; }
+}

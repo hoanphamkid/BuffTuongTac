@@ -1,0 +1,211 @@
+/* Customer pages only: admin, authentication and payment dialogs keep their own styles. */
+.customer-shell {
+  --customer-bg: #172d43;
+  --customer-panel: #101f34;
+  --customer-raised: #192e47;
+  --customer-border: #304c67;
+  --customer-text: #e7f0fc;
+  --customer-muted: #a5bad1;
+  --customer-accent: #78daef;
+  --customer-success: #75e5bf;
+  color: var(--customer-text);
+  color-scheme: dark;
+  scrollbar-color: #476783 #122139;
+}
+
+.customer-shell.shell { background: var(--customer-bg); }
+.customer-shell.shell > .customer-main {
+  background: linear-gradient(145deg, #1a3049, #203e50 70%, #1a3945) !important;
+  padding-bottom: 90px;
+}
+.customer-shell.shell > aside {
+  background: linear-gradient(180deg, #0e1c30, #0b1627);
+  border-right-color: var(--customer-border);
+}
+.customer-shell.shell .brand span { color: var(--customer-accent); }
+.customer-shell.shell .user {
+  background: #172c44;
+  border-color: var(--customer-border);
+}
+.customer-shell.shell .user:hover { border-color: #5c9ab6; }
+.customer-shell.shell > aside > nav label { color: #829fbf; }
+.customer-shell.shell > aside > nav button { color: #b9cfe4; }
+.customer-shell.shell > aside > nav button:hover,
+.customer-shell.shell > aside > nav button.active {
+  color: #fff;
+  background: #20435f;
+  border-color: #396586;
+}
+.customer-shell.shell > aside > nav button.active { box-shadow: inset 3px 0 var(--customer-accent); }
+.customer-shell .customer-main > header,
+.customer-shell .account-page > .account-title {
+  background: linear-gradient(110deg, #12243b, #1c3b50);
+  border-bottom-color: var(--customer-border);
+  color: var(--customer-text);
+}
+.customer-shell .customer-main > header h1,
+.customer-shell .account-title h1 { color: #f4f8ff; }
+.customer-shell .customer-main > header :is(.crumb, .head-user),
+.customer-shell .account-title :is(p, span, .breadcrumbs) { color: var(--customer-muted); }
+.customer-shell .customer-main > header .head-user span { color: var(--customer-success); }
+
+.customer-shell :is(.account-page, .funds-page) { background: transparent; color: var(--customer-text); }
+.customer-shell :is(.card, .fund-card, .history-card, .support-card),
+.customer-shell .account-page .security-card {
+  background: var(--customer-panel);
+  color: var(--customer-text);
+  border-color: var(--customer-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px #07132225;
+}
+.customer-shell .card.order { background: radial-gradient(ellipse at top right, #1b3756, #101f34 65%); }
+.customer-shell :is(.card, .fund-card, .history-card) h2 { color: var(--customer-text); }
+.customer-shell :is(.muted, .account-profile p, .account-stat span, .security-row small,
+  .empty-state, .empty-row, .support-heading p, .support-card p, .copy-hint,
+  .table-controls, .table-footer, .history-toolbar, .history-footer) { color: var(--customer-muted); }
+.customer-shell :is(.account-name b, .account-stat i, .security-row i) {
+  color: var(--customer-accent);
+  background: #18354d;
+}
+.customer-shell .account-avatar { background: linear-gradient(135deg, #2772a8, #18a399); }
+.customer-shell :is(.account-tabs, .security-row, .info-row) { border-color: var(--customer-border); }
+.customer-shell .account-tabs button { color: var(--customer-muted); }
+.customer-shell .account-tabs button.active {
+  color: var(--customer-accent);
+  border-bottom-color: var(--customer-accent);
+  background: #183249;
+}
+.customer-shell .account-tabs button:hover { color: #fff; background: #1b344d; }
+.customer-shell :is(.account-stat strong.green, .security-row b.ok, .account-message,
+  .positive, .received) { color: var(--customer-success); }
+.customer-shell :is(.negative, .fund-error) { color: #ff9bac; }
+.customer-shell :is(.account-field, .amount-label, .info-row span,
+  .order .field label, .order .section-label) { color: var(--customer-muted); }
+.customer-shell :is(.account-field input, .amount-label input, .history-toolbar input,
+  .history-toolbar select, .table-controls select, .order .field input,
+  .order .field select, .order .comment-box) {
+  color: var(--customer-text);
+  background: #152a42;
+  border-color: #3b5873;
+  border-radius: 9px;
+}
+.customer-shell :is(input, textarea)::placeholder { color: #91aac5; }
+.customer-shell :is(.account-field input, .amount-label input, .history-toolbar input,
+  .history-toolbar select, .table-controls select, .order .field input,
+  .order .field select, .order .comment-box):focus {
+  outline: 2px solid #63c6e0;
+  outline-offset: 2px;
+}
+.customer-shell :is(.account-field input, .order .field select):disabled {
+  color: #93a9c0;
+  background: #142338;
+  border-color: #2c425a;
+}
+.customer-shell :is(.primary, .account-primary, .fund-button) {
+  background: linear-gradient(100deg, #226aba, #139485);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 16px #06162944;
+}
+.customer-shell :is(.primary, .account-primary, .fund-button):hover:not(:disabled) {
+  background: linear-gradient(100deg, #2b7bd4, #12a793);
+}
+.customer-shell :is(.primary, .account-primary, .fund-button):disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.customer-shell :is(.dev-button, .action-btn, .page-btn, .history-footer button) {
+  color: var(--customer-accent);
+  background: var(--customer-raised);
+  border-color: var(--customer-border);
+}
+.customer-shell :is(.action-btn, .page-btn, .history-footer button):hover:not(:disabled) { background: #24435f; }
+.customer-shell .history-footer b { background: #207c95; border-color: #439cb0; color: #fff; }
+.customer-shell :is(.table-scroll, .info-box, .bank-qr, .usdt-qr, .checking) { border-color: var(--customer-border); }
+.customer-shell :is(.bank-qr, .usdt-qr) { background: #13253b; color: var(--customer-text); }
+.customer-shell :is(.bank-qr small, .usdt-qr small, .checking, .qr-placeholder) { color: var(--customer-muted); }
+.customer-shell .bank-qr img { background: #fff; border-radius: 8px; padding: 8px; }
+.customer-shell .info-row b { color: var(--customer-text); }
+.customer-shell .info-row button { color: var(--customer-accent); }
+.customer-shell .notes small { background: #192e44; border-color: var(--customer-border); color: var(--customer-muted); }
+.customer-shell .bank-card,
+.customer-shell .usdt-card { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.customer-shell :is(.bank-form, .info-box) { min-width: 0; }
+.customer-shell :is(table th, table td) { border-color: #293e55; }
+.customer-shell table th { color: #b4c9df; background: #192e46; }
+.customer-shell table td { color: #d2e2f3; }
+.customer-shell table tbody tr:hover { background: #192e43; }
+.customer-shell :is(.order-code-col .code, .service-title) { color: var(--customer-text); }
+.customer-shell :is(.order-link, .support-card b) { color: var(--customer-accent); }
+.customer-shell .order-status { background: #43351d; color: #f5d492; }
+.customer-shell :is(.status-processing, .status-in_progress) { background: #193f61; color: #a1d3ff; }
+.customer-shell .status-completed { background: #134638; color: #89edc6; }
+.customer-shell :is(.status-failed, .status-canceled) { background: #492737; color: #ffb2c2; }
+.customer-shell .status-refunded { background: #343051; color: #d8c8ff; }
+.customer-shell .support-card:hover { background: #192f48; border-color: #4a92b0; }
+.customer-shell .support-heading span { color: var(--customer-accent); }
+.customer-shell .notice { background: #3a301f; color: #ffdda2; border-color: #785e33; }
+
+/* The server chooser expands only as far as the available choices. */
+.customer-shell .order-server-section { margin-top: 22px; }
+.customer-shell .order-server-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.customer-shell .order-server-heading h2 { margin: 0; font-size: 13px; font-weight: 600; color: var(--customer-muted); }
+.customer-shell .order-server-heading > span { font-size: 11px; color: #abc9de; background: #1a354c; padding: 4px 9px; border-radius: 12px; }
+.customer-shell .order .servers { height: auto; max-height: 360px; }
+.customer-shell .order .server { min-width: 0; margin-bottom: 10px; }
+.customer-shell .order .server:last-child { margin-bottom: 0; }
+.customer-shell .order .server > div { min-width: 0; }
+.customer-shell .order .server :is(small, strong, p) { overflow-wrap: anywhere; }
+.customer-shell .order .server p { line-height: 1.6; margin: 5px 0 0; }
+.customer-shell .order-selection-hint { margin: 18px 0 0; padding: 12px 14px; color: var(--customer-muted); font-size: 12px; line-height: 1.6; background: #182e44; border: 1px dashed #3d5872; border-radius: 9px; }
+.customer-shell .server.maintenance { background: #382635; border-color: #87556d !important; }
+
+/* Shared mobile balance uses CurrentUserProvider and stays in normal page flow. */
+.customer-shell .order-balance-shortfall { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; padding: 15px; border: 1px solid #8a6838; border-radius: 10px; background: #372f23; }
+.customer-shell .order-balance-shortfall strong { display: block; color: #ffe1a1; font-size: 15px; }
+.customer-shell .order-balance-shortfall small { display: block; color: #dfc9a7; margin-top: 6px; font-size: 12px; line-height: 1.6; }
+.customer-shell .order-balance-shortfall a { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 14px; border: 1px solid #5296ad; border-radius: 8px; background: #23536d; color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; }
+.customer-shell .order-return-link { display: inline-flex; margin: 20px 28px 0; min-height: 44px; align-items: center; color: var(--customer-accent); font-size: 14px; text-decoration: none; }
+.customer-shell a.action-btn { text-decoration: none; }
+.customer-mobile-wallet { display: none; }
+.customer-shell .customer-wallet-topup:focus-visible { outline: 2px solid var(--customer-accent); outline-offset: 3px; }
+
+@media (max-width: 800px) {
+  .customer-shell .order-balance-shortfall { align-items: stretch; flex-direction: column; }
+  .customer-shell .order-return-link { margin-left: 18px; margin-right: 18px; }
+  .customer-shell .customer-mobile-wallet {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 18px 0;
+    padding: 12px;
+    border: 1px solid #3c627a;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #172f46, #143d42);
+    box-shadow: 0 5px 16px #07132220;
+  }
+  .customer-shell .customer-wallet-icon { display: grid; place-items: center; flex: 0 0 34px; height: 34px; border-radius: 10px; background: #75e5bf14; color: var(--customer-success); }
+  .customer-shell .customer-wallet-value { flex: 1; min-width: 0; }
+  .customer-shell .customer-wallet-value small { display: block; font-size: 11px; line-height: 1.5; color: #b2cbc9; }
+  .customer-shell .customer-wallet-value strong { display: block; margin-top: 2px; color: #88f1cb; font-size: 19px; line-height: 1.4; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+  .customer-shell .customer-wallet-topup { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-shrink: 0; min-height: 44px; padding: 0 12px; color: #defdf5; background: #206259; border: 1px solid #3c8f7e; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 700; }
+  .customer-shell .customer-wallet-topup:hover { background: #277968; }
+  .customer-shell .account-page > .account-title { margin-top: 14px; height: auto; min-height: 0; }
+  .customer-shell .account-page > :is(section, nav) { margin-left: 18px; margin-right: 18px; }
+  .customer-shell .account-profile { margin-top: 18px; }
+  .customer-shell .card { padding: 18px; }
+  .customer-shell .account-page .account-profile { margin-bottom: 18px; }
+  .customer-shell .order .server { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; padding: 12px; }
+  .customer-shell .order .server input { margin: 4px 0; align-self: start; }
+  .customer-shell .order .server > b { grid-column: 2; text-align: left; font-size: 13px; }
+  .customer-shell .order .server em { display: inline-block; margin-top: 4px; }
+}
+
+@media (max-width: 768px) {
+  .customer-shell .bank-card, .customer-shell .usdt-card { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 380px) {
+  .customer-shell .customer-wallet-icon { display: none; }
+  .customer-shell .customer-wallet-value strong { font-size: 17px; }
+}

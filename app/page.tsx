@@ -4,10 +4,14 @@ import './comment.css';
 import '../components/payment/payment.css';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useCurrentUser } from '@/providers/CurrentUserProvider';
 import PlatformPicker from '@/app/_components/PlatformPicker';
 import { OrderSuccessModal } from '@/components/order/OrderSuccessModal';
 import { OrderNoticeBanner } from '@/app/_components/OrderNoticeBanner';
+import { MobileWallet } from '@/app/_components/MobileWallet';
+import { useOrderDraft } from '@/app/_components/useOrderDraft';
+import { balanceShortfall } from '@/lib/order-pricing';
 
 const money = (value: number | string | null | undefined) =>
   new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
@@ -34,16 +38,13 @@ export default function Home() {
   const { user, loading, refreshUser, clearUser } = useCurrentUser();
   const router = useRouter();
   const [catalog, setCatalog] = useState<Platform[]>([]);
-  const [platform, setPlatform] = useState<Platform | null>(null);
-  const [service, setService] = useState<Service | null>(null);
-  const [server, setServer] = useState<Server | null>(null);
-  const [link, setLink] = useState('');
-  const [comments, setComments] = useState('');
-  const [reaction, setReaction] = useState('');
-  const [quantity, setQuantity] = useState(1000);
+  const { draft, updateDraft, resetDraft, ready: draftReady } = useOrderDraft(user?.id);
+  const { link, comments, reaction, trialMode } = draft;
+  const platform = (trialMode ? catalog.find((item) => item.slug === 'tiktok') : catalog.find((item) => item.id === draft.platformId)) || null;
+  const service = (trialMode ? platform?.services.find((item) => item.slug === 'tiktok-views') : platform?.services.find((item) => item.id === draft.serviceId)) || null;
+  const server = (draft.serverId ? service?.servers.find((item) => item.id === draft.serverId) : service?.servers[0]) || null;
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const [trialMode, setTrialMode] = useState(false);
   const [trialKey, setTrialKey] = useState('');
   const [showTrialKeyNotice, setShowTrialKeyNotice] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<CreatedOrder | null>(null);
@@ -53,26 +54,6 @@ export default function Home() {
       .then((response) => response.json())
       .then((result) => setCatalog(result.data || []));
   }, []);
-
-  useEffect(() => {
-    if (!platform) {
-      setService(null);
-      return;
-    }
-    setService(
-      trialMode
-        ? platform.services.find((item) => item.slug === 'tiktok-views') || null
-        : platform.services[0] || null,
-    );
-  }, [platform, trialMode]);
-
-  useEffect(() => setServer(service?.servers[0] || null), [service]);
-
-  useEffect(() => {
-    if (!trialMode) return;
-    const tiktok = catalog.find((item) => item.slug === 'tiktok');
-    if (tiktok && platform?.id !== tiktok.id) setPlatform(tiktok);
-  }, [catalog, platform, trialMode]);
 
   const isComments = !trialMode && service?.slug === 'tiktok-comments';
   const isFacebookReaction = !trialMode && platform?.slug === 'facebook' && server?.name.includes('[SV2]');
@@ -85,32 +66,36 @@ export default function Home() {
     [comments],
   );
 
-  useEffect(() => {
-    if (isComments) setQuantity(commentLines.length || 0);
-  }, [isComments, commentLines.length]);
+  const quantity = isComments ? commentLines.length : draft.quantity;
 
   const total = useMemo(
     () => trialMode ? 0 : server ? Math.ceil(quantity * Number(server.pricePer1000) / 1000) : 0,
     [server, quantity, trialMode],
   );
+  const missingBalance = server && user && Number.isSafeInteger(quantity) && quantity >= server.min && quantity <= server.max
+    ? balanceShortfall(total, user.balance, trialMode) : 0;
+
+  function choosePlatform(next: Platform) {
+    const firstService = next.services[0];
+    updateDraft({ platformId: next.id, serviceId: firstService?.id || '', serverId: firstService?.servers[0]?.id || '', reaction: '' });
+    setMessage('');
+  }
+
+  function chooseService(id: string) {
+    const next = platform?.services.find((item) => item.id === id);
+    updateDraft({ serviceId: id, serverId: next?.servers[0]?.id || '', reaction: '' });
+    setMessage('');
+  }
 
   function changeMode(nextTrialMode: boolean) {
-    setTrialMode(nextTrialMode);
+    updateDraft({ trialMode: nextTrialMode, platformId: '', serviceId: '', serverId: '', reaction: '', quantity: nextTrialMode ? 100 : 1000 });
     setTrialKey('');
     setShowTrialKeyNotice(false);
     setMessage('');
-    setReaction('');
-    if (nextTrialMode) {
-      setQuantity(100);
-    } else {
-      setPlatform(null);
-      setService(null);
-      setServer(null);
-      setQuantity(1000);
-    }
   }
 
   async function create() {
+    if (busy || !draftReady) return;
     const value = link.trim();
     if (trialMode && !trialKey.trim()) {
       setMessage('');
@@ -167,9 +152,8 @@ export default function Home() {
       }
 
       const order = data.data;
-      setLink('');
-      if (isComments) setComments('');
-      if (trialMode) setTrialKey('');
+      resetDraft();
+      setTrialKey('');
       await refreshUser();
       setCreatedOrder({
         id: order.id,
@@ -187,6 +171,7 @@ export default function Home() {
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' });
+    resetDraft();
     clearUser();
     router.replace('/login');
   }
@@ -194,7 +179,7 @@ export default function Home() {
   if (loading) return <div className="loading-screen">Đang tải tài khoản...</div>;
 
   return (
-    <div className="shell">
+    <div className="shell customer-shell">
       <aside>
         <div className="brand">KID <span>Social</span></div>
         <div className="user">
@@ -216,12 +201,13 @@ export default function Home() {
         </nav>
       </aside>
 
-      <main>
+      <main className="customer-main">
         <header>
           <div><span className="crumb">Bảng điều khiển</span><h1>Tạo đơn mới</h1></div>
           <div className="head-user">◉ {user?.username} <span>{money(user?.balance)}</span></div>
         </header>
 
+        <MobileWallet />
         <OrderNoticeBanner />
 
         <div className={'card order ' + (isComments ? 'comments-order' : '')}>
@@ -236,7 +222,7 @@ export default function Home() {
 
           <div className="field">
             <label>Liên kết *</label>
-            <input required value={link} onChange={(event) => setLink(event.target.value)} placeholder="Nhập liên kết cần tăng..." />
+            <input required value={link} onChange={(event) => updateDraft({ link: event.target.value })} placeholder="Nhập liên kết cần tăng..." />
           </div>
 
           {trialMode ? (
@@ -249,14 +235,14 @@ export default function Home() {
             <div className="grid2">
               <div className="field">
                 <label>Nền tảng</label>
-                <PlatformPicker items={catalog} value={platform?.id || ''} onChange={(item: Platform) => setPlatform(item)} />
+                <PlatformPicker items={catalog} value={platform?.id || ''} onChange={choosePlatform} />
               </div>
               <div className="field">
                 <label>Dịch vụ</label>
                 <select
                   value={service?.id || ''}
                   disabled={!platform}
-                  onChange={(event) => setService(platform?.services.find((item) => item.id === event.target.value) || null)}
+                  onChange={(event) => chooseService(event.target.value)}
                 >
                   <option value="">{platform ? 'Chọn dịch vụ' : 'Chọn nền tảng trước'}</option>
                   {platform?.services.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
@@ -265,26 +251,37 @@ export default function Home() {
             </div>
           )}
 
-          <label className="section-label">Máy chủ</label>
-          <div className="servers">
-            {service?.servers.map((item) => (
-              <label className={'server ' + (server?.id === item.id ? 'chosen' : '')} key={item.id}>
-                <input type="radio" checked={server?.id === item.id} onChange={() => setServer(item)} />
-                <div>
-                  <small>Mã: {item.id}</small>
-                  <strong>{item.name} <i>✓</i></strong>
-                  <p>{item.description || ''} · Tốc độ: {item.speed} · Tối thiểu: {item.min} · Tối đa: {item.max}</p>
+          {service ? (
+            <section className="order-server-section" aria-labelledby="order-server-heading">
+              <div className="order-server-heading">
+                <h2 id="order-server-heading">Máy chủ</h2>
+                <span>{service.servers.length} lựa chọn</span>
+              </div>
+              {service.servers.length ? (
+                <div className="servers">
+                  {service.servers.map((item) => (
+                    <label className={'server ' + (server?.id === item.id ? 'chosen' : '')} key={item.id}>
+                      <input type="radio" checked={server?.id === item.id} onChange={() => updateDraft({ serverId: item.id, reaction: '' })} />
+                      <div>
+                        <small>Mã: {item.id}</small>
+                        <strong>{item.name} <i>✓</i></strong>
+                        <p>{item.description || ''} · Tốc độ: {item.speed} · Tối thiểu: {item.min} · Tối đa: {item.max}</p>
+                      </div>
+                      <b>{isComments ? money(Number(item.pricePer1000) / 1000) + ' / comment' : trialMode ? 'Miễn phí' : money(item.pricePer1000) + ' / 1000'}<br /><em>Đang hoạt động</em></b>
+                    </label>
+                  ))}
                 </div>
-                <b>{isComments ? money(Number(item.pricePer1000) / 1000) + ' / comment' : trialMode ? 'Miễn phí' : money(item.pricePer1000) + ' / 1000'}<br /><em>Đang hoạt động</em></b>
-              </label>
-            ))}
-          </div>
+              ) : <p className="order-selection-hint" role="status">Dịch vụ này chưa có máy chủ khả dụng. Vui lòng chọn dịch vụ khác.</p>}
+            </section>
+          ) : (
+            <p className="order-selection-hint">{trialMode ? 'Đang kiểm tra dịch vụ dùng thử...' : 'Chọn nền tảng và dịch vụ để xem máy chủ, giá và giới hạn số lượng.'}</p>
+          )}
 
           {trialMode ? (
             <>
               <div className="field">
                 <label>Số lượng dùng thử (100 - 1000)</label>
-                <input type="number" min={100} max={1000} value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} />
+                <input type="number" min={100} max={1000} value={quantity} onChange={(event) => updateDraft({ quantity: Number(event.target.value) })} />
                 <small className="trial-help">Mỗi tài khoản chỉ được dùng gói thử một lần.</small>
               </div>
               <div className="field trial-key-field">
@@ -296,13 +293,13 @@ export default function Home() {
           ) : isComments ? (
             <div className="field">
               <label>Nội dung comment *</label>
-              <textarea className="comment-box" value={comments} onChange={(event) => setComments(event.target.value)} placeholder="Mỗi hàng là một comment..." />
+              <textarea className="comment-box" value={comments} onChange={(event) => updateDraft({ comments: event.target.value })} placeholder="Mỗi hàng là một comment..." />
               <small className="comment-count">{commentLines.length} comment · {server ? money(Number(server.pricePer1000) / 1000) : '0đ'}/comment</small>
             </div>
           ) : (
             <div className="field">
               <label>Số lượng</label>
-              <input type="number" min={server?.min || 1} max={server?.max || 1000000} value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} />
+              <input type="number" min={server?.min || 1} max={server?.max || 1000000} value={quantity} onChange={(event) => updateDraft({ quantity: Number(event.target.value) })} />
             </div>
           )}
 
@@ -310,8 +307,14 @@ export default function Home() {
             <div><small>{trialMode ? 'Tổng thanh toán gói thử' : 'Tổng thanh toán'}</small><strong>{trialMode ? 'Miễn phí' : money(total)}</strong></div>
             <span>▣</span>
           </div>
+          {missingBalance > 0 && (
+            <div className="order-balance-shortfall">
+              <div role="status"><strong>Bạn thiếu {money(missingBalance)}</strong><small>Số dư hiện tại: {money(user?.balance)}. Nội dung đơn sẽ được giữ khi bạn quay lại.</small></div>
+              <Link href={`/add-funds?amount=${missingBalance}`}>Nạp tiền ngay</Link>
+            </div>
+          )}
           {message && <div className="notice">{message}</div>}
-          <button className="primary" disabled={busy || !server || quantity < 1} onClick={create}>
+          <button className="primary" disabled={busy || !draftReady || !server || quantity < 1} onClick={create}>
             {busy ? 'Đang xử lý...' : trialMode ? 'Tạo gói thử miễn phí' : 'Tạo đơn hàng'}
           </button>
         </div>

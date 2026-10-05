@@ -43,13 +43,29 @@
   flex: 0 0 auto;
   white-space: nowrap;
   font-size: 13px;
+  font-weight: 600;
   line-height: 1.7;
 }
 
-.order-notice-time { color: #ffe1a1; }
-.order-notice-contact { color: #7cddff; text-decoration: underline; text-underline-offset: 3px; }
-.order-notice-welcome { color: #8ce9c5; }
-.order-notice-divider { display: inline-block; padding: 0 28px; color: #65b3cc; }
+.order-notice-copy strong { color: inherit; }
+.order-notice-contact { text-decoration: underline; text-decoration-color: #7cddff; text-underline-offset: 3px; }
+.order-notice-divider { display: inline-block; padding: 0 28px; }
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .order-notice-copy {
+    background-image: linear-gradient(90deg, #ff8797, #ffb474, #ffe78c, #81e9ae, #80d5ff, #a7afff, #dfa0ff, #ff8797);
+    background-size: 420px 100%;
+    background-repeat: repeat-x;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@media (forced-colors: active) {
+  .order-notice-copy { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+}
 
 .order-notice-viewport:focus-visible { outline: 2px solid #7cddff; outline-offset: 2px; }
 .order-notice-viewport:focus-visible .order-notice-track { animation-play-state: paused; }

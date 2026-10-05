@@ -1,9 +1,16 @@
 'use client';
+import {parseTopUpAmount} from '@/lib/order-pricing';
 import {useEffect,useMemo,useState,useRef} from 'react';import {useCurrentUser} from '@/providers/CurrentUserProvider';import {PaymentSuccessModal} from '@/components/payment/PaymentSuccessModal';import './funds.css';import '../../components/payment/payment.css';
 const money=(n:any)=>new Intl.NumberFormat('vi-VN').format(Number(n)||0)+'đ';
 const copy=async(v:string)=>{await navigator.clipboard?.writeText(v)};
 export default function AddFunds(){const {refreshUser}=useCurrentUser();const [info,setInfo]=useState<any>({}),[amountInput,setAmountInput]=useState(''),[deposit,setDeposit]=useState<any>(null),[paid,setPaid]=useState(false),[paidAmount,setPaidAmount]=useState(0),[rows,setRows]=useState<any[]>([]),[search,setSearch]=useState(''),[size,setSize]=useState(10),[page,setPage]=useState(1),[error,setError]=useState('');
  const creatingRef=useRef(false);const [creating,setCreating]=useState(false);
+ useEffect(()=>{
+   const amount=parseTopUpAmount(new URLSearchParams(window.location.search).get('amount'));
+   if(!amount)return;
+   setAmountInput(amount);
+   if(Number(amount)<5000)setError(`Bạn còn thiếu ${money(amount)}. Số tiền nạp tối thiểu là 5.000đ; vui lòng điều chỉnh số tiền trước khi tạo mã QR.`);
+ },[]);
  useEffect(()=>{fetch('/api/payment-info').then(async r=>{const t=await r.text();try{return t?JSON.parse(t):{}}catch{return {}}}).then(x=>setInfo(x.data||{}));fetch('/api/deposits').then(async r=>{const t=await r.text();try{return t?JSON.parse(t):{}}catch{return {}}}).then(x=>setRows((x.data||[]).filter((d:any)=>d.status==='PAID')))},[]);
  useEffect(()=>{if(!deposit||paid)return;const t=setInterval(async()=>{const r=await fetch(`/api/deposits/${deposit.id}/status`);const text=await r.text();let x:any={};try{x=text?JSON.parse(text):{}}catch{}if(x.data?.status==='PAID'){clearInterval(t);setPaidAmount(Number(deposit.amount)||0);setPaid(true);setDeposit(null);await refreshUser();loadRows()}},4000);return()=>clearInterval(t)},[deposit,paid,refreshUser]);
  async function loadRows(){const r=await fetch('/api/deposits');const text=await r.text();let x:any={};try{x=text?JSON.parse(text):{}}catch{}setRows((x.data||[]).filter((d:any)=>d.status==='PAID'))}
