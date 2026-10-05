@@ -285,8 +285,10 @@ h1 {
   font-weight: bold;
   cursor: pointer;
 }
-.primary:hover {
-  background: #0c6f9c;
+@media (hover: hover) and (min-width: 801px) {
+  .primary:hover {
+    background: #0c6f9c;
+  }
 }
 .empty {
   text-align: center;

@@ -25,7 +25,19 @@
   .account-page .account-tabs button { padding: 12px; font-size: 14px; }
   .account-page .security-card, .account-page .account-panel { padding: 18px; }
   .shell > aside, .shell > aside:hover, .shell > aside:focus-within { width: 54px; }
-  .shell > aside { padding-top: 58px; }
+  .shell > aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100dvh;
+    padding-top: 58px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .shell > main { margin-left: 54px; }
+  .shell > aside .brand { display: block; white-space: nowrap; }
+  body.mobile-sidebar-open { overflow: hidden; }
+  body.mobile-sidebar-open .shell > aside .brand::after { content: none; }
   .shell > aside > nav button { min-height: 44px; }
   body.mobile-sidebar-open .shell > aside { width: min(280px,85vw); z-index: 120; }
   body.mobile-sidebar-open .shell > aside > nav button { font-size: 14px; white-space: normal; }
