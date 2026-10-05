@@ -43,6 +43,7 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [trialMode, setTrialMode] = useState(false);
   const [trialKey, setTrialKey] = useState('');
+  const [showTrialKeyNotice, setShowTrialKeyNotice] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<CreatedOrder | null>(null);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function Home() {
   function changeMode(nextTrialMode: boolean) {
     setTrialMode(nextTrialMode);
     setTrialKey('');
+    setShowTrialKeyNotice(false);
     setMessage('');
     setReaction('');
     if (nextTrialMode) {
@@ -108,6 +110,11 @@ export default function Home() {
 
   async function create() {
     const value = link.trim();
+    if (trialMode && !trialKey.trim()) {
+      setMessage('');
+      setShowTrialKeyNotice(true);
+      return;
+    }
     if (!value) {
       setMessage('Vui lòng nhập link cần tăng.');
       return;
@@ -116,10 +123,6 @@ export default function Home() {
       new URL(value);
     } catch {
       setMessage('Link không hợp lệ. Vui lòng nhập URL đầy đủ.');
-      return;
-    }
-    if (trialMode && !trialKey.trim()) {
-      setMessage('Vui lòng inbox admin để nhận KEY dùng thử trước khi tạo đơn.');
       return;
     }
     if (trialMode && (quantity < 100 || quantity > 1000)) {
@@ -306,6 +309,16 @@ export default function Home() {
         </div>
       </main>
       <OrderSuccessModal order={createdOrder} onClose={() => setCreatedOrder(null)} />
+      {showTrialKeyNotice && (
+        <div className="payment-overlay trial-key-notice-overlay" role="dialog" aria-modal="true" aria-label="Thông báo nhận KEY dùng thử">
+          <div className="success-modal trial-key-notice">
+            <div className="trial-key-error-icon" aria-hidden="true">!</div>
+            <h2>Lỗi!</h2>
+            <p>Vui lòng inbox admin để nhận KEY dùng thử trước khi tạo đơn.</p>
+            <button className="trial-key-ok" onClick={() => setShowTrialKeyNotice(false)}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
