@@ -122,7 +122,7 @@ export default function AdminUsers() {
                     </button>
                     {open === user.id && (
                       <div className="user-menu">
-                        <button onClick={() => alert(`${account}${user.email?.trim() ? ` - ${user.email.trim()}` : ''}`)}>
+                        <button onClick={() => location.assign('/admin/users/' + user.id)}>
                           ◎　Xem chi tiết
                         </button>
                         <button onClick={() => location.assign('/admin/balance/' + user.id)}>
