@@ -62,7 +62,7 @@ export function CustomerOrderDetail({ orderId }: { orderId: string }) {
             <div><dt>Thời gian đặt</dt><dd>{new Date(order.createdAt).toLocaleString('vi-VN')}</dd></div>
             <div><dt>Cập nhật lần cuối</dt><dd>{new Date(order.updatedAt).toLocaleString('vi-VN')}</dd></div>
           </dl>
-          <div className="customer-order-actions"><Link href="/">Tạo đơn mới</Link><a href="https://zalo.me/0945459491" target="_blank" rel="noopener noreferrer">Liên hệ hỗ trợ</a></div>
+          <div className="customer-order-actions"><Link href="/">Tạo đơn mới</Link><Link href="/#feedback">Viết đánh giá</Link><a href="https://zalo.me/0945459491" target="_blank" rel="noopener noreferrer">Liên hệ hỗ trợ</a></div>
         </>
       )}
     </section>

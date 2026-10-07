@@ -106,6 +106,19 @@ model Order {
   providerOrderId String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  review          OrderReview?
+}
+
+model OrderReview {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rating    Int
+  content   String   @db.VarChar(1000)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt, id])
+  @@index([rating, createdAt, id])
 }
 
 model Deposit {

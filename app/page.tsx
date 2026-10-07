@@ -12,6 +12,8 @@ import { OrderNoticeBanner } from '@/app/_components/OrderNoticeBanner';
 import { MobileWallet } from '@/app/_components/MobileWallet';
 import { useOrderDraft } from '@/app/_components/useOrderDraft';
 import { balanceShortfall } from '@/lib/order-pricing';
+import { CustomerReviews } from '@/components/reviews/CustomerReviews';
+import { HeaderClock } from '@/app/_components/HeaderClock';
 
 const money = (value: number | string | null | undefined) =>
   new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
@@ -204,7 +206,7 @@ export default function Home() {
       <main className="customer-main">
         <header>
           <div><span className="crumb">Bảng điều khiển</span><h1>Tạo đơn mới</h1></div>
-          <div className="head-user">◉ {user?.username} <span>{money(user?.balance)}</span></div>
+          <HeaderClock><div className="head-user">◉ {user?.username} <span>{money(user?.balance)}</span></div></HeaderClock>
         </header>
 
         <MobileWallet />
@@ -318,6 +320,8 @@ export default function Home() {
             {busy ? 'Đang xử lý...' : trialMode ? 'Tạo gói thử miễn phí' : 'Tạo đơn hàng'}
           </button>
         </div>
+
+        <CustomerReviews refreshKey={createdOrder?.id} />
       </main>
       <OrderSuccessModal order={createdOrder} onClose={() => setCreatedOrder(null)} />
       {showTrialKeyNotice && (
