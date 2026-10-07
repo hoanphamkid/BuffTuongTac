@@ -4,8 +4,12 @@ import {usePathname} from 'next/navigation';
 import {useCurrentUser} from '@/providers/CurrentUserProvider';
 import './welcome-support.css';
 
+const CLOSE_DELAY_MS = 5000;
+
 export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:boolean}){
   const [open,setOpen]=useState(false);
+  const [canClose,setCanClose]=useState(false);
+  const [secondsLeft,setSecondsLeft]=useState(5);
   const {user,loading}=useCurrentUser();
   const pathname=usePathname();
   const key='welcome-notice-seen:'+user?.id;
@@ -14,8 +18,25 @@ export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:bo
     if(!eligible&&!force){setOpen(false);return}
     try{setOpen(force||sessionStorage.getItem(key)!=='true')}catch{setOpen(true)}
   },[force,eligible,key]);
+  useEffect(()=>{
+    if(!open){setCanClose(false);setSecondsLeft(5);return}
+    const startedAt=Date.now();
+    const updateCountdown=()=>{
+      const remaining=CLOSE_DELAY_MS-(Date.now()-startedAt);
+      if(remaining<=0){setSecondsLeft(0);setCanClose(true);return}
+      setSecondsLeft(Math.ceil(remaining/1000));
+    };
+    updateCountdown();
+    const timer=window.setInterval(updateCountdown,100);
+    return()=>window.clearInterval(timer);
+  },[open]);
   if(!open||(!eligible&&!force))return null;
-  const close=()=>{try{sessionStorage.setItem(key,'true')}catch{}setOpen(false);onClose?.()};
+  const close=()=>{
+    if(!canClose)return;
+    try{sessionStorage.setItem(key,'true')}catch{}
+    setOpen(false);
+    onClose?.();
+  };
   return <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
     <div className="welcome-modal notice-style-modal">
       <div className="notice-style-title">⚡ <span id="welcome-title">Thông Báo</span> ⚡</div>
@@ -29,7 +50,9 @@ export function WelcomeNotice({onClose,force=false}:{onClose?:()=>void;force?:bo
         <a className="contact-icon tiktok-icon" href="https://www.tiktok.com/@kidzdayy" target="_blank" rel="noreferrer" aria-label="TikTok" title="TikTok">♪</a>
         <a className="contact-icon gmail-icon" href="mailto:phamthanhhoan2401@gmail.com" aria-label="Gửi email" title="Gmail">✉</a>
       </div>
-      <button className="welcome-confirm" onClick={close}>Đã hiểu</button>
+      <button className="welcome-confirm" onClick={close} disabled={!canClose}>
+        {canClose?'Đã hiểu':`Đã hiểu (${secondsLeft}s)`}
+      </button>
     </div>
   </div>;
 }

@@ -208,6 +208,14 @@
 .notice-style-modal .welcome-confirm:hover {
   background: #c94312;
 }
+.notice-style-modal .welcome-confirm:disabled {
+  background: #efaa8c;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+.notice-style-modal .welcome-confirm:disabled:hover {
+  background: #efaa8c;
+}
 .welcome-modal.notice-style-modal {
   color-scheme: light;
   background-color: #fff !important;
