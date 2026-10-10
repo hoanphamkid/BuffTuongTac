@@ -22,10 +22,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="shell customer-shell">
       <aside>
-        <Link className="brand" href="/account">KID <span>Social</span></Link>
+        <Link className="brand" href={user ? '/account' : '/'}><img src="/kid-social-logo-dark.png" alt="KID Social" /></Link>
         <div className="user">
           <div className="avatar">{user?.username?.slice(0, 2).toUpperCase() || 'K'}</div>
-          <div><b>{user?.username || 'Tài khoản'}</b><small>Số dư: {user?.balance || '0'}đ</small></div>
+          <div><b>{user?.username || 'Khách'}</b><small>{user ? `Số dư: ${user.balance}đ` : 'Đăng nhập để dùng tài khoản'}</small></div>
         </div>
         <nav>
           <label>DỊCH VỤ & ĐƠN HÀNG</label>
@@ -41,7 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           ].map(([label, href]) => (
             <button key={href} className={path === href ? 'active' : ''} onClick={() => router.push(href)}>◈ {label}</button>
           ))}
-          <button onClick={logout}>◈ Đăng xuất</button>
+          {user ? <button onClick={logout}>◈ Đăng xuất</button> : <button onClick={() => router.push(`/login?next=${encodeURIComponent(path)}`)}>◈ Đăng nhập</button>}
         </nav>
       </aside>
       <main className="customer-main">

@@ -97,7 +97,12 @@ export default function Home() {
   }
 
   async function create() {
-    if (busy || !draftReady) return;
+    if (busy) return;
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent('/')}`);
+      return;
+    }
+    if (!draftReady) return;
     const value = link.trim();
     if (trialMode && !trialKey.trim()) {
       setMessage('');
@@ -183,10 +188,10 @@ export default function Home() {
   return (
     <div className="shell customer-shell">
       <aside>
-        <div className="brand">KID <span>Social</span></div>
+        <div className="brand"><img src="/kid-social-logo-dark.png" alt="KID Social" /></div>
         <div className="user">
-          <div className="avatar">{user?.username?.slice(0, 2).toUpperCase()}</div>
-          <div><b>{user?.username}</b><small>Số dư: {money(user?.balance)}</small></div>
+          <div className="avatar">{user?.username?.slice(0, 2).toUpperCase() || 'K'}</div>
+          <div><b>{user?.username || 'Khách'}</b><small>{user ? `Số dư: ${money(user.balance)}` : 'Đăng nhập khi cần đặt đơn'}</small></div>
         </div>
         <nav>
           <label>DỊCH VỤ & ĐƠN HÀNG</label>
@@ -199,14 +204,14 @@ export default function Home() {
             ['Tài khoản của tôi', '/account'], ['Nạp tiền', '/add-funds'],
             ['Lịch sử hoàn tiền', '/refunds'], ['API SMM V2', '/api-docs'],
           ].map(([label, href]) => <button onClick={() => router.push(href)} key={href}>◈ {label}</button>)}
-          <button onClick={logout}>◈ Đăng xuất</button>
+          {user ? <button onClick={logout}>◈ Đăng xuất</button> : <button onClick={() => router.push('/login?next=%2F')}>◈ Đăng nhập</button>}
         </nav>
       </aside>
 
       <main className="customer-main">
         <header>
           <div><span className="crumb">Bảng điều khiển</span><h1>Tạo đơn mới</h1></div>
-          <HeaderClock><div className="head-user">◉ {user?.username} <span>{money(user?.balance)}</span></div></HeaderClock>
+          <HeaderClock><div className="head-user">◉ {user?.username || 'Khách'} {user ? <span>{money(user.balance)}</span> : <Link href="/login?next=%2F">Đăng nhập</Link>}</div></HeaderClock>
         </header>
 
         <MobileWallet />
@@ -316,8 +321,8 @@ export default function Home() {
             </div>
           )}
           {message && <div className="notice">{message}</div>}
-          <button className="primary" disabled={busy || !draftReady || !server || quantity < 1} onClick={create}>
-            {busy ? 'Đang xử lý...' : trialMode ? 'Tạo gói thử miễn phí' : 'Tạo đơn hàng'}
+          <button className="primary" disabled={busy || !server || quantity < 1} onClick={create}>
+            {busy ? 'Đang xử lý...' : user ? (trialMode ? 'Tạo gói thử miễn phí' : 'Tạo đơn hàng') : 'Đăng nhập để đặt đơn'}
           </button>
         </div>
 

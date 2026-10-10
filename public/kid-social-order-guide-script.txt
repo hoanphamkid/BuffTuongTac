@@ -1,0 +1,11 @@
+KID Social – kịch bản video hướng dẫn 45 giây
+
+0–4s: KID Social là dashboard để chọn dịch vụ, tạo đơn và quản lý giao dịch.
+4–10s: Người dùng có thể xem nền tảng, dịch vụ, máy chủ và mức giá trước khi tạo đơn.
+10–15s: Bước 1 – Đăng ký hoặc đăng nhập tài khoản.
+15–22s: Bước 2 – Chọn nền tảng, dịch vụ và máy chủ phù hợp.
+22–29s: Bước 3 – Dán link, nhập số lượng và kiểm tra tổng chi phí.
+29–34s: Bước 4 – Kiểm tra số dư; nếu thiếu, chọn Nạp tiền ngay.
+34–40s: Bước 5 – Tạo đơn và mở Lịch sử đơn hàng để theo dõi trạng thái.
+40–44s: Mở từng đơn để xem chi tiết và liên hệ hỗ trợ khi cần.
+44–45s: Truy cập tuongtacmxh.vercel.app – link ở bio.

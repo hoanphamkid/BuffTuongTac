@@ -47,6 +47,8 @@ model User {
   deposits       Deposit[]
   transactions   BalanceTransaction[]
   trialKey       TrialKey?
+  notifications  Notification[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Platform {
@@ -156,4 +158,32 @@ model TrialKey {
   usedByUserId String?   @unique
   usedByUser   User?     @relation(fields: [usedByUserId], references: [id], onDelete: SetNull)
   createdAt    DateTime  @default(now())
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  orderId   String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique @db.Text
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

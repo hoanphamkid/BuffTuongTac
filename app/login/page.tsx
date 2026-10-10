@@ -11,6 +11,10 @@ export default function Login(){
   const [loading,setLoading]=useState(false);
   const router=useRouter();
   const {refreshUser}=useCurrentUser();
+  function nextPath(){
+    const next=new URLSearchParams(window.location.search).get('next');
+    return next&&next.startsWith('/')&&!next.startsWith('//')?next:'/';
+  }
   async function submit(e:React.FormEvent){
     e.preventDefault();
     if(loading)return;
@@ -21,7 +25,7 @@ export default function Login(){
       if(!r.ok||!d?.success){setError(d?.error||'Đăng nhập thất bại');return}
       try{sessionStorage.removeItem('welcome-notice-seen:'+d.data.id)}catch{}
       await refreshUser();
-      router.replace(d.data?.role==='ADMIN'?'/admin':'/');
+      router.replace(d.data?.role==='ADMIN'?'/admin':nextPath());
       router.refresh();
     }catch{setError('Không thể kết nối máy chủ. Vui lòng thử lại.')}finally{setLoading(false)}
   }

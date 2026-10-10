@@ -3,8 +3,12 @@ import type {NextRequest} from 'next/server';
 export function middleware(req:NextRequest){
   const path=req.nextUrl.pathname;
   if(process.env.NODE_ENV!=='production'||process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true')return NextResponse.next();
-  const protectedPath=path==='/'||['/new-order','/account','/add-funds','/orders','/refunds','/services','/mass-order','/support','/deposits','/transactions','/api-docs','/dev'].some(x=>path===x||path.startsWith(x+'/'));
-  if(protectedPath&&!req.cookies.get('smm_session')?.value)return NextResponse.redirect(new URL('/login',req.url));
+  const protectedPath=['/account','/add-funds','/orders','/refunds','/deposits','/transactions'].some(x=>path===x||path.startsWith(x+'/'));
+  if(protectedPath&&!req.cookies.get('smm_session')?.value){
+    const loginUrl=new URL('/login',req.url);
+    loginUrl.searchParams.set('next',`${path}${req.nextUrl.search}`);
+    return NextResponse.redirect(loginUrl);
+  }
   // Cookie tồn tại chưa chứng minh phiên hợp lệ. Không chặn trang đăng nhập.
   return NextResponse.next();
 }

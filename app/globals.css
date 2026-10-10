@@ -33,6 +33,14 @@ aside {
 .brand span {
   color: #31c4d8;
 }
+.brand img {
+  display: block;
+  width: 184px;
+  height: auto;
+  max-height: 48px;
+  object-fit: contain;
+  object-position: left center;
+}
 .user {
   display: flex;
   align-items: center;

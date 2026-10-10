@@ -6,11 +6,8 @@ type Ctx={user:CurrentUser|null;loading:boolean;error:string;refreshUser:(silent
 const UserContext=createContext<Ctx>({user:null,loading:true,error:'',refreshUser:async()=>{},clearUser:()=>{}});
 
 export function CurrentUserProvider({children}:{children:React.ReactNode}){
- const localPreview=process.env.NODE_ENV!=='production'||process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
- const previewUser:CurrentUser={id:'local-preview',username:'preview',fullName:'Local Preview',email:'preview@local.test',avatar:null,balance:'7179',totalDeposited:'0',level:'Thành viên',createdAt:new Date().toISOString()};
- const [user,setUser]=useState<CurrentUser|null>(localPreview?previewUser:null);const [loading,setLoading]=useState(!localPreview);const [error,setError]=useState('');
+ const [user,setUser]=useState<CurrentUser|null>(null);const [loading,setLoading]=useState(true);const [error,setError]=useState('');
  const refreshUser=useCallback(async(silent=false)=>{
-  if(localPreview){setUser(previewUser);setLoading(false);return}
   if(!silent)setLoading(true);
   try{
    const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);

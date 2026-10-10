@@ -1,6 +1,8 @@
 import {NextResponse} from 'next/server';
 import {prisma} from '@/lib/prisma';
 import {requireAdmin} from '@/lib/admin';
+import {createBalanceNotification} from '@/lib/notifications';
+import {sendPushNotification} from '@/lib/push';
 
 export async function GET(){
   if(!await requireAdmin())return NextResponse.json({success:false,error:'Không có quyền quản trị'},{status:403});
@@ -29,8 +31,10 @@ export async function PATCH(req:Request){
       if(changed.count!==1)throw new Error('NOT_PENDING');
       await tx.user.update({where:{id:user.id},data:{balance:{increment:amount},totalDeposited:{increment:amount}}});
       await tx.balanceTransaction.create({data:{userId:user.id,type:'DEPOSIT',amount,balanceBefore:Number(user.balance),balanceAfter:after,referenceType:'Deposit',referenceId:deposit.id,description:`Admin xác nhận nạp tiền ${deposit.paymentCode}`}});
-      return {status:'PAID'};
+      const notification=await createBalanceNotification(tx,{userId:user.id,amount,balanceAfter:after,reason:'Admin xác nhận nạp tiền'});
+      return {status:'PAID',notification};
     });
+    if(result.notification)await sendPushNotification(result.notification);
     return NextResponse.json({success:true,data:result});
   }catch(error){
     const message=error instanceof Error?error.message:'';

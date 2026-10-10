@@ -9,15 +9,16 @@ export function AuthGate({children}:{children:React.ReactNode}){
   const router=useRouter();
   const {user,loading,clearUser}=useCurrentUser();
   const publicPage=path==='/login'||path==='/register';
-  const localPreview=process.env.NODE_ENV!=='production'||process.env.NEXT_PUBLIC_LOCAL_PREVIEW==='true';
+  const privatePage=['/account','/add-funds','/orders','/refunds','/deposits','/transactions'].some(x=>path===x||path.startsWith(x+'/'));
 
   useEffect(()=>{
-    if(!localPreview&&!publicPage&&!loading&&!user){
+    if(privatePage&&!publicPage&&!loading&&!user){
       clearUser();
-      router.replace('/login');
+      const next=`${path}${window.location.search}`;
+      router.replace(`/login?next=${encodeURIComponent(next)}`);
     }
-  },[publicPage,loading,user,clearUser,router]);
+  },[path,privatePage,publicPage,loading,user,clearUser,router]);
 
-  if(localPreview||publicPage||user)return <>{children}</>;
+  if(!privatePage||publicPage||user)return <>{children}</>;
   return <div className="loading-screen">Đang chuyển đến đăng nhập...</div>;
 }

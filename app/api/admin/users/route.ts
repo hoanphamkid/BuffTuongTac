@@ -1,6 +1,8 @@
 import {NextResponse} from 'next/server';
 import {prisma} from '@/lib/prisma';
 import {requireAdmin} from '@/lib/admin';
+import {createBalanceNotification} from '@/lib/notifications';
+import {sendPushNotification} from '@/lib/push';
 
 export async function GET(){
   if(!await requireAdmin())return NextResponse.json({error:'Forbidden'},{status:403});
@@ -33,13 +35,15 @@ export async function PATCH(req:Request){
       const reason=typeof b.reason==='string'&&b.reason.trim()?b.reason.trim():'Điều chỉnh thủ công';
       const note=typeof b.note==='string'&&b.note.trim()?` — ${b.note.trim()}`:'';
       await tx.balanceTransaction.create({data:{userId:u.id,type:delta>0?'ADMIN_CREDIT':'ADMIN_DEBIT',amount:Math.abs(delta),balanceBefore:before,balanceAfter:after,referenceType:'ADMIN',referenceId:admin.id,description:`${reason}${note}`}});
-      return {balance:after};
+      const notification=await createBalanceNotification(tx,{userId:u.id,amount:delta,balanceAfter:after,reason:`${reason}${note}`});
+      return {balance:after,notification};
     }).catch(error=>{
       if(error instanceof Error&&error.message==='INSUFFICIENT_BALANCE')return null;
       throw error;
     });
     if(!adjustment)return NextResponse.json({error:'Số dư hiện tại không đủ để trừ.'},{status:400});
-    return NextResponse.json({success:true,data:adjustment});
+    if(adjustment?.notification)await sendPushNotification(adjustment.notification);
+    return NextResponse.json({success:true,data:{balance:adjustment?.balance}});
   }else return NextResponse.json({error:'Thao tác không hợp lệ'},{status:400});
   return NextResponse.json({success:true});
 }
