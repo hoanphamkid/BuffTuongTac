@@ -93,8 +93,8 @@ export function NotificationBell() {
         setUnreadCount(Number(data.unreadCount) || 0);
 
         if (document.visibilityState === 'visible') {
-          const completedOrder = newItems.find((item) => item.type === 'ORDER_COMPLETED');
-          if (completedOrder) setToast(completedOrder);
+          const orderStatusUpdate = newItems.find((item) => item.type === 'ORDER_COMPLETED' || item.type === 'ORDER_PROCESSING');
+          if (orderStatusUpdate) setToast(orderStatusUpdate);
         }
 
         if (document.visibilityState === 'hidden' && permission === 'granted') {
@@ -157,13 +157,13 @@ export function NotificationBell() {
   return (
     <div className={styles.container}>
       {toast && (
-        <div className={styles.successToast} role="status" aria-live="polite">
+        <div className={toast.type === 'ORDER_PROCESSING' ? styles.processingToast : styles.successToast} role="status" aria-live="polite">
           <a
             className={styles.toastLink}
             href={toast.orderId ? `/orders/${encodeURIComponent(toast.orderId)}` : '/orders'}
             onClick={() => void markRead(toast.id)}
           >
-            <span className={styles.toastIcon} aria-hidden="true">✓</span>
+            <span className={styles.toastIcon} aria-hidden="true">{toast.type === 'ORDER_PROCESSING' ? '↻' : '✓'}</span>
             <span className={styles.toastCopy}>
               <strong>{toast.title}</strong>
               <span>{toast.message}</span>
@@ -217,7 +217,7 @@ export function NotificationBell() {
                   if (item.orderId) window.location.href = `/orders/${encodeURIComponent(item.orderId)}`;
                 }}
               >
-                <span className={styles.icon}>{item.type === 'ORDER_REFUNDED' ? '↶' : '✓'}</span>
+                <span className={styles.icon}>{item.type === 'ORDER_REFUNDED' ? '↶' : item.type === 'ORDER_PROCESSING' ? '↻' : '✓'}</span>
                 <span className={styles.copy}>
                   <strong>{item.title}</strong>
                   <span>{item.message}</span>

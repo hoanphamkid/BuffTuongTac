@@ -6,19 +6,22 @@ export async function createOrderStatusNotification(
   tx: Prisma.TransactionClient,
   input: { userId: string; orderId: string; status: string; serviceName?: string | null },
 ) {
-  if (input.status !== 'COMPLETED' && input.status !== 'REFUNDED') return null;
-
   const completed = input.status === 'COMPLETED';
+  const processing = input.status === 'PROCESSING' || input.status === 'IN_PROGRESS';
+  const refunded = input.status === 'REFUNDED';
+  if (!completed && !processing && !refunded) return null;
   const orderCode = `#${input.orderId.slice(-8)}`;
   return tx.notification.create({
     data: {
       userId: input.userId,
       orderId: input.orderId,
-      type: completed ? 'ORDER_COMPLETED' : 'ORDER_REFUNDED',
-      title: completed ? 'Đơn hàng thành công' : 'Đơn hàng đã được hoàn tiền',
+      type: completed ? 'ORDER_COMPLETED' : processing ? 'ORDER_PROCESSING' : 'ORDER_REFUNDED',
+      title: completed ? 'Đơn hàng thành công' : processing ? 'Đơn hàng đang được xử lý' : 'Đơn hàng đã được hoàn tiền',
       message: completed
         ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn thành.`
-        : `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn tiền vào số dư.`,
+        : processing
+          ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đang được xử lý.`
+          : `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn tiền vào số dư.`,
     },
   });
 }
