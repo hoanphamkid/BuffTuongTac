@@ -1,0 +1,152 @@
+.locket-gold-page {
+  width: min(860px, 100%);
+  margin: 30px auto;
+  padding: 0 22px 34px;
+}
+
+.locket-gold-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(28px, 6vw, 58px);
+  border: 1px solid #92733e;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 90% 0%, rgb(238 188 91 / 22%), transparent 42%),
+    radial-gradient(ellipse at 0% 100%, rgb(159 114 49 / 16%), transparent 45%),
+    linear-gradient(145deg, #18283a, #102034 62%, #19283b);
+  box-shadow: 0 22px 55px rgb(5 14 26 / 24%), inset 0 1px rgb(255 255 255 / 6%);
+}
+
+.locket-gold-orb {
+  position: absolute;
+  z-index: -1;
+  top: 44px;
+  right: clamp(25px, 8vw, 90px);
+  display: grid;
+  width: clamp(82px, 15vw, 132px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(255 225 158 / 48%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fff1bf, #e5b751 45%, #92601e 100%);
+  color: #553716;
+  font-size: clamp(40px, 8vw, 68px);
+  font-weight: 900;
+  box-shadow: 0 0 50px rgb(230 181 81 / 28%), inset 0 2px 5px #fff8d7;
+  opacity: .92;
+}
+
+.locket-gold-eyebrow {
+  display: inline-flex;
+  margin: 0 0 16px;
+  padding: 7px 10px;
+  border: 1px solid rgb(224 186 110 / 38%);
+  border-radius: 999px;
+  background: rgb(218 169 78 / 10%);
+  color: #f1cd83;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.locket-gold-hero h1 {
+  max-width: 620px;
+  margin: 0;
+  color: #f5f8ff;
+  font-size: clamp(30px, 6vw, 52px);
+  letter-spacing: -1.5px;
+  line-height: 1.12;
+}
+
+.locket-gold-hero h1 span {
+  display: block;
+  margin-top: 8px;
+  color: #f0c975;
+}
+
+.locket-gold-description {
+  max-width: 470px;
+  margin: 18px 0 25px;
+  color: #bac8d9;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.locket-gold-price {
+  display: grid;
+  width: min(340px, 100%);
+  gap: 4px;
+  padding: 15px 18px;
+  border: 1px solid rgb(224 186 110 / 32%);
+  border-radius: 13px;
+  background: rgb(8 19 32 / 42%);
+}
+
+.locket-gold-price span { color: #c0cadd; font-size: 11px; }
+.locket-gold-price strong { color: #ffdc90; font-size: 32px; letter-spacing: -.5px; }
+.locket-gold-price small { color: #9fb2c8; font-size: 11px; }
+
+.locket-gold-cta {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 0 19px;
+  border: 1px solid #ffe3a0;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #f5d47f, #e7ac4c);
+  color: #35240e;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgb(225 172 76 / 20%);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.locket-gold-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgb(225 172 76 / 30%); }
+
+.locket-gold-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 16px 18px;
+  border: 1px solid #304d69;
+  border-radius: 13px;
+  background: #132940;
+}
+
+.locket-gold-note-icon {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid #718aa4;
+  border-radius: 50%;
+  color: #c2d4e7;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.locket-gold-note div { flex: 1; min-width: 0; }
+.locket-gold-note strong { color: #e9f1fb; font-size: 12px; }
+.locket-gold-note p { margin: 4px 0 0; color: #aabbd0; font-size: 11px; line-height: 1.55; }
+.locket-gold-note > a { flex-shrink: 0; color: #f0cf84; font-size: 11px; font-weight: 700; text-decoration: none; }
+
+@media (max-width: 560px) {
+  .locket-gold-page { margin: 18px auto; padding: 0 14px 24px; }
+  .locket-gold-hero { padding: 25px 20px; border-radius: 18px; }
+  .locket-gold-orb { top: 24px; right: 15px; opacity: .35; }
+  .locket-gold-hero h1 { max-width: 100%; font-size: 34px; }
+  .locket-gold-description { max-width: 100%; font-size: 13px; }
+  .locket-gold-note { align-items: flex-start; flex-wrap: wrap; padding: 14px; }
+  .locket-gold-note > a { margin-left: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .locket-gold-cta { transition: none; }
+}

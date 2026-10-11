@@ -15,9 +15,9 @@ export async function createOrderStatusNotification(
       userId: input.userId,
       orderId: input.orderId,
       type: completed ? 'ORDER_COMPLETED' : 'ORDER_REFUNDED',
-      title: completed ? 'Đơn hàng đã hoàn thành' : 'Đơn hàng đã được hoàn tiền',
+      title: completed ? 'Đơn hàng thành công' : 'Đơn hàng đã được hoàn tiền',
       message: completed
-        ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã hoàn thành.`
+        ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn thành.`
         : `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn tiền vào số dư.`,
     },
   });

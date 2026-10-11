@@ -51,6 +51,7 @@ export function NotificationBell() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<NotificationItem[]>([]);
+  const [toast, setToast] = useState<NotificationItem | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [permission, setPermission] = useState<'default' | 'granted' | 'denied' | 'unsupported'>('default');
   const [desktopReady, setDesktopReady] = useState(false);
@@ -91,6 +92,11 @@ export function NotificationBell() {
         setItems(nextItems);
         setUnreadCount(Number(data.unreadCount) || 0);
 
+        if (document.visibilityState === 'visible') {
+          const completedOrder = newItems.find((item) => item.type === 'ORDER_COMPLETED');
+          if (completedOrder) setToast(completedOrder);
+        }
+
         if (document.visibilityState === 'hidden' && permission === 'granted') {
           newItems.slice(0, 3).forEach((item) => {
             new window.Notification(item.title, { body: item.message, icon: '/kid-social-logo-dark.png' });
@@ -108,6 +114,12 @@ export function NotificationBell() {
       window.clearInterval(timer);
     };
   }, [pathname, permission, user?.id]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 8000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
   if (!user || pathname === '/login' || pathname === '/register' || pathname.startsWith('/admin')) return null;
 
@@ -144,6 +156,22 @@ export function NotificationBell() {
 
   return (
     <div className={styles.container}>
+      {toast && (
+        <div className={styles.successToast} role="status" aria-live="polite">
+          <a
+            className={styles.toastLink}
+            href={toast.orderId ? `/orders/${encodeURIComponent(toast.orderId)}` : '/orders'}
+            onClick={() => void markRead(toast.id)}
+          >
+            <span className={styles.toastIcon} aria-hidden="true">✓</span>
+            <span className={styles.toastCopy}>
+              <strong>{toast.title}</strong>
+              <span>{toast.message}</span>
+            </span>
+          </a>
+          <button type="button" className={styles.toastClose} aria-label="Đóng thông báo" onClick={() => setToast(null)}>×</button>
+        </div>
+      )}
       <button
         type="button"
         className={styles.bell}

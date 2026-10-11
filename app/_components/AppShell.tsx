@@ -31,7 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <label>DỊCH VỤ & ĐƠN HÀNG</label>
           {[
             ['Tạo đơn mới', '/'], ['Lịch sử đơn hàng', '/orders'],
-            ['Danh sách dịch vụ', '/services'], ['Hỗ trợ', '/support'],
+            ['Danh sách dịch vụ', '/services'], ['Locket Gold', '/locket-gold'], ['Hỗ trợ', '/support'],
           ].map(([label, href]) => (
             <button key={href} className={path === href ? 'active' : ''} onClick={() => router.push(href)}>◈ {label}</button>
           ))}
