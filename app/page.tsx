@@ -209,7 +209,7 @@ export default function Home() {
           <label>DỊCH VỤ & ĐƠN HÀNG</label>
           {[
             ['Tạo đơn mới', '/'], ['Lịch sử đơn hàng', '/orders'],
-            ['Danh sách dịch vụ', '/services'], ['Hỗ trợ', '/support'],
+            ['Danh sách dịch vụ', '/services'], ['Locket Gold', '/locket-gold'], ['Hỗ trợ', '/support'],
           ].map(([label, href]) => <button onClick={() => router.push(href)} key={href}>◈ {label}</button>)}
           <label>TÀI KHOẢN</label>
           {[
