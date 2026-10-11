@@ -9,7 +9,7 @@ export function AuthGate({children}:{children:React.ReactNode}){
   const router=useRouter();
   const {user,loading,clearUser}=useCurrentUser();
   const publicPage=path==='/login'||path==='/register';
-  const privatePage=['/account','/add-funds','/orders','/refunds','/deposits','/transactions'].some(x=>path===x||path.startsWith(x+'/'));
+  const privatePage=['/account','/orders','/refunds','/deposits','/transactions'].some(x=>path===x||path.startsWith(x+'/'));
 
   useEffect(()=>{
     if(privatePage&&!publicPage&&!loading&&!user){

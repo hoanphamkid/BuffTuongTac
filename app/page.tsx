@@ -40,6 +40,7 @@ export default function Home() {
   const { user, loading, refreshUser, clearUser } = useCurrentUser();
   const router = useRouter();
   const [catalog, setCatalog] = useState<Platform[]>([]);
+  const [trialEnabled, setTrialEnabled] = useState(true);
   const { draft, updateDraft, resetDraft, ready: draftReady } = useOrderDraft(user?.id);
   const { link, comments, reaction, trialMode } = draft;
   const platform = (trialMode ? catalog.find((item) => item.slug === 'tiktok') : catalog.find((item) => item.id === draft.platformId)) || null;
@@ -54,8 +55,19 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/catalog')
       .then((response) => response.json())
-      .then((result) => setCatalog(result.data || []));
+      .then((result) => {
+        setCatalog(result.data || []);
+        if (typeof result.trialEnabled === 'boolean') setTrialEnabled(result.trialEnabled);
+      });
   }, []);
+
+  useEffect(() => {
+    if (!trialEnabled && trialMode) {
+      updateDraft({ trialMode: false, platformId: '', serviceId: '', serverId: '', reaction: '', quantity: 1000 });
+      setTrialKey('');
+      setMessage('Gói dùng thử hiện đang tạm tắt.');
+    }
+  }, [trialEnabled, trialMode, updateDraft]);
 
   const isComments = !trialMode && service?.slug === 'tiktok-comments';
   const isFacebookReaction = !trialMode && platform?.slug === 'facebook' && server?.name.includes('[SV2]');
@@ -196,13 +208,13 @@ export default function Home() {
         <nav>
           <label>DỊCH VỤ & ĐƠN HÀNG</label>
           {[
-            ['Tạo đơn mới', '/'], ['Đơn hàng hàng loạt', '/mass-order'],
-            ['Lịch sử đơn hàng', '/orders'], ['Danh sách dịch vụ', '/services'], ['Hỗ trợ', '/support'],
+            ['Tạo đơn mới', '/'], ['Lịch sử đơn hàng', '/orders'],
+            ['Danh sách dịch vụ', '/services'], ['Hỗ trợ', '/support'],
           ].map(([label, href]) => <button onClick={() => router.push(href)} key={href}>◈ {label}</button>)}
           <label>TÀI KHOẢN</label>
           {[
             ['Tài khoản của tôi', '/account'], ['Nạp tiền', '/add-funds'],
-            ['Lịch sử hoàn tiền', '/refunds'], ['API SMM V2', '/api-docs'],
+            ['Lịch sử hoàn tiền', '/refunds'],
           ].map(([label, href]) => <button onClick={() => router.push(href)} key={href}>◈ {label}</button>)}
           {user ? <button onClick={logout}>◈ Đăng xuất</button> : <button onClick={() => router.push('/login?next=%2F')}>◈ Đăng nhập</button>}
         </nav>
@@ -222,8 +234,8 @@ export default function Home() {
             <button type="button" className={!trialMode ? 'selected' : ''} onClick={() => changeMode(false)}>
               Đặt đơn thường
             </button>
-            <button type="button" className={trialMode ? 'selected trial' : ''} onClick={() => changeMode(true)}>
-              Gói thử miễn phí
+            <button type="button" className={trialMode ? 'selected trial' : ''} onClick={() => changeMode(true)} disabled={!trialEnabled} title={!trialEnabled ? 'Admin đang tạm tắt gói dùng thử' : undefined} style={!trialEnabled ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}>
+              Gói thử miễn phí{trialEnabled ? '' : ' (Tạm tắt)'}
             </button>
           </div>
 

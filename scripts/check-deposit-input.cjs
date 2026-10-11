@@ -22,7 +22,8 @@ const context = {
   require(name) {
     if (name === 'react') return react;
     if (name === 'react/jsx-runtime') return {jsx, jsxs: jsx, Fragment: 'fragment'};
-    if (name.includes('CurrentUserProvider')) return {useCurrentUser: () => ({refreshUser: async () => {}})};
+    if (name === 'next/navigation') return {useRouter: () => ({push: () => {}})};
+    if (name.includes('CurrentUserProvider')) return {useCurrentUser: () => ({user: {id: 'test-user'}, refreshUser: async () => {}})};
     if (name.includes('PaymentSuccessModal')) return {PaymentSuccessModal: () => null};
     return {};
   },

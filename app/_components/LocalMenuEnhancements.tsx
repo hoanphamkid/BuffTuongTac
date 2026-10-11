@@ -8,8 +8,6 @@ export function LocalMenuEnhancements() {
 
   useEffect(() => {
     const cards = Array.from(document.querySelectorAll<HTMLElement>('.shell > aside > .user'));
-    const apiButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.shell > aside > nav button'))
-      .filter((button) => button.textContent?.includes('API SMM V2'));
     const linkInput = document.querySelector<HTMLInputElement>('.order .field input');
     const orderButton = document.querySelector<HTMLButtonElement>('.order .primary');
     const linkField = linkInput?.closest('.field');
@@ -27,7 +25,6 @@ export function LocalMenuEnhancements() {
       card.tabIndex = 0;
       card.setAttribute('role', 'button');
     });
-    apiButtons.forEach((button) => { button.hidden = true; });
     orderButton?.addEventListener('click', focusLinkIfEmpty);
     const moveNotice = () => {
       const notice = document.querySelector<HTMLElement>('.order .notice');
@@ -59,7 +56,6 @@ export function LocalMenuEnhancements() {
         card.removeEventListener('click', openAccount);
         card.removeEventListener('keydown', openAccount);
       });
-      apiButtons.forEach((button) => { button.hidden = false; });
       orderButton?.removeEventListener('click', focusLinkIfEmpty);
       noticeObserver.disconnect();
       maintenanceObserver.disconnect();

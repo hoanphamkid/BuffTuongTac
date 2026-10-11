@@ -3,6 +3,7 @@ import {z} from 'zod';
 import {currentUser} from '@/lib/auth';
 import {prisma} from '@/lib/prisma';
 import {sendOrderEmail} from '@/lib/send-order-email';
+import {getTrialAvailability} from '@/lib/trial-availability';
 
 const schema=z.object({serverId:z.string(),link:z.string().url(),quantity:z.number().int().positive(),comments:z.array(z.string().trim().min(1).max(1000)).max(100000).optional(),reaction:z.string().trim().max(30).optional(),trialKey:z.string().trim().min(1).max(100).optional()});
 
@@ -15,6 +16,7 @@ export async function POST(req:Request){
   if(!server||!server.active)return NextResponse.json({success:false,error:'Máy chủ không khả dụng'},{status:400});
   if(input.data.quantity<server.min||input.data.quantity>server.max)return NextResponse.json({success:false,error:`Số lượng phải từ ${server.min} đến ${server.max}`},{status:400});
   if(input.data.trialKey){
+    if(!(await getTrialAvailability()).enabled)return NextResponse.json({success:false,error:'Gói thử hiện đang tạm tắt.'},{status:403});
     if(server.service.platform.slug!=='tiktok'||server.service.slug!=='tiktok-views')return NextResponse.json({success:false,error:'Gói thử chỉ dùng cho dịch vụ TikTok Views.'},{status:400});
     if(input.data.quantity<100||input.data.quantity>1000)return NextResponse.json({success:false,error:'Gói thử cho phép số lượng từ 100 đến 1000.'},{status:400});
     const keyValue=input.data.trialKey.toUpperCase();
