@@ -19,24 +19,33 @@
   padding-bottom: 90px;
 }
 .customer-shell.shell > aside {
-  background: linear-gradient(180deg, #0e1c30, #0b1627);
-  border-right-color: var(--customer-border);
+  background:
+    radial-gradient(ellipse at 0 0%, rgb(139 92 246 / 26%), transparent 46%),
+    radial-gradient(ellipse at 100% 100%, rgb(79 70 229 / 18%), transparent 42%),
+    linear-gradient(165deg, #35264f 0%, #2b2144 55%, #211b38 100%);
+  border-right-color: #5b4777;
+  box-shadow: 5px 0 24px rgb(16 8 34 / 28%);
 }
 .customer-shell.shell .brand span { color: var(--customer-accent); }
 .customer-shell.shell .user {
-  background: #172c44;
-  border-color: var(--customer-border);
+  background: linear-gradient(135deg, #3a2c54, #302444);
+  border-color: #5b4777;
 }
-.customer-shell.shell .user:hover { border-color: #5c9ab6; }
-.customer-shell.shell > aside > nav label { color: #829fbf; }
-.customer-shell.shell > aside > nav button { color: #b9cfe4; }
+.customer-shell.shell .user:hover { border-color: #9b79dc; }
+.customer-shell.shell .user b { color: #f4f0ff; }
+.customer-shell.shell .user small { color: #c4b7d9; }
+.customer-shell.shell > aside > nav label { color: #b9a3d6; }
+.customer-shell.shell > aside > nav button { color: #e1d6f0; }
 .customer-shell.shell > aside > nav button:hover,
 .customer-shell.shell > aside > nav button.active {
   color: #fff;
-  background: #20435f;
-  border-color: #396586;
+  background: #493465;
+  border-color: #70528f;
 }
-.customer-shell.shell > aside > nav button.active { box-shadow: inset 3px 0 var(--customer-accent); }
+.customer-shell.shell > aside > nav button.active {
+  background: linear-gradient(105deg, #7751b5, #593f8b);
+  box-shadow: inset 3px 0 var(--customer-accent), 0 4px 12px rgb(22 10 42 / 28%);
+}
 .customer-shell .customer-main > header,
 .customer-shell .account-page > .account-title {
   background: linear-gradient(110deg, #12243b, #1c3b50);
