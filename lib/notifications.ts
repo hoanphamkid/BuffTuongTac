@@ -4,7 +4,7 @@ type NewOrder={id:string;username:string;service:string;quantity:number;price:nu
 export async function notifyAdminNewOrder(order:NewOrder){console.log('[email] order notification invoked',order.id);const key=process.env.RESEND_API_KEY?.trim(),to=process.env.ADMIN_NOTIFICATION_EMAIL?.trim();if(!key||!to){console.error('[email] missing RESEND_API_KEY or ADMIN_NOTIFICATION_EMAIL');return false}try{const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({from:'KID Social <onboarding@resend.dev>',to:[to],subject:`Đơn hàng mới #${order.id.slice(0,8)}`,html:`<h2>Có đơn hàng mới</h2><p><b>User:</b> ${order.username}</p><p><b>Dịch vụ:</b> ${order.service}</p><p><b>Số lượng:</b> ${order.quantity.toLocaleString('vi-VN')}</p><p><b>Tổng tiền:</b> ${order.price.toLocaleString('vi-VN')}đ</p><p><b>Link:</b> ${order.link}</p>`})});const body=await response.text();if(!response.ok){console.error('[email] Resend error',response.status,body);return false}console.log('[email] sent',to);return true}catch(error){console.error('[email] request failed',error);return false}}
 export async function createOrderStatusNotification(
   tx: Prisma.TransactionClient,
-  input: { userId: string; orderId: string; status: string; serviceName?: string | null },
+  input: { userId: string; orderId: string; status: string; serviceName?: string | null; reason?: string | null },
 ) {
   const completed = input.status === 'COMPLETED';
   const processing = input.status === 'PROCESSING' || input.status === 'IN_PROGRESS';
@@ -21,7 +21,7 @@ export async function createOrderStatusNotification(
         ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn thành.`
         : processing
           ? `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đang được xử lý.`
-          : `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn tiền vào số dư.`,
+          : `Đơn ${orderCode}${input.serviceName ? ` · ${input.serviceName}` : ''} đã được hoàn tiền vào số dư.${input.reason ? ` Lý do: ${input.reason}.` : ''}`,
     },
   });
 }

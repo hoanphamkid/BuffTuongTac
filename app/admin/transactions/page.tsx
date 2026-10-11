@@ -3,6 +3,8 @@ import "./transactions.css";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { statusLabel } from "@/lib/status-label";
+import { REFUND_REASONS } from "@/lib/orders/refund-reasons";
+import "./refund.css";
 
 type User = { id: string; username: string; email: string };
 type Order = {
@@ -191,6 +193,12 @@ function OrderDetail({ order, close, onUpdated }: { order: Order; close: () => v
         <h4>Nhãn và trạng thái</h4>
         <OrderEditor order={order} onUpdated={onUpdated} />
       </section>
+      {Number(order.price) > 0 && (
+        <section className="order-refund-section">
+          <h4>Hoàn tiền đơn hàng</h4>
+          <RefundControl order={order} onUpdated={onUpdated} />
+        </section>
+      )}
     </div>
   );
 }
@@ -243,12 +251,12 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        disabled={saving}
+        disabled={saving || status === "REFUNDED"}
         title="Chọn trạng thái đơn hàng"
       >
         {saving ? "Đang lưu..." : label || statusLabel(status)} <span aria-hidden="true">▾</span>
       </button>
-      {open && (
+      {open && status !== "REFUNDED" && (
         <div className="order-status-menu" role="listbox" aria-label="Trạng thái đơn hàng">
           {[
             ["PENDING", "Chờ xử lý"],
@@ -270,6 +278,73 @@ function OrderEditor({ order, onUpdated }: { order: Order; onUpdated: (order: Or
         </div>
       )}
       {error && <small className="label-error">{error}</small>}
+    </div>
+  );
+}
+
+function RefundControl({ order, onUpdated }: { order: Order; onUpdated: (order: Order) => void }) {
+  const [reasonCode, setReasonCode] = useState<string>(REFUND_REASONS[0].value);
+  const [reasonDetail, setReasonDetail] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setReasonCode(REFUND_REASONS[0].value);
+    setReasonDetail("");
+    setSaving(false);
+    setError("");
+    setMessage("");
+  }, [order.id]);
+
+  if (order.status === "REFUNDED") {
+    return <div className="order-refund-complete">✓ Đơn hàng đã được hoàn tiền vào số dư khách hàng. {message}</div>;
+  }
+
+  async function refund() {
+    if (saving) return;
+    if (reasonCode === "OTHER" && !reasonDetail.trim()) {
+      setError("Vui lòng nhập lý do hoàn tiền.");
+      return;
+    }
+    const selectedReason = REFUND_REASONS.find((item) => item.value === reasonCode)?.label || "";
+    const reasonText = reasonCode === "OTHER" ? `${selectedReason}: ${reasonDetail.trim()}` : selectedReason;
+    if (!window.confirm(`Hoàn ${currency(Number(order.price))} vào số dư của ${order.user.username}?\n\nLý do: ${reasonText}`)) return;
+
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/transactions", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "refund", orderId: order.id, reasonCode, reasonDetail }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Không thể hoàn tiền đơn hàng");
+      onUpdated({ ...order, ...result.data });
+      setMessage("Đã hoàn tiền thành công.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Không thể hoàn tiền đơn hàng");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="order-refund-panel">
+      <p>Số tiền sẽ được cộng lại vào số dư khách hàng và gửi thông báo kèm lý do.</p>
+      <label htmlFor="refund-reason">Lý do hoàn tiền</label>
+      <select id="refund-reason" value={reasonCode} onChange={(event) => { setReasonCode(event.target.value); setError(""); }} disabled={saving}>
+        {REFUND_REASONS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+      </select>
+      {reasonCode === "OTHER" && (
+        <textarea value={reasonDetail} onChange={(event) => { setReasonDetail(event.target.value); setError(""); }} placeholder="Nhập lý do cụ thể..." maxLength={160} disabled={saving} />
+      )}
+      {error && <small className="order-refund-error">{error}</small>}
+      <button type="button" className="order-refund-button" onClick={refund} disabled={saving}>
+        {saving ? "Đang hoàn tiền..." : `Hoàn ${currency(Number(order.price))} vào số dư`}
+      </button>
     </div>
   );
 }
