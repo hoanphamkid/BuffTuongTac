@@ -122,9 +122,9 @@ export default function ServicesPage() {
     <div className="admin-body services-page">
       <div className="services-intro">
         <div>
-          <p className="services-crumb">Quản lý　›　Giá dịch vụ</p>
-          <h2 className="admin-only-title">Giá các gói dịch vụ</h2>
-          <p className="admin-only-sub">Điều chỉnh giá bán cho từng server/gói. Giá mới sẽ được áp dụng cho các đơn tạo sau khi lưu.</p>
+          <p className="services-crumb">Quản lý　›　Giá nền tảng & dịch vụ</p>
+          <h2 className="admin-only-title">Điều chỉnh giá nền tảng & dịch vụ</h2>
+          <p className="admin-only-sub">Chọn nền tảng, dịch vụ và gói/server để cập nhật giá bán. Giá mới áp dụng cho các đơn tạo sau khi lưu.</p>
         </div>
         <button type="button" className="services-refresh" onClick={load} disabled={loading}>{loading ? 'Đang tải...' : '↻ Làm mới'}</button>
       </div>
