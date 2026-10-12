@@ -129,6 +129,14 @@ export default function ServicesPage() {
   }
 
   const platformOptions = useMemo(() => Array.from(new Map(packages.map((item) => [item.service.platform.slug, item.service.platform])).values()), [packages]);
+  const platformCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    packages.forEach((item) => {
+      const slug = item.service.platform.slug;
+      counts.set(slug, (counts.get(slug) || 0) + 1);
+    });
+    return counts;
+  }, [packages]);
   const serviceOptions = useMemo(() => serviceCatalog.length ? serviceCatalog : Array.from(new Map(packages.map((item) => [item.service.id, item.service])).values()), [packages, serviceCatalog]);
   useEffect(() => {
     if (!createForm.serviceId && serviceOptions[0]) setCreateForm((current) => ({ ...current, serviceId: serviceOptions[0].id }));
@@ -235,6 +243,16 @@ export default function ServicesPage() {
       <div className={'services-layout ' + (selected ? 'has-selection' : '')}>
         <section className="admin-card services-table-card">
           <div className="services-table-head"><div><h3>Tất cả gói/server</h3><span>{filtered.length} gói hiển thị · {packages.length} gói trong hệ thống</span></div><div className="services-table-actions"><span className="services-table-hint">Chọn một gói để chỉnh giá</span><button type="button" className="services-add-server" onClick={() => { setCreateOpen((current) => !current); setCreateError(''); }}>＋ Thêm máy chủ</button></div></div>
+          <div className="services-platform-tabs" role="group" aria-label="Lọc nhanh theo nền tảng">
+            <button type="button" className={'platform-filter-chip ' + (platform === 'ALL' ? 'active' : '')} aria-pressed={platform === 'ALL'} onClick={() => setPlatform('ALL')}>
+              <span className="platform-filter-icon">✦</span><span>Tất cả</span><b>{packages.length}</b>
+            </button>
+            {platformOptions.map((item) => (
+              <button key={item.slug} type="button" className={'platform-filter-chip ' + (platform === item.slug ? 'active' : '')} aria-pressed={platform === item.slug} onClick={() => setPlatform(item.slug)}>
+                <span className="platform-filter-icon">{item.icon || '◈'}</span><span>{item.name}</span><b>{platformCounts.get(item.slug) || 0}</b>
+              </button>
+            ))}
+          </div>
           <div className="services-table-wrap">
             <table className="admin-table services-table">
               <thead><tr><th>NỀN TẢNG</th><th>DỊCH VỤ</th><th>GÓI / SERVER</th><th>GIỚI HẠN</th><th>GIÁ / 1.000</th><th>TRẠNG THÁI</th><th /></tr></thead>
