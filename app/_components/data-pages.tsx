@@ -128,14 +128,14 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                   
                   return (
                     <tr key={x.id}>
-                      <td>
+                      <td data-label="Thao tác">
                         <div className="action-btns">
                           <Link className="action-btn" href={'/orders/' + encodeURIComponent(x.id)} title="Chi tiết" aria-label={'Xem chi tiết đơn ' + x.id}>↗</Link>
                           <button className="action-btn" title="Hủy/Tạm dừng">∅</button>
                           <button className="action-btn" title="Hỗ trợ">⚡</button>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Mã đơn hàng">
                         <div className="order-code-col">
                           <span className="code">{orderCode}</span>
                           <span className="copy-hint" onClick={() => handleCopy(orderCode, x.id)}>
@@ -143,7 +143,7 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                           </span>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Dịch vụ">
                         <div className="service-title">
                           <PlatformLogo platform={x.service?.platform ? {
                             id: x.service.platform.id || x.service.platform.slug || x.service.platform.icon || 'platform',
@@ -154,18 +154,18 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
                           <span className="tag-green">✕</span>
                         </div>
                       </td>
-                      <td>—</td>
-                      <td>{serverName}</td>
-                      <td>{unitPrice ? money(unitPrice) : '—'}</td>
-                      <td>{money(x.quantity)}</td>
-                      <td>{money(x.price)}</td>
-                      <td>
+                      <td data-label="Cảm xúc">—</td>
+                      <td data-label="Server">{serverName}</td>
+                      <td data-label="Giá">{unitPrice ? money(unitPrice) : '—'}</td>
+                      <td data-label="Số lượng">{money(x.quantity)}</td>
+                      <td data-label="Tổng tiền">{money(x.price)}</td>
+                      <td data-label="Link order">
                         <a href={x.link} target="_blank" rel="noopener noreferrer" className="order-link">
                           {x.link}
                         </a>
                       </td>
-                      <td><span className={'order-status status-' + String(x.status || 'PENDING').toLowerCase()}>{statusLabel(x.status || 'PENDING')}</span></td>
-                      <td>{formatDate(x.createdAt)}</td>
+                      <td data-label="Trạng thái"><span className={'order-status status-' + String(x.status || 'PENDING').toLowerCase()}>{statusLabel(x.status || 'PENDING')}</span></td>
+                      <td data-label="Thời gian mua">{formatDate(x.createdAt)}</td>
                     </tr>
                   );
                 })}
