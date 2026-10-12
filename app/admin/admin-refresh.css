@@ -1,5 +1,1 @@
-.admin-header-actions{display:flex;align-items:center;gap:8px}
-.admin-refresh{display:inline-flex;align-items:center;gap:5px;border:1px solid #d7e3f2;border-radius:7px;background:#fff;color:#1769d8;padding:6px 9px;font-size:10px;font-weight:700;cursor:pointer;transition:.18s}
-.admin-refresh:hover{border-color:#1769d8;background:#eef6ff}
-.admin-refresh:disabled{opacity:.65;cursor:wait}
-@media(max-width:800px){.admin-refresh{padding:7px 8px;font-size:0}.admin-refresh:first-letter{font-size:17px}}
+.admin-refresh{display:inline-flex;align-items:center;gap:6px;min-height:33px;padding:0 10px;border:1px solid #d5e3ed;border-radius:9px;background:#fff;color:#216caa;font-size:10px;font-weight:750;cursor:pointer;transition:border-color .18s,background .18s,color .18s,transform .18s}.admin-refresh:hover{transform:translateY(-1px);border-color:#69afd9;background:#f0f9ff;color:#1279c0}.admin-refresh:disabled{opacity:.62;cursor:wait}.admin-refresh.is-refreshing{animation:admin-refresh-pulse 1.1s ease-in-out infinite}@keyframes admin-refresh-pulse{50%{box-shadow:0 0 0 4px #38a9dc17}}

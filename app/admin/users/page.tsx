@@ -36,6 +36,7 @@ export default function AdminUsers() {
   const [rows, setRows] = useState<UserRow[]>([]);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'online' | 'inactive'>('all');
 
   const load = () =>
     fetch('/api/admin/users', { cache: 'no-store' })
@@ -49,12 +50,17 @@ export default function AdminUsers() {
   }, []);
 
   const list = rows.filter((user) =>
-    !query || `${accountOf(user)} ${user.email || ''}`.toLowerCase().includes(query.toLowerCase()),
+    (!query || `${accountOf(user)} ${user.email || ''}`.toLowerCase().includes(query.toLowerCase())) &&
+    (statusFilter === 'all' || (statusFilter === 'online' ? online(user.lastSeenAt) : !online(user.lastSeenAt))),
   );
+
+  const totalBalance = rows.reduce((sum, user) => sum + Number(user.balance || 0), 0);
+  const totalDeposited = rows.reduce((sum, user) => sum + Number(user.totalDeposited || 0), 0);
+  const onlineCount = rows.filter((user) => online(user.lastSeenAt)).length;
 
   async function remove(user: UserRow) {
     const account = accountOf(user);
-    if (!confirm(`Xóa tài khoản ${account}?`)) return;
+    if (!confirm(`Xóa tài khoản ${account}?\n\nThao tác này không thể hoàn tác.`)) return;
 
     const response = await fetch('/api/admin/users', {
       method: 'DELETE',
@@ -62,94 +68,60 @@ export default function AdminUsers() {
       body: JSON.stringify({ id: user.id }),
     });
 
-    if (response.ok) load();
-    else alert((await response.json()).error);
+    if (response.ok) {
+      setOpen('');
+      load();
+    } else {
+      const data = await response.json().catch(() => ({}));
+      alert(data.error || 'Không thể xóa tài khoản.');
+    }
   }
 
   return (
     <div className="admin-body users-page">
-      <h2 className="admin-only-title">Người dùng</h2>
-      <p className="admin-only-sub">Dữ liệu tất cả người dùng trên hệ thống</p>
+      <section className="users-console-hero">
+        <div><span className="users-page-kicker">OPERATIONS / USER DIRECTORY</span><h2>Quản lý người dùng</h2><p>Theo dõi tài khoản, số dư, nạp tiền và hoạt động truy cập trong một màn hình.</p></div>
+        <div className="users-hero-actions"><span><i /> Hệ thống đang hoạt động</span><button type="button" onClick={load}>↻ Đồng bộ dữ liệu</button></div>
+      </section>
 
-      <div className="admin-stats">
-        <Card t="TỔNG NGƯỜI DÙNG" v={rows.length} />
-        <Card t="TỔNG SỐ DƯ" v={rows.reduce((sum, user) => sum + Number(user.balance || 0), 0)} />
-        <Card t="TỔNG ĐÃ NẠP" v={rows.reduce((sum, user) => sum + Number(user.totalDeposited || 0), 0)} />
-      </div>
+      <section className="users-metric-grid">
+        <Metric icon="◎" label="Tổng người dùng" value={String(rows.length)} note={`${onlineCount} đang hoạt động`} tone="blue" />
+        <Metric icon="₫" label="Tổng số dư" value={money(totalBalance)} note="Số dư hiện tại" tone="green" />
+        <Metric icon="↗" label="Tổng đã nạp" value={money(totalDeposited)} note="Tổng giao dịch thành công" tone="purple" />
+        <Metric icon="◌" label="Đang online" value={String(onlineCount)} note="Trong 30 giây gần nhất" tone="orange" />
+      </section>
 
-      <div className="admin-card users-table-card">
-        <div className="users-toolbar">
-          <input
-            placeholder="Tìm tài khoản, email..."
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <button>Lọc</button>
+      <section className="admin-card users-directory-card">
+        <div className="users-directory-head"><div><span>ACCOUNT DIRECTORY</span><h3>Danh sách tài khoản</h3><p>Chọn một tài khoản để xem chi tiết hoặc điều chỉnh số dư.</p></div><b>{list.length} kết quả</b></div>
+        <div className="users-directory-toolbar">
+          <label className="users-search"><span>⌕</span><input placeholder="Tìm username hoặc email..." value={query} onChange={(event) => setQuery(event.target.value)} /></label>
+          <div className="users-status-filter"><button className={statusFilter === 'all' ? 'active' : ''} onClick={() => setStatusFilter('all')}>Tất cả <b>{rows.length}</b></button><button className={statusFilter === 'online' ? 'active' : ''} onClick={() => setStatusFilter('online')}>Online <b>{onlineCount}</b></button><button className={statusFilter === 'inactive' ? 'active' : ''} onClick={() => setStatusFilter('inactive')}>Không hoạt động <b>{Math.max(0, rows.length - onlineCount)}</b></button></div>
+          <button type="button" className="users-reset" onClick={() => { setQuery(''); setStatusFilter('all'); }}>Đặt lại</button>
         </div>
 
-        <table className="admin-table users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>TÀI KHOẢN</th>
-              <th>EMAIL / TÀI KHOẢN</th>
-              <th>SỐ DƯ</th>
-              <th>VAI TRÒ</th>
-              <th>HOẠT ĐỘNG LẦN CUỐI</th>
-              <th>THAO TÁC</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((user) => {
+        <div className="users-table-scroll">
+          <table className="admin-table users-table">
+            <thead><tr><th>TÀI KHOẢN</th><th>ID</th><th>TỔNG ĐÃ NẠP</th><th>SỐ DƯ</th><th>VAI TRÒ</th><th>HOẠT ĐỘNG</th><th>THAO TÁC</th></tr></thead>
+            <tbody>{list.map((user) => {
               const account = accountOf(user);
-
-              return (
-                <tr key={user.id}>
-                  <td>{user.id.slice(0, 10)}</td>
-                  <td><b>{account}</b></td>
-                  <td>{emailOf(user)}</td>
-                  <td>{money(user.balance)}</td>
-                  <td><span className="pill blue">{user.role}</span></td>
-                  <td>
-                    <span className={'presence ' + (online(user.lastSeenAt) ? 'online' : '')}>
-                      <i />
-                      {seen(user.lastSeenAt)}
-                    </span>
-                  </td>
-                  <td className="action-cell">
-                    <button className="more-user" onClick={() => setOpen(open === user.id ? '' : user.id)}>
-                      •••
-                    </button>
-                    {open === user.id && (
-                      <div className="user-menu">
-                        <button onClick={() => location.assign('/admin/users/' + user.id)}>
-                          ◎　Xem chi tiết
-                        </button>
-                        <button onClick={() => location.assign('/admin/balance/' + user.id)}>
-                          ＋　Cộng/Trừ số dư
-                        </button>
-                        <button className="danger" onClick={() => remove(user)}>
-                          ♜　Xóa người dùng
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              return <tr key={user.id}>
+                <td data-label="Tài khoản"><div className="user-identity"><i>{account.slice(0, 2).toUpperCase()}</i><span><b>{account}</b><small>{emailOf(user)}</small></span></div></td>
+                <td data-label="ID"><span className="user-id">{user.id.slice(0, 12)}</span></td>
+                <td data-label="Tổng đã nạp"><strong className="total-deposited-cell">{money(user.totalDeposited)}</strong></td>
+                <td data-label="Số dư"><strong className="user-balance">{money(user.balance)}</strong></td>
+                <td data-label="Vai trò"><span className="role-badge">{user.role}</span></td>
+                <td data-label="Hoạt động"><span className={'presence ' + (online(user.lastSeenAt) ? 'online' : '')}><i />{seen(user.lastSeenAt)}</span></td>
+                <td data-label="Thao tác" className="action-cell"><button className="more-user" onClick={() => setOpen(open === user.id ? '' : user.id)}>•••</button>{open === user.id && <div className="user-menu"><button onClick={() => location.assign('/admin/users/' + user.id)}>◎　Xem chi tiết</button><button onClick={() => location.assign('/admin/balance/' + user.id)}>＋　Cộng/Trừ số dư</button><button className="danger" onClick={() => remove(user)}>♜　Xóa người dùng</button></div>}</td>
+              </tr>;
+            })}</tbody>
+          </table>
+          {!list.length && <div className="users-empty">Không tìm thấy tài khoản phù hợp với bộ lọc.</div>}
+        </div>
+      </section>
     </div>
   );
 }
 
-function Card({ t, v }: { t: string; v: string | number }) {
-  return (
-    <div className="admin-card admin-stat">
-      <small>{t}</small>
-      <strong>{money(v)}</strong>
-      <span>↗ Dữ liệu thực tế</span>
-    </div>
-  );
+function Metric({ icon, label, value, note, tone }: { icon: string; label: string; value: string; note: string; tone: string }) {
+  return <div className={'users-metric ' + tone}><i>{icon}</i><div><span>{label}</span><strong>{value}</strong><small>● {note}</small></div></div>;
 }

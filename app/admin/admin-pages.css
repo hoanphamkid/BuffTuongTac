@@ -1,0 +1,678 @@
+/* Page-level workspace redesign. Each admin screen gets its own visual hierarchy
+   while keeping the shared console shell consistent. */
+
+.admin .users-page,
+.admin .trial-keys-page,
+.admin .deposits-page,
+.admin .transactions-page,
+.admin .services-page,
+.admin .user-detail-page,
+.admin .balance-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin .users-page::before,
+.admin .trial-keys-page::before,
+.admin .deposits-page::before,
+.admin .transactions-page::before,
+.admin .services-page::before,
+.admin .user-detail-page::before,
+.admin .balance-page::before {
+  position: absolute;
+  top: 0;
+  right: 28px;
+  width: 260px;
+  height: 150px;
+  border-radius: 0 0 0 100%;
+  background: radial-gradient(circle at top right, #1b9ec91a, transparent 68%);
+  pointer-events: none;
+  content: "";
+}
+
+.admin .users-page > .admin-only-title,
+.admin .trial-keys-page > .admin-only-title,
+.admin .balance-page > h2,
+.admin .user-detail-page .admin-only-title {
+  position: relative;
+  padding-top: 17px;
+}
+
+.admin .users-page > .admin-only-title::before,
+.admin .trial-keys-page > .admin-only-title::before,
+.admin .balance-page > h2::before,
+.admin .user-detail-page .admin-only-title::before {
+  display: block;
+  margin-bottom: 8px;
+  color: #118b9b;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.7px;
+  content: "OPERATIONS / CONTROL CENTER";
+}
+
+.admin .trial-keys-page > .admin-only-title::before { content: "CONFIGURATION / ACCESS MANAGEMENT"; }
+.admin .balance-page > h2::before { content: "FINANCE / MANUAL ADJUSTMENT"; }
+.admin .user-detail-page .admin-only-title::before { content: "OPERATIONS / ACCOUNT INSPECTOR"; }
+
+/* User directory */
+.admin .users-page .admin-stats { margin: 22px 0 14px; }
+.admin .users-page .admin-stat,
+.admin .trial-keys-page .admin-stat {
+  position: relative;
+  min-height: 116px;
+  overflow: hidden;
+  border-color: #d6e4ed;
+  background: linear-gradient(145deg, #fff 0%, #f8fcfe 100%);
+}
+.admin .users-page .admin-stat::after,
+.admin .trial-keys-page .admin-stat::after {
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
+  width: 95px;
+  height: 95px;
+  border: 1px solid #1698aa26;
+  border-radius: 50%;
+  box-shadow: 0 0 0 11px #1698aa09, 0 0 0 22px #1698aa05;
+  content: "";
+}
+.admin .users-page .admin-stat:nth-child(1) { border-top: 3px solid #1879e5; }
+.admin .users-page .admin-stat:nth-child(2) { border-top: 3px solid #16a98e; }
+.admin .users-page .admin-stat:nth-child(3) { border-top: 3px solid #8c67dc; }
+.admin .users-page .admin-stat strong { font-size: 23px; }
+.admin .users-page .admin-stat span { color: #8296a8; }
+.admin .users-table-card {
+  position: relative;
+  padding: 0;
+  overflow: visible;
+}
+.admin .users-table-card::before {
+  display: block;
+  padding: 17px 18px 13px;
+  border-bottom: 1px solid #e3edf3;
+  color: #1b3957;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .2px;
+  content: "User directory";
+}
+.admin .users-table-card::after {
+  display: block;
+  position: absolute;
+  top: 18px;
+  left: 127px;
+  color: #8aa0b2;
+  font-size: 9px;
+  content: "Danh sách tài khoản và quyền truy cập";
+}
+.admin .users-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 13px 18px 12px;
+  border-bottom: 1px solid #edf2f6;
+  background: #fbfdfe;
+}
+.admin .users-toolbar input {
+  width: min(360px, 100%);
+  min-height: 36px;
+  padding-left: 13px;
+  border-radius: 8px 0 0 8px;
+  background: #fff;
+}
+.admin .users-toolbar button {
+  min-height: 36px;
+  padding: 0 18px;
+  border: 1px solid #176fba;
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(135deg, #1d7fdf, #126d9e);
+  box-shadow: none;
+}
+.admin .users-table { margin: 0; }
+.admin .users-table th:first-child,
+.admin .users-table td:first-child { padding-left: 18px; }
+.admin .users-table th:last-child,
+.admin .users-table td:last-child { padding-right: 18px; }
+.admin .users-table tbody tr { transition: background .18s, box-shadow .18s; }
+.admin .users-table tbody tr:hover { background: #eef8fd; box-shadow: inset 3px 0 #1d93ba; }
+.admin .users-table td { height: 62px; }
+.admin .users-table td:first-child { color: #8298aa; font-family: Consolas, monospace; font-size: 9px; }
+.admin .users-table td:nth-child(2) b { color: #183a5c; }
+.admin .more-user { width: 34px; height: 30px; padding: 0; color: #537b96; }
+.admin .user-menu { right: 18px; top: 48px; border-color: #cfe0ea; box-shadow: 0 16px 35px #153b5b25; }
+
+/* Deposit operations */
+.admin .deposit-page-head,
+.admin .transactions-head,
+.admin .services-intro {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 4px 0 17px;
+  border-bottom: 1px solid #dce8ef;
+}
+.admin .deposit-page-head h2,
+.admin .transactions-head h2,
+.admin .services-intro .admin-only-title {
+  margin: 0;
+  padding-top: 18px;
+}
+.admin .deposit-page-head h2::before,
+.admin .transactions-head h2::before,
+.admin .services-intro .admin-only-title::before {
+  display: block;
+  margin-bottom: 8px;
+  color: #118b9b;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+}
+.admin .deposit-page-head h2::before { content: "FINANCE / DEPOSIT OPERATIONS"; }
+.admin .transactions-head h2::before { content: "OPERATIONS / ORDER MONITOR"; }
+.admin .services-intro .admin-only-title::before { content: "CONFIGURATION / SERVICE CATALOG"; }
+.admin .deposit-head-tools label,
+.admin .transactions-head > label {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding-left: 12px;
+  border: 1px solid #d1e1eb;
+  border-radius: 9px;
+  background: #fff;
+  color: #4f98b0;
+  box-shadow: 0 5px 15px #173b5b09;
+}
+.admin .deposit-head-tools input,
+.admin .transactions-head > label input {
+  width: 255px;
+  padding: 9px 11px;
+  border: 0;
+  box-shadow: none;
+}
+.admin .deposit-head-tools input:focus,
+.admin .transactions-head > label input:focus { box-shadow: none; }
+.admin .deposit-head-tools button { min-height: 38px; }
+.admin .deposit-summary { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(260px, 1.35fr); margin: 18px 0 14px; }
+.admin .deposit-summary .summary-card { position: relative; overflow: hidden; min-height: 104px; padding: 15px; }
+.admin .deposit-summary .summary-card::after { position: absolute; right: -24px; bottom: -30px; width: 90px; height: 90px; border: 1px solid currentColor; border-radius: 50%; opacity: .13; content: ""; }
+.admin .deposit-summary .summary-card.blue { border-top: 3px solid #1678e7; }
+.admin .deposit-summary .summary-card.green { border-top: 3px solid #13ab86; }
+.admin .deposit-summary .summary-card.orange { border-top: 3px solid #e7a228; }
+.admin .deposit-summary .summary-card.red { border-top: 3px solid #e35e70; }
+.admin .deposit-summary .summary-card strong { font-size: 23px; }
+.admin .total-paid-card { min-height: 104px; padding: 15px 17px; }
+.admin .total-paid-card .coin-icon { border-radius: 10px; background: #dff9f1; color: #079a79; }
+.admin .total-paid-card strong { color: #087c72; font-size: 20px; }
+.admin .deposit-workspace { grid-template-columns: minmax(0, 1.42fr) minmax(350px, .58fr); gap: 14px; align-items: start; }
+.admin .deposit-list-card { overflow: hidden; padding: 0; }
+.admin .list-title { min-height: 58px; padding: 0 17px; background: linear-gradient(90deg, #fbfdff, #f4fafd); }
+.admin .list-title h3 { color: #1a3b59; }
+.admin .list-title button { border: 1px solid #cfe1eb; border-radius: 7px; background: #fff; color: #1a79a5; }
+.admin .status-tabs { padding: 7px 14px; background: #f4f9fc; }
+.admin .status-tabs button { border-radius: 7px; }
+.admin .status-tabs button.active { background: #173f64; }
+.admin .list-filters { padding: 11px 14px; border-bottom: 1px solid #e6eef3; background: #fff; }
+.admin .deposit-table { margin: 0; }
+.admin .deposit-table td { height: 58px; }
+.admin .deposit-table tbody tr.selected { background: #eaf7fb; box-shadow: inset 3px 0 #0f9aae; }
+.admin .deposit-table tbody tr:hover { background: #f1f9fc; }
+.admin .deposit-detail { position: sticky; top: 94px; overflow: hidden; padding: 0; }
+.admin .deposit-detail .detail-hero { padding: 18px 18px 16px; background: linear-gradient(135deg, #10375b, #126177 72%, #0d9689); color: #fff; }
+.admin .deposit-detail .detail-hero h3,
+.admin .deposit-detail .detail-hero p,
+.admin .deposit-detail .detail-hero span { color: inherit; }
+.admin .detail-body { padding: 16px; }
+.admin .detail-grid { gap: 10px; }
+.admin .detail-user,
+.admin .payment-info,
+.admin .detail-actions { border-color: #dce9f0; border-radius: 10px; background: #f8fbfd; }
+.admin .detail-user { padding: 12px; }
+.admin .payment-info { padding: 13px; }
+.admin .qr-panel { border-color: #c9e0e9; border-radius: 10px; background: #fff; }
+.admin .detail-actions { padding: 12px; }
+.admin .detail-actions button { border-radius: 8px; }
+
+/* Transaction monitor */
+.admin .transaction-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 18px 0 14px; }
+.admin .tx-stat { position: relative; min-height: 112px; overflow: hidden; padding: 15px; }
+.admin .tx-stat::after { position: absolute; right: -26px; bottom: -32px; width: 100px; height: 100px; border: 1px solid currentColor; border-radius: 50%; opacity: .12; content: ""; }
+.admin .tx-stat.blue { border-top: 3px solid #1c7fe0; }
+.admin .tx-stat.orange { border-top: 3px solid #e5a326; }
+.admin .tx-stat.purple { border-top: 3px solid #8a63d5; }
+.admin .tx-stat.green { border-top: 3px solid #13ae86; }
+.admin .tx-stat i { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 9px; background: #edf7fc; color: #157aa2; }
+.admin .tx-stat strong { font-size: 22px; }
+.admin .transactions-shell { grid-template-columns: minmax(0, 1.5fr) minmax(350px, .5fr); gap: 14px; align-items: start; }
+.admin .transactions-card { overflow: hidden; padding: 0; }
+.admin .transaction-tabs { padding: 7px 12px; border-bottom: 1px solid #dfeaf1; background: #f5f9fc; }
+.admin .transaction-tabs button { min-height: 34px; border-radius: 7px; color: #71879b; }
+.admin .transaction-tabs button.active { background: #163e64; color: #fff; box-shadow: 0 5px 12px #153a5b24; }
+.admin .transaction-table-wrap { overflow-x: auto; }
+.admin .transaction-table { margin: 0; }
+.admin .transaction-table td { height: 64px; }
+.admin .transaction-table tbody tr { cursor: pointer; }
+.admin .transaction-table tbody tr.selected { background: #eaf7fc; box-shadow: inset 3px 0 #148da7; }
+.admin .transaction-table tbody tr:hover { background: #f1f9fc; }
+.admin .transaction-table td:first-child { color: #7d94a6; font-family: Consolas, monospace; }
+.admin .tx-user i { background: linear-gradient(145deg, #1579cb, #15ae9b); box-shadow: 0 4px 10px #1579cb2e; }
+.admin .order-price { color: #127e71; }
+.admin .transaction-detail { position: sticky; top: 94px; overflow: hidden; padding: 0; }
+.admin .tx-detail-head { padding: 15px 17px; background: linear-gradient(135deg, #10375b, #126177); color: #fff; }
+.admin .tx-detail-head h3 { color: #fff; }
+.admin .tx-detail-head button { color: #bce7ef; }
+.admin .tx-detail-id,
+.admin .tx-profile,
+.admin .order-detail-info,
+.admin .order-detail-editor,
+.admin .order-refund-section { border-color: #dce9f0; background: #f8fbfd; }
+.admin .tx-profile { margin: 14px; border-radius: 10px; }
+.admin .tx-info { border-bottom-color: #e2ebf1; }
+.admin .tx-info span { color: #7d93a5; }
+.admin .order-label { border-radius: 8px; }
+.admin .order-status-menu { border-color: #cfe0ea; box-shadow: 0 16px 30px #163b5b1d; }
+.admin .order-refund-button { border-radius: 8px; background: linear-gradient(135deg, #e65c72, #ca3f59); }
+
+/* Service catalog and pricing */
+.admin .services-page {
+  background: #f4f8fb;
+}
+.admin .services-intro { align-items: flex-end; }
+.admin .services-note { display: flex; align-items: center; gap: 10px; padding: 11px 13px; }
+.admin .services-note span { display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border-radius: 50%; background: #dff4fa; color: #0e8ba0; font-weight: 900; }
+.admin .trial-admin-card { position: relative; overflow: hidden; border-color: #cbe4ed; background: linear-gradient(105deg, #f7fcff, #f1fbf8); }
+.admin .trial-admin-card::after { position: absolute; right: -25px; top: -45px; width: 135px; height: 135px; border: 1px solid #18a7902e; border-radius: 50%; content: ""; }
+.admin .services-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.admin .service-stat { position: relative; min-height: 102px; overflow: hidden; }
+.admin .service-stat strong { font-size: 22px; }
+.admin .service-stat.blue { border-top: 3px solid #197ce0; }
+.admin .service-stat.green { border-top: 3px solid #16aa87; }
+.admin .service-stat.orange { border-top: 3px solid #e4a127; }
+.admin .service-stat.purple { border-top: 3px solid #8961d2; }
+.admin .services-toolbar { padding: 10px; border: 1px solid #dce8ef; border-radius: 11px; background: #f7fafc; }
+.admin .services-search { min-height: 38px; border-radius: 8px; background: #fff; }
+.admin .services-toolbar select { min-height: 38px; border-radius: 8px; }
+.admin .services-table-actions { display: flex; align-items: center; gap: 12px; }
+.admin .services-add-server { min-height: 34px; padding: 0 12px; border: 1px solid #b9dfdc; border-radius: 8px; background: #edfbf8; color: #087f77; font-size: 10px; font-weight: 850; }
+.admin .services-add-server:hover { border-color: #4eb9ae; background: #dcf7f1; }
+.admin .server-create-panel { margin: 13px 0 14px; overflow: hidden; padding: 0; border: 1px solid #bcdde5; border-top: 3px solid #159a98; border-radius: 10px; background: #fff; }
+.admin .server-create-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 15px 17px; background: linear-gradient(100deg, #f4fbfd, #f3fbf8); }
+.admin .server-create-head > div > span { color: #118b9b; font-size: 8px; font-weight: 900; letter-spacing: 1.4px; }
+.admin .server-create-head h3 { margin: 6px 0 3px; color: #1b3b57; font-size: 15px; }
+.admin .server-create-head p { margin: 0; color: #8298a8; font-size: 10px; }
+.admin .server-create-head > button { width: 28px; height: 28px; border: 1px solid #d2e4eb; border-radius: 7px; background: #fff; color: #53778d; font-size: 18px; line-height: 1; }
+.admin .server-create-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 16px 17px 5px; }
+.admin .server-field { display: grid; gap: 6px; color: #49677f; font-size: 10px; font-weight: 750; }
+.admin .server-field-wide { grid-column: span 2; }
+.admin .server-field input,
+.admin .server-field select,
+.admin .server-field textarea { width: 100%; min-height: 37px; padding: 9px 10px; border: 1px solid #d2e2ea; border-radius: 7px; background: #fff; color: #244861; font-size: 11px; }
+.admin .server-field textarea { min-height: 68px; resize: vertical; }
+.admin .server-field input:focus,
+.admin .server-field select:focus,
+.admin .server-field textarea:focus { border-color: #4da5b4; box-shadow: 0 0 0 3px #35aeb51a; }
+.admin .server-create-error { margin: 2px 17px 0; color: #d34e63; font-size: 10px; }
+.admin .server-create-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 17px 15px; }
+.admin .server-cancel,
+.admin .server-submit { min-height: 36px; padding: 0 14px; border-radius: 7px; font-size: 10px; font-weight: 850; }
+.admin .server-cancel { border: 1px solid #d2e2ea; background: #fff; color: #5b7489; }
+.admin .server-submit { border: 0; background: linear-gradient(105deg, #147bd1, #138a98); color: #fff; box-shadow: 0 6px 14px #138a9826; }
+.admin .server-submit:disabled { cursor: wait; opacity: .6; }
+.admin .services-layout { gap: 14px; align-items: start; }
+.admin .services-table-card { overflow: hidden; padding: 0; border-radius: 8px; box-shadow: 0 3px 14px #153b5b0b; }
+.admin .services-table-head { min-height: 58px; padding: 13px 15px; background: linear-gradient(90deg, #fbfdff, #f3f9fc); }
+.admin .services-table-head h3 { color: #1c3c59; }
+.admin .services-table-wrap { overflow-x: auto; padding: 0; }
+.admin .services-table { width: 100%; margin: 0; table-layout: fixed; border: 1px solid #d8e4eb; border-collapse: collapse; background: #fff; }
+.admin .services-table th:nth-child(1), .admin .services-table td:nth-child(1) { width: 18%; }
+.admin .services-table th:nth-child(2), .admin .services-table td:nth-child(2) { width: 25%; }
+.admin .services-table th:nth-child(3), .admin .services-table td:nth-child(3) { width: 32%; }
+.admin .services-table th:nth-child(4), .admin .services-table td:nth-child(4) { width: 13%; }
+.admin .services-table th:nth-child(5), .admin .services-table td:nth-child(5) { width: 12%; }
+.admin .services-table th:nth-child(6), .admin .services-table td:nth-child(6),
+.admin .services-table th:nth-child(7), .admin .services-table td:nth-child(7) { display: none; }
+.admin .services-table thead th { padding: 10px 12px; border: 1px solid #d8e4eb; background: #f0f5f8; color: #6b8497; font-size: 8px; }
+.admin .services-table tbody td { height: 57px; padding: 9px 12px; border: 1px solid #e5edf2; color: #284760; font-size: 10px; }
+.admin .services-table tbody tr { cursor: pointer; }
+.admin .services-table tbody tr { cursor: pointer; }
+.admin .services-table tbody tr:hover { background: #f0f9fc; }
+.admin .services-table tbody tr.selected { background: #e7f7fb; box-shadow: inset 3px 0 #0b9b9b; }
+.admin .platform-cell { display: flex; min-width: 0; align-items: center; gap: 7px; }
+.admin .platform-cell > span { display: grid; width: 27px; height: 27px; flex: 0 0 27px; place-items: center; overflow: hidden; border-radius: 8px; background: #e7f3fc; color: #1476b5; font-size: 9px; line-height: 1; text-overflow: ellipsis; }
+.admin .platform-cell b { overflow: hidden; color: #1c5d91; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.admin .services-service-column b,
+.admin .services-package-column b { display: block; overflow: hidden; color: #153f62; font-size: 10px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.admin .services-service-column > small:not(.service-platform-mobile),
+.admin .services-package-column > small { display: block; overflow: hidden; margin-top: 4px; color: #8aa0b0; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.admin .services-limit-column { color: #315a79; white-space: nowrap; }
+.admin .services-limit-column small { display: block; margin-top: 4px; color: #91a4b1; font-size: 8px; }
+.admin .services-price-column { text-align: right; white-space: nowrap; }
+.admin .services-price-column .service-price { color: #0d6f9d; font-size: 11px; }
+.admin .service-inline-state { display: none; }
+.admin .service-status { border-radius: 20px; }
+.admin .service-edit { border: 1px solid #cce0eb; background: #f5fbfe; color: #1677a1; }
+.admin .service-edit:hover { border-color: #54a9c2; background: #e5f7fb; }
+.admin .service-price-editor { position: sticky; top: 94px; overflow: hidden; padding: 0; }
+.admin .service-editor-head { padding: 17px; background: linear-gradient(135deg, #10375b, #126177); color: #fff; }
+.admin .service-editor-head h3,
+.admin .service-editor-head p { color: inherit; }
+.admin .service-editor-path,
+.admin .service-editor-info,
+.admin .service-availability { margin-left: 15px; margin-right: 15px; }
+.admin .service-editor-path { margin-top: 15px; border-color: #d8e8ef; border-radius: 9px; background: #f7fbfd; }
+.admin .service-editor-info { border-color: #e0ebf0; }
+.admin .service-availability { border-color: #cfe3eb; border-radius: 10px; background: #f7fbfd; }
+.admin .service-price-input { background: #fff; }
+.admin .service-price-preview { background: #effaf9; }
+.admin .service-save { margin-left: 15px; margin-right: 15px; width: calc(100% - 30px); border: 0; border-radius: 8px; }
+
+/* Trial key management */
+.admin .trial-key-stats { margin: 22px 0 14px; }
+.admin .trial-key-grid { gap: 14px; }
+.admin .trial-key-create,
+.admin .trial-key-new { position: relative; overflow: hidden; padding: 19px; }
+.admin .trial-key-create { border-top: 3px solid #1b81dd; }
+.admin .trial-key-new { border-top: 3px solid #15aa88; }
+.admin .trial-key-create::after,
+.admin .trial-key-new::after { position: absolute; right: -25px; bottom: -35px; width: 120px; height: 120px; border: 1px solid #238cb62c; border-radius: 50%; content: ""; }
+.admin .trial-key-create h2,
+.admin .trial-key-new h2,
+.admin .trial-key-table-card h2 { font-size: 15px; }
+.admin .trial-key-primary { position: relative; z-index: 1; min-height: 40px; }
+.admin .trial-key-section-head { min-height: 57px; align-items: center; }
+.admin .trial-key-table-card { overflow: hidden; padding: 0; }
+.admin .trial-key-table-card > .trial-key-section-head { padding: 0 17px; background: linear-gradient(90deg, #fbfdff, #f3f9fc); }
+.admin .trial-key-table-card > p,
+.admin .trial-key-table-wrap > p { padding: 16px; }
+.admin .trial-key-table { margin: 0; }
+.admin .trial-key-table td { height: 54px; }
+.admin .key-code { padding: 5px 7px; border: 1px dashed #a9d8dc; border-radius: 6px; background: #effaf9; }
+
+/* User profile and balance workspace */
+.admin .user-profile-card { position: relative; overflow: hidden; border-top: 3px solid #187fe0; }
+.admin .user-profile-card::after { position: absolute; right: -30px; top: -52px; width: 170px; height: 170px; border: 1px solid #1b95bc26; border-radius: 50%; content: ""; }
+.admin .user-profile-avatar { position: relative; z-index: 1; }
+.admin .user-profile-main { position: relative; z-index: 1; }
+.admin .user-balance-link { position: relative; z-index: 1; }
+.admin .user-detail-stat { position: relative; overflow: hidden; background: linear-gradient(145deg, #fff, #f8fcfe); }
+.admin .user-detail-stat::after { position: absolute; right: -18px; bottom: -28px; width: 80px; height: 80px; border: 1px solid currentColor; border-radius: 50%; opacity: .1; content: ""; }
+.admin .user-account-card,
+.admin .user-security-card { min-height: 214px; }
+.admin .user-account-card h2,
+.admin .user-security-card h2 { display: flex; align-items: center; gap: 8px; }
+.admin .user-account-card h2::before,
+.admin .user-security-card h2::before { display: inline-block; width: 5px; height: 18px; border-radius: 3px; background: #1595a6; content: ""; }
+.admin .user-orders-card { overflow: hidden; padding: 0; }
+.admin .user-orders-heading { min-height: 65px; padding: 14px 18px; background: linear-gradient(90deg, #fbfdff, #f3f9fc); }
+.admin .user-orders-table-wrap { padding: 0 0 4px; }
+.admin .user-orders-table { margin: 0; }
+.admin .user-orders-table tbody tr:hover { background: #f1f9fc; }
+.admin .balance-user { position: relative; overflow: hidden; border-top: 3px solid #14a88a; }
+.admin .balance-user::after { position: absolute; right: -35px; top: -55px; width: 170px; height: 170px; border: 1px solid #159a9625; border-radius: 50%; content: ""; }
+.admin .balance-avatar,
+.admin .balance-user > div:not(.balance-avatar) { position: relative; z-index: 1; }
+.admin .balance-stat { position: relative; z-index: 1; min-width: 140px; }
+.admin .balance-grid { gap: 14px; }
+.admin .balance-form,
+.admin .user-info { padding: 20px; }
+.admin .balance-form { border-top: 3px solid #1b81dd; }
+.admin .user-info { border-top: 3px solid #8a63d6; }
+.admin .mode { gap: 8px; margin: 22px 0 18px; }
+.admin .mode button { border-radius: 8px; }
+.admin .save-balance { min-height: 44px; }
+
+/* Generic system modules (refunds, notifications, provider, settings) */
+.admin .generic-page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 5px 0 18px; border-bottom: 1px solid #dce8ef; }
+.admin .generic-eyebrow { display: block; margin-bottom: 8px; color: #118b9b; font-size: 8px; font-weight: 900; letter-spacing: 1.7px; }
+.admin .generic-page-head h2 { margin: 0; }
+.admin .generic-refresh { min-height: 38px; padding: 0 14px; border: 1px solid #cfe0eb; border-radius: 8px; background: #fff; color: #1677a8; font-weight: 750; }
+.admin .generic-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin: 18px 0 14px; }
+.admin .generic-stat { min-height: 102px; padding: 15px; border: 1px solid #dce8ef; border-top: 3px solid #187fca; border-radius: 13px; background: linear-gradient(145deg, #fff, #f7fbfd); box-shadow: 0 6px 18px #153b5b0b; }
+.admin .generic-stat:nth-child(2) { border-top-color: #13a989; }
+.admin .generic-stat:nth-child(3) { border-top-color: #8961d2; }
+.admin .generic-stat span { display: block; color: #7289a0; font-size: 8px; font-weight: 850; letter-spacing: .7px; }
+.admin .generic-stat strong { display: block; margin: 10px 0 4px; color: #183853; font-size: 22px; }
+.admin .generic-stat small { color: #8297a8; font-size: 9px; }
+.admin .generic-workspace { overflow: hidden; padding: 0; border-top: 3px solid #187fca; }
+.admin .generic-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 70px; padding: 13px 17px; border-bottom: 1px solid #e2ebf1; background: linear-gradient(90deg, #fbfdff, #f3f9fc); }
+.admin .generic-toolbar h3 { margin: 0; color: #1d3b57; font-size: 14px; }
+.admin .generic-toolbar p { margin: 5px 0 0; color: #8297a8; font-size: 10px; }
+.admin .generic-toolbar label { display: flex; align-items: center; min-height: 36px; padding-left: 10px; border: 1px solid #d2e1ea; border-radius: 8px; background: #fff; color: #438fa7; }
+.admin .generic-toolbar label input { width: 250px; padding: 8px 10px; border: 0; box-shadow: none; }
+.admin .generic-module-empty { display: grid; justify-items: center; padding: 62px 24px 70px; text-align: center; }
+.admin .generic-module-icon { display: grid; width: 52px; height: 52px; place-items: center; border: 1px solid #bfe0e8; border-radius: 16px; background: #eaf8fa; color: #128da0; font-size: 24px; font-weight: 850; }
+.admin .generic-module-empty h3 { margin: 16px 0 5px; color: #1b3b58; font-size: 16px; }
+.admin .generic-module-empty p { max-width: 470px; margin: 0; color: #8296a8; font-size: 11px; line-height: 1.6; }
+.admin .generic-module-empty button { margin-top: 17px; min-height: 36px; padding: 0 14px; border: 1px solid #c8e0e8; border-radius: 8px; background: #f2fbfd; color: #167d99; font-size: 10px; font-weight: 800; }
+.admin .generic-table-wrap { overflow-x: auto; }
+.admin .generic-table { min-width: 820px; margin: 0; }
+.admin .generic-table td { height: 56px; }
+.admin .generic-table tbody tr:hover { background: #f1f9fc; }
+.admin .generic-id { color: #8298a9; font-family: Consolas, monospace; font-size: 9px; }
+.admin .generic-empty { padding: 35px 18px; color: #8296a8; text-align: center; font-size: 11px; }
+.admin .generic-delete { padding: 6px 10px; border: 1px solid #f4cdd3; border-radius: 7px; background: #fff3f4; color: #d84b62; font-size: 10px; font-weight: 800; }
+
+@media (max-width: 1200px) {
+  .admin .deposit-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin .total-paid-card { grid-column: 1 / -1; }
+  .admin .transactions-shell { grid-template-columns: minmax(0, 1fr) 360px; }
+}
+
+@media (max-width: 900px) {
+  .admin .deposit-summary,
+  .admin .transaction-stats,
+  .admin .services-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin .deposit-workspace,
+  .admin .transactions-shell,
+  .admin .services-layout,
+  .admin .services-layout.has-selection { grid-template-columns: 1fr; }
+  .admin .deposit-detail,
+  .admin .transaction-detail,
+  .admin .service-price-editor { position: static; }
+  .admin .transactions-shell.has-detail .transaction-detail { margin-top: 14px; }
+  .admin .deposit-detail { margin-top: 14px; }
+  .admin .users-table-card::after { display: none; }
+  .admin .users-toolbar { justify-content: stretch; }
+  .admin .users-toolbar input { flex: 1; }
+}
+
+@media (max-width: 600px) {
+  .admin .users-page > .admin-only-title,
+  .admin .trial-keys-page > .admin-only-title,
+  .admin .balance-page > h2,
+  .admin .user-detail-page .admin-only-title { padding-top: 10px; }
+  .admin .deposit-page-head,
+  .admin .transactions-head,
+  .admin .services-intro { display: block; }
+  .admin .deposit-head-tools,
+  .admin .transactions-head > label,
+  .admin .services-refresh { margin-top: 14px; }
+  .admin .deposit-head-tools label,
+  .admin .transactions-head > label { width: 100%; }
+  .admin .deposit-head-tools input,
+  .admin .transactions-head > label input { flex: 1; width: auto; }
+  .admin .deposit-summary,
+  .admin .transaction-stats,
+  .admin .services-stats { gap: 8px; }
+  .admin .users-page .admin-stat,
+  .admin .trial-keys-page .admin-stat,
+  .admin .tx-stat,
+  .admin .service-stat { min-height: 92px; padding: 11px; }
+  .admin .users-page .admin-stat strong,
+  .admin .tx-stat strong,
+  .admin .service-stat strong { font-size: 17px; }
+  .admin .users-table-card::before { padding-left: 13px; }
+  .admin .users-toolbar { padding: 10px 13px; }
+  .admin .deposit-summary { grid-template-columns: 1fr 1fr; }
+  .admin .deposit-summary .total-paid-card { grid-column: 1 / -1; }
+  .admin .trial-key-grid { grid-template-columns: 1fr; }
+  .admin .new-key-list { grid-template-columns: 1fr; }
+  .admin .services-table-actions { align-items: flex-end; flex-direction: column; gap: 7px; }
+  .admin .services-table-hint { text-align: right; }
+  .admin .server-create-grid { grid-template-columns: 1fr 1fr; }
+  .admin .server-field-wide { grid-column: 1 / -1; }
+  .admin .balance-user { padding: 16px; }
+  .admin .balance-form,
+  .admin .user-info { padding: 15px; }
+  .admin .generic-page-head { display: block; }
+  .admin .generic-refresh { margin-top: 14px; }
+  .admin .generic-stats { gap: 8px; }
+  .admin .generic-stat { min-height: 90px; padding: 11px; }
+  .admin .generic-stat strong { font-size: 17px; }
+  .admin .generic-toolbar { display: block; }
+  .admin .generic-toolbar label { margin-top: 12px; }
+  .admin .generic-toolbar label,
+  .admin .generic-toolbar label input { width: 100%; }
+}
+
+/* User directory alternative layout */
+.admin .users-page-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+  padding: 20px 22px;
+  border: 1px solid #cfe0ea;
+  border-radius: 14px;
+  background: linear-gradient(115deg, #ffffff 0%, #f1f9fc 62%, #eef5ff 100%);
+  box-shadow: 0 8px 22px #153b5b0b;
+}
+.admin .users-page-heading .admin-only-title { padding-top: 0; }
+.admin .users-page-heading .admin-only-title::before { display: none; }
+.admin .users-page-kicker { display: block; margin-bottom: 8px; color: #168a9a; font-size: 8px; font-weight: 900; letter-spacing: 1.7px; }
+.admin .users-page-heading .admin-only-sub { margin-top: 5px; }
+.admin .users-refresh { min-height: 36px; padding: 0 13px; border: 1px solid #c8dfe9; border-radius: 8px; background: #fff; color: #17769b; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.admin .users-refresh:hover { border-color: #55a9bd; background: #effbfc; }
+.admin .users-page .admin-stats { margin-top: 0; }
+.admin .users-page .admin-stat { min-height: 108px; border-radius: 12px; }
+.admin .users-page .admin-stat small { letter-spacing: .9px; }
+.admin .users-page .admin-stat strong { color: #183b5a; font-size: 22px; }
+.admin .users-page .admin-stat:nth-child(1) { border-top-color: #4f69df; }
+.admin .users-page .admin-stat:nth-child(2) { border-top-color: #12a58c; }
+.admin .users-page .admin-stat:nth-child(3) { border-top-color: #9162d6; }
+.admin .users-table-card { border-radius: 12px; }
+.admin .users-table-card::before { padding: 15px 17px 11px; content: "Account directory"; }
+.admin .users-table-card::after { top: 17px; left: 138px; content: "Tài khoản, số dư và hoạt động gần nhất"; }
+.admin .users-toolbar { align-items: center; justify-content: space-between; gap: 12px; padding: 11px 17px; }
+.admin .users-search { display: flex; min-width: 270px; max-width: 420px; flex: 1; align-items: center; padding-left: 11px; border: 1px solid #d5e3ec; border-radius: 8px; background: #fff; color: #5b9bb1; }
+.admin .users-search input { width: 100%; min-height: 35px; padding: 8px 10px; border: 0; box-shadow: none; }
+.admin .users-search input:focus { box-shadow: none; }
+.admin .users-toolbar-meta { display: inline-flex; align-items: baseline; gap: 5px; color: #8a9dac; font-size: 9px; white-space: nowrap; }
+.admin .users-toolbar-meta b { color: #1b7899; font-size: 15px; }
+.admin .users-toolbar > button { min-height: 35px; padding: 0 13px; border: 1px solid #cfe0ea; border-radius: 8px; background: #f5fafc; color: #337594; box-shadow: none; }
+.admin .users-toolbar > button:hover { transform: none; border-color: #64a9bd; background: #edf9fc; box-shadow: none; }
+.admin .users-table { border-top: 1px solid #dbe7ee; }
+.admin .users-table th { padding-top: 10px; padding-bottom: 10px; background: #f1f6f9; }
+.admin .users-table td { height: 60px; }
+.admin .users-table tbody tr:hover { background: #f2f9fc; box-shadow: inset 3px 0 #1c9cad; }
+.admin .users-table td:nth-child(2) b { color: #173b5a; }
+.admin .users-table .total-deposited-cell { color: #128d71; }
+.admin .users-table .presence { font-size: 9px; }
+
+@media (max-width: 700px) {
+  .admin .users-page-heading { align-items: stretch; flex-direction: column; padding: 16px; }
+  .admin .users-refresh { width: 100%; }
+  .admin .users-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .admin .users-search { min-width: 100%; max-width: none; }
+  .admin .users-toolbar-meta { margin-right: auto; }
+}
+
+/* Full user-directory redesign */
+.admin .users-page { max-width: 1600px; }
+.admin .users-console-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 142px;
+  margin-bottom: 16px;
+  padding: 24px 26px;
+  overflow: hidden;
+  border: 1px solid #1d4f70;
+  border-radius: 16px;
+  background: radial-gradient(circle at 92% 0, #1ca6bd55, transparent 34%), linear-gradient(120deg, #0b2a47, #10445c 63%, #106f70);
+  box-shadow: 0 13px 30px #0d38521d;
+}
+.admin .users-console-hero::after { width: 220px; height: 220px; right: -80px; top: -115px; border: 1px solid #76e7e344; border-radius: 50%; box-shadow: 0 0 0 18px #76e7e315, 0 0 0 36px #76e7e308; content: ""; position: absolute; pointer-events: none; }
+.admin .users-console-hero h2 { position: relative; z-index: 1; margin: 6px 0 5px; color: #f2fbff; font-size: 25px; letter-spacing: -.5px; }
+.admin .users-console-hero p { position: relative; z-index: 1; margin: 0; color: #acd0dc; font-size: 10px; }
+.admin .users-page-kicker { color: #7ee6dd; }
+.admin .users-hero-actions { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
+.admin .users-hero-actions > span { display: inline-flex; align-items: center; gap: 7px; color: #b8e8e2; font-size: 9px; font-weight: 800; white-space: nowrap; }
+.admin .users-hero-actions > span i { width: 7px; height: 7px; border-radius: 50%; background: #31e4ae; box-shadow: 0 0 0 4px #31e4ae22; }
+.admin .users-hero-actions button { min-height: 36px; padding: 0 13px; border: 1px solid #74cbd2; border-radius: 8px; background: #ffffff12; color: #e9ffff; font-size: 10px; font-weight: 800; }
+.admin .users-hero-actions button:hover { background: #ffffff22; }
+.admin .users-metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.admin .users-metric { position: relative; display: flex; align-items: center; gap: 12px; min-height: 94px; overflow: hidden; padding: 14px; border: 1px solid #d8e5ed; border-top: 3px solid #4b63de; border-radius: 12px; background: #fff; box-shadow: 0 7px 18px #183b5b0a; }
+.admin .users-metric::after { position: absolute; right: -25px; bottom: -35px; width: 95px; height: 95px; border: 1px solid currentColor; border-radius: 50%; opacity: .11; content: ""; }
+.admin .users-metric.green { border-top-color: #12a98b; }
+.admin .users-metric.purple { border-top-color: #8a62d5; }
+.admin .users-metric.orange { border-top-color: #e0a027; }
+.admin .users-metric > i { display: grid; width: 35px; height: 35px; flex: 0 0 35px; place-items: center; border-radius: 10px; background: #eef1ff; color: #5265d7; font-size: 17px; font-style: normal; font-weight: 800; }
+.admin .users-metric.green > i { background: #e9faf5; color: #0b997b; }
+.admin .users-metric.purple > i { background: #f3edff; color: #8359ce; }
+.admin .users-metric.orange > i { background: #fff5df; color: #c98813; }
+.admin .users-metric span, .admin .users-metric small { display: block; }
+.admin .users-metric span { color: #71869a; font-size: 8px; font-weight: 850; letter-spacing: .6px; text-transform: uppercase; }
+.admin .users-metric strong { display: block; margin: 5px 0 3px; color: #183752; font-size: 19px; }
+.admin .users-metric small { color: #7e97a8; font-size: 8px; }
+.admin .users-directory-card { overflow: hidden; padding: 0; border-radius: 14px; }
+.admin .users-directory-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 17px 19px; border-bottom: 1px solid #e2ebf0; background: linear-gradient(100deg, #fff, #f5fafc); }
+.admin .users-directory-head > div > span { color: #17879a; font-size: 8px; font-weight: 900; letter-spacing: 1.3px; }
+.admin .users-directory-head h3 { margin: 5px 0 3px; color: #1b3956; font-size: 15px; }
+.admin .users-directory-head p { margin: 0; color: #8297a8; font-size: 9px; }
+.admin .users-directory-head > b { padding: 7px 10px; border: 1px solid #cae4ea; border-radius: 20px; background: #effafd; color: #177e97; font-size: 9px; white-space: nowrap; }
+.admin .users-directory-toolbar { display: flex; align-items: center; gap: 11px; padding: 12px 17px; border-bottom: 1px solid #e3edf2; background: #fbfdfe; }
+.admin .users-directory-toolbar .users-search { display: flex; min-width: 230px; flex: 1; align-items: center; padding-left: 11px; border: 1px solid #d4e2eb; border-radius: 8px; background: #fff; color: #5a9bae; }
+.admin .users-directory-toolbar .users-search input { width: 100%; min-height: 35px; padding: 8px 10px; border: 0; box-shadow: none; }
+.admin .users-status-filter { display: flex; gap: 3px; padding: 3px; border: 1px solid #dce7ed; border-radius: 8px; background: #f2f7fa; }
+.admin .users-status-filter button { min-height: 29px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; color: #748a9d; font-size: 9px; white-space: nowrap; }
+.admin .users-status-filter button b { margin-left: 3px; color: #2d6781; font-size: 8px; }
+.admin .users-status-filter button.active { background: #173f63; color: #fff; box-shadow: 0 3px 8px #173f6326; }
+.admin .users-status-filter button.active b { color: #a9edf0; }
+.admin .users-reset { min-height: 35px; padding: 0 11px; border: 1px solid #d1e1e9; border-radius: 8px; background: #fff; color: #37758e; font-size: 9px; font-weight: 800; white-space: nowrap; }
+.admin .users-reset:hover { border-color: #55a9bd; background: #effafd; }
+.admin .users-table-scroll { overflow-x: auto; }
+.admin .users-table { min-width: 880px; margin: 0; }
+.admin .users-table thead th { padding: 10px 12px; border-bottom: 1px solid #d5e4eb; background: #f1f6f8; color: #71899b; font-size: 8px; }
+.admin .users-table thead th:first-child, .admin .users-table tbody td:first-child { padding-left: 18px; }
+.admin .users-table thead th:last-child, .admin .users-table tbody td:last-child { padding-right: 18px; }
+.admin .users-table tbody td { height: 64px; padding: 10px 12px; border-bottom-color: #e9f0f4; }
+.admin .users-table tbody tr:hover { background: #f1f9fc; box-shadow: inset 3px 0 #18a0aa; }
+.admin .user-identity { display: flex; min-width: 180px; align-items: center; gap: 9px; }
+.admin .user-identity > i { display: grid; width: 31px; height: 31px; flex: 0 0 31px; place-items: center; border-radius: 9px; background: linear-gradient(145deg, #e4ecff, #d8f5f3); color: #3e62c8; font-size: 9px; font-style: normal; font-weight: 900; }
+.admin .user-identity b, .admin .user-identity small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin .user-identity b { color: #173957; font-size: 10px; }
+.admin .user-identity small { max-width: 170px; margin-top: 4px; color: #8a9dac; font-size: 8px; }
+.admin .user-id { color: #8ba0af; font-family: Consolas, monospace; font-size: 8px; }
+.admin .user-balance { color: #167e70; font-size: 10px; }
+.admin .role-badge { display: inline-flex; padding: 5px 8px; border-radius: 20px; background: #edf2ff; color: #4564ca; font-size: 8px; font-weight: 850; }
+.admin .users-table .total-deposited-cell { color: #148d70; font-size: 10px; }
+.admin .users-table .total-deposited-cell::before { content: "↗ "; color: #22af8d; }
+.admin .users-table .presence { font-size: 8px; white-space: nowrap; }
+.admin .users-empty { padding: 45px 20px; color: #8297a8; text-align: center; font-size: 10px; }
+
+@media (max-width: 1000px) {
+  .admin .users-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin .users-directory-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .admin .users-directory-toolbar .users-search { min-width: 100%; }
+  .admin .users-status-filter { flex: 1; }
+}
+
+@media (max-width: 600px) {
+  .admin .users-console-hero { display: block; padding: 18px; }
+  .admin .users-console-hero h2 { font-size: 21px; }
+  .admin .users-hero-actions { justify-content: space-between; margin-top: 16px; }
+  .admin .users-metric-grid { gap: 8px; }
+  .admin .users-metric { min-height: 88px; padding: 10px; gap: 8px; }
+  .admin .users-metric > i { width: 29px; height: 29px; flex-basis: 29px; font-size: 13px; }
+  .admin .users-metric strong { font-size: 15px; }
+  .admin .users-directory-head { align-items: flex-start; padding: 14px; }
+  .admin .users-directory-toolbar { padding: 10px 12px; }
+  .admin .users-status-filter { width: 100%; justify-content: space-between; }
+  .admin .users-status-filter button { flex: 1; padding: 0 4px; }
+  .admin .users-reset { flex: 0 0 auto; }
+}

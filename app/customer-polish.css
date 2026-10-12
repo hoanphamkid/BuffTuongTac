@@ -1,0 +1,183 @@
+/* Customer workspace refresh: calm navy surfaces, clear hierarchy and compact
+   controls. This layer is scoped to customer-shell so admin/auth screens keep
+   their own visual language. */
+
+.customer-shell {
+  --customer-bg: #0b1c2e;
+  --customer-panel: #10263d;
+  --customer-raised: #15314a;
+  --customer-border: #2c4d67;
+  --customer-text: #eaf4ff;
+  --customer-muted: #91abc3;
+  --customer-accent: #62d3e8;
+  --customer-success: #73e7bf;
+  color: var(--customer-text);
+}
+
+.customer-shell.shell,
+.customer-shell.shell > .customer-main { background: #0b1c2e !important; }
+
+.customer-shell.shell > aside {
+  width: 244px;
+  padding: 18px 13px 16px;
+  border-right: 1px solid #254863;
+  background: radial-gradient(circle at 0 0, #17557955, transparent 38%), linear-gradient(180deg, #0b2339 0%, #091a2b 100%);
+  box-shadow: 8px 0 25px #06132235;
+}
+.customer-shell .brand { display: block; padding: 5px 9px 22px; }
+.customer-shell .brand img { width: 174px; max-height: 42px; }
+.customer-shell .user { margin: 0 3px; padding: 11px; border: 1px solid #2b506c; border-radius: 11px; background: linear-gradient(135deg, #123550, #102941); box-shadow: inset 0 1px #ffffff0b; }
+.customer-shell .user:hover { border-color: #3d86a3; }
+.customer-shell .avatar { background: linear-gradient(145deg, #1689c5, #15aa91); box-shadow: 0 5px 13px #0c7c9c44; }
+.customer-shell .user b { color: #edf8ff; }
+.customer-shell .user small { color: #8eafc6; }
+.customer-shell > aside > nav { margin-top: 18px; gap: 4px; }
+.customer-shell > aside > nav label { padding: 14px 10px 6px; color: #5f8ca8; font-size: 9px; font-weight: 850; letter-spacing: 1.3px; }
+.customer-shell > aside > nav button { min-height: 38px; padding: 9px 11px; border: 1px solid transparent; border-radius: 8px; color: #a9c3d8; font-size: 11px; transition: background .18s, border-color .18s, color .18s, transform .18s; }
+.customer-shell > aside > nav button:hover { transform: translateX(2px); border-color: #2b5d7b; background: #123652; color: #eaf8ff; }
+.customer-shell > aside > nav button.active { border-color: #2b7190; background: linear-gradient(90deg, #124969, #103a58); box-shadow: inset 3px 0 #43d2bb, 0 5px 14px #06152433; color: #fff; }
+
+.customer-shell .customer-main { min-width: 0; background: radial-gradient(circle at 100% 0, #1e526522, transparent 34%), linear-gradient(145deg, #112b42, #0d2438 68%, #0b1d2e) !important; }
+.customer-shell .customer-main > header { min-height: 78px; height: auto; padding: 15px clamp(18px, 3vw, 34px); border-bottom: 1px solid #294963; background: #0d2439e8; box-shadow: 0 5px 18px #06152422; }
+.customer-shell .customer-main > header .crumb { color: #73a0bd; font-size: 9px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+.customer-shell .customer-main > header h1 { margin-top: 5px; color: #f2f8ff; font-size: 20px; letter-spacing: -.3px; }
+.customer-shell .head-user { color: #94b4ca; font-size: 10px; }
+.customer-shell .head-user span { color: #78edc7; }
+.customer-shell .head-user a { color: #6bd6ee; }
+
+/* Create-order screen */
+.customer-shell .order.card { width: min(1080px, calc(100% - 48px)); margin: 24px auto; padding: 20px; border: 1px solid #315873; border-radius: 16px; background: linear-gradient(145deg, #122d48, #0e2238 68%, #102a3c); box-shadow: 0 16px 38px #06152455, inset 0 1px #ffffff0b; }
+.customer-shell .order-mode-switch { padding: 4px; border: 1px solid #2a4a66; border-radius: 10px; background: #091a2b; }
+.customer-shell .order-mode-switch button { min-height: 36px; color: #8daac1; }
+.customer-shell .order-mode-switch button.selected { background: #214669; color: #fff; box-shadow: 0 4px 12px #06132255; }
+.customer-shell .order-mode-switch button.selected.trial { background: #145b53; color: #b9ffe5; }
+.customer-shell .order .field { margin-top: 18px; }
+.customer-shell .order .field label { color: #9ab5cc; font-size: 10px; font-weight: 700; letter-spacing: .2px; }
+.customer-shell .order .field :is(input, select, textarea) { min-height: 43px; border: 1px solid #355873; border-radius: 8px; background: #132b44; color: #edf7ff; }
+.customer-shell .order .field :is(input, select, textarea):focus { border-color: #55c6d9; box-shadow: 0 0 0 3px #55c6d926; }
+.customer-shell .order .field :is(input, select, textarea)::placeholder { color: #7593ab; }
+.customer-shell .order .platform-trigger { min-height: 43px; border-color: #355873; border-radius: 8px; background: #132b44; color: #edf7ff; }
+.customer-shell .order .platform-menu { border-color: #355873; border-radius: 9px; background: #10283f; }
+.customer-shell .order .platform-option { background: #10283f; color: #eaf5ff; }
+.customer-shell .order .platform-option:hover, .customer-shell .order .platform-option.active { background: #1b405e; }
+.customer-shell .order-server-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid #244660; }
+.customer-shell .order-server-heading { margin-bottom: 9px; }
+.customer-shell .order-server-heading h2 { color: #c5d9e8; font-size: 12px; letter-spacing: .2px; }
+.customer-shell .order-server-heading > span { background: #173a54; color: #8fd7e6; }
+.customer-shell .order .servers { max-height: 350px; padding-right: 3px; }
+.customer-shell .order .server { min-height: 72px; margin-bottom: 8px; padding: 11px 13px; border: 1px solid #2a4a65; border-left: 3px solid #2a4a65; border-radius: 9px; background: #10263d; transition: background .18s, border-color .18s, transform .18s; }
+.customer-shell .order .server:hover { transform: translateX(2px); border-color: #3c7d9a; background: #14314b; }
+.customer-shell .order .server.chosen { border-color: #46bdd4; border-left-color: #36dab9; background: #153951; box-shadow: 0 5px 14px #071a2a44; }
+.customer-shell .order .server small { color: #7898b2; }
+.customer-shell .order .server strong { color: #f0f7ff; font-size: 12px; }
+.customer-shell .order .server p { color: #91acc1; font-size: 10px; }
+.customer-shell .order .server > b { color: #a7c4d9; font-size: 10px; }
+.customer-shell .order .server em { color: #6fe2bc; }
+.customer-shell .order .total { margin-top: 18px; padding: 14px 16px; border: 1px solid #1b8876; border-radius: 10px; background: linear-gradient(135deg, #0e3d3b, #123444); }
+.customer-shell .order .total small { color: #8ccfc1; font-size: 10px; }
+.customer-shell .order .total strong { color: #72efc2; font-size: 22px; }
+.customer-shell .order .total span { color: #60e6c2; font-size: 22px; }
+.customer-shell .order .primary { min-height: 44px; margin-top: 15px; background: linear-gradient(100deg, #175eae, #0f8d89); }
+
+/* Shared customer data pages */
+.customer-shell .table-card { width: min(1220px, calc(100% - 48px)); margin: 24px auto; padding: 20px; border: 1px solid #2d4d67; border-radius: 14px; background: #10263d; box-shadow: 0 14px 32px #0615243d; }
+.customer-shell .table-card h2 { margin: 0 0 16px; color: #eff7ff; font-size: 17px; }
+.customer-shell .table-controls { margin-bottom: 12px; color: #92adc3; font-size: 10px; }
+.customer-shell .table-controls select { min-height: 32px; border: 1px solid #345873; border-radius: 7px; background: #142e47; color: #e7f4ff; }
+.customer-shell .table-scroll { border: 1px solid #2e506a; border-radius: 9px; background: #0d2135; }
+.customer-shell .order-table tbody { gap: 9px; }
+.customer-shell .order-table tr { border-color: #2b4b65; background: #122a42; }
+.customer-shell .order-table tr:hover { background: #163550; }
+.customer-shell .table-footer { padding-top: 13px; color: #8da7bd; font-size: 10px; }
+.customer-shell .page-btn { border-color: #34536b; border-radius: 7px; background: #142d45; color: #a9c4d8; }
+.customer-shell .page-btn:not(.disabled):hover { background: #1b4663; color: #fff; }
+
+/* Customer service directory without the previous glowing treatment. */
+.customer-shell .services-overview { gap: 12px; }
+.customer-shell .services-summary { padding: 14px 16px; border: 1px solid #2d526b; border-radius: 11px; background: linear-gradient(100deg, #122e47, #15374c); }
+.customer-shell .services-summary-kicker { color: #78b1c8; font-size: 9px; letter-spacing: 1.3px; }
+.customer-shell .services-summary p { color: #9ab4c8; font-size: 11px; }
+.customer-shell .services-summary p strong { color: #eff8ff; font-size: 14px; }
+.customer-shell .services-live { color: #7fe5be; font-size: 10px; }
+.customer-shell .services-grid { gap: 12px; }
+.customer-shell .service-platform-card { border: 1px solid #2d4e68; border-radius: 12px; background: #10263d; box-shadow: 0 8px 20px #0615242e; animation: none; }
+.customer-shell .service-platform-card::before, .customer-shell .service-platform-card::after { display: none; }
+.customer-shell .service-platform-card:hover { transform: translateY(-2px); border-color: #4d8aa3; box-shadow: 0 12px 25px #0615244a; }
+.customer-shell .service-platform-head { padding: 13px 14px; border-bottom: 1px solid #294a63; background: #132d46; }
+.customer-shell .service-platform-copy h3 { color: #eef7ff; font-size: 16px; }
+.customer-shell .service-platform-copy p { color: #8eabc0; font-size: 10px; }
+.customer-shell .service-platform-list { padding: 4px 12px; }
+.customer-shell .service-item { padding: 11px 2px; border-bottom-color: #29475f; }
+.customer-shell .service-item:hover { transform: none; background: #15344d; }
+.customer-shell .service-item-title b { color: #eaf5ff; font-size: 11px; }
+.customer-shell .service-item-meta { color: #8aa8be; font-size: 9px; }
+.customer-shell .service-server-list span { border-color: #2e526b; background: #132d44; color: #9fbace; }
+.customer-shell .service-server-list span b { color: #74e4c0; }
+.customer-shell .service-platform-footer { border-top-color: #29475f; }
+
+/* Account, funds and support share the same surface rhythm. */
+.customer-shell .account-page, .customer-shell .funds-page { background: transparent; }
+.customer-shell .account-page > .account-title { padding: 22px clamp(18px, 3vw, 34px); border-bottom: 1px solid #294963; background: #0d2439; }
+.customer-shell .account-title h1 { color: #f0f8ff; font-size: 22px; }
+.customer-shell .account-title p, .customer-shell .account-title span, .customer-shell .breadcrumbs { color: #8eacc1; }
+.customer-shell .account-page > section, .customer-shell .account-page > nav { width: min(1120px, calc(100% - 48px)); margin-left: auto; margin-right: auto; }
+.customer-shell .account-profile, .customer-shell .account-stat, .customer-shell .account-panel, .customer-shell .security-card, .customer-shell .fund-card, .customer-shell .history-card, .customer-shell .support-page { border-color: #2d4d67; background: #10263d; box-shadow: 0 12px 28px #06152435; }
+.customer-shell .account-profile { margin-top: 22px; padding: 21px; }
+.customer-shell .account-name h2 { color: #f0f7ff; font-size: 21px; }
+.customer-shell .account-profile p { color: #91abc0; }
+.customer-shell .account-avatar { width: 78px; height: 78px; background: linear-gradient(145deg, #1988c3, #15ad91); font-size: 28px; }
+.customer-shell .account-stats { width: min(1120px, calc(100% - 48px)); margin: 13px auto 0; gap: 12px; }
+.customer-shell .account-stat { padding: 15px; }
+.customer-shell .account-stat i { padding: 11px; border-radius: 10px; background: #173a54; color: #6dd9e6; }
+.customer-shell .account-stat span { color: #8da8bd; font-size: 10px; }
+.customer-shell .account-stat strong { color: #edf7ff; font-size: 21px; }
+.customer-shell .account-tabs { width: min(1120px, calc(100% - 48px)); margin: 14px auto 0; border-bottom-color: #2a4a63; }
+.customer-shell .account-tabs button { color: #89a7bd; font-size: 12px; }
+.customer-shell .account-tabs button.active { color: #6bdded; border-bottom-color: #48cfdb; background: #14334c; }
+.customer-shell .account-columns { width: min(1120px, calc(100% - 48px)); margin: 13px auto 0; gap: 13px; }
+.customer-shell .account-panel, .customer-shell .security-card { padding: 19px; }
+.customer-shell .account-panel h2, .customer-shell .security-card h2 { color: #eef7ff; font-size: 15px; }
+.customer-shell .account-field { color: #97b1c4; font-size: 11px; }
+.customer-shell .account-field input { border-color: #355772; border-radius: 8px; background: #142c45; color: #edf6ff; }
+.customer-shell .account-field input:disabled { background: #11263b; color: #819bb0; }
+.customer-shell .account-primary { margin-top: 20px; padding: 11px 18px; border-radius: 8px; background: linear-gradient(100deg, #1764b6, #128f88); font-size: 12px; }
+.customer-shell .security-row { border-top-color: #29475f; }
+.customer-shell .security-row span { color: #d9e8f5; }
+.customer-shell .security-row small { color: #8ca7bc; }
+.customer-shell .funds-top { width: min(1120px, calc(100% - 48px)); margin: 23px auto 0; gap: 13px; }
+.customer-shell .fund-card { padding: 19px; }
+.customer-shell .bank-qr, .customer-shell .usdt-qr, .customer-shell .info-box, .customer-shell .notes small { border-color: #2d4d67; background: #122b43; }
+.customer-shell .info-row { border-bottom-color: #2b4962; }
+.customer-shell .info-row span { color: #8da7bd; }
+.customer-shell .info-row b { color: #e4f1fc; }
+.customer-shell .amount-label { color: #91abc0; }
+.customer-shell .amount-label input { border-color: #355772; background: #142c45; color: #eef7ff; }
+.customer-shell .history-card { width: min(1120px, calc(100% - 48px)); margin: 13px auto 0; padding: 15px; }
+.customer-shell .support-page { width: min(1080px, calc(100% - 48px)); margin: 24px auto !important; padding: 24px !important; background: #10263d; }
+.customer-shell .support-heading h1 { color: #f0f8ff; font-size: 24px; }
+.customer-shell .support-heading p, .customer-shell .support-card p { color: #8fa9bd; }
+.customer-shell .support-card { border-color: #2d4d67; background: #132c44; color: #eaf5ff; }
+.customer-shell .support-card:hover { border-color: #48a9bb; background: #173852; }
+
+@media (max-width: 800px) {
+  .customer-shell.shell > aside { width: 54px; padding: 58px 7px 14px; }
+  .customer-shell.shell > aside .brand { padding: 0 8px 20px; }
+  .customer-shell.shell > aside .brand img { width: 150px; max-width: none; transform: translateX(-3px); }
+  .customer-shell .customer-main > header { padding: 13px 14px; }
+  .customer-shell .order.card, .customer-shell .table-card, .customer-shell .support-page { width: calc(100% - 28px); margin: 14px auto; }
+  .customer-shell .order.card { padding: 15px; }
+  .customer-shell .account-page > section, .customer-shell .account-page > nav, .customer-shell .account-stats, .customer-shell .account-tabs, .customer-shell .account-columns, .customer-shell .funds-top, .customer-shell .history-card { width: calc(100% - 28px); }
+  .customer-shell .account-page > .account-title { padding: 18px 14px; }
+  .customer-shell .account-profile { margin-top: 14px; }
+  .customer-shell .account-stats { grid-template-columns: 1fr; }
+  .customer-shell .account-tabs { overflow-x: auto; }
+  .customer-shell .services-summary { align-items: flex-start; flex-direction: column; }
+  .customer-shell .service-platform-card { animation: none; }
+  .customer-shell .funds-top { margin-top: 14px; }
+}
+
+@media (max-width: 420px) {
+  .customer-shell .order-mode-switch button { padding-left: 7px; padding-right: 7px; font-size: 11px; }
+  .customer-shell .order .server { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; }
+  .customer-shell .order .server > b { grid-column: 2; text-align: left; }
+}

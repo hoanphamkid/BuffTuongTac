@@ -7,7 +7,47 @@ import {sendPushNotification} from '@/lib/push';
 export async function GET(){
   if(!await requireAdmin())return NextResponse.json({error:'Forbidden'},{status:403});
   const data=await prisma.user.findMany({orderBy:{createdAt:'desc'},include:{_count:{select:{orders:true}}},take:100});
-  return NextResponse.json({success:true,data});
+  return NextResponse.json({success:true,data:data.map(user=>({
+    ...user,
+    balance:Number(user.balance),
+    totalDeposited:Number(user.totalDeposited),
+  }))});
+}
+
+export async function DELETE(req:Request){
+  const admin=await requireAdmin();
+  if(!admin)return NextResponse.json({success:false,error:'Forbidden'},{status:403});
+
+  const body=await req.json().catch(()=>({}));
+  const id=typeof body.id==='string'?body.id.trim():'';
+  if(!id)return NextResponse.json({success:false,error:'Thiếu tài khoản cần xóa'},{status:400});
+  if(id===admin.id)return NextResponse.json({success:false,error:'Không thể tự xóa tài khoản quản trị'},{status:400});
+
+  const user=await prisma.user.findUnique({
+    where:{id},
+    select:{
+      id:true,
+      role:true,
+      balance:true,
+      totalDeposited:true,
+      _count:{select:{orders:true,deposits:true,transactions:true}},
+    },
+  });
+  if(!user)return NextResponse.json({success:false,error:'Không tìm thấy tài khoản'},{status:404});
+  if(user.role==='ADMIN')return NextResponse.json({success:false,error:'Không thể xóa tài khoản quản trị khác'},{status:400});
+  if(user._count.orders||user._count.deposits||user._count.transactions){
+    return NextResponse.json({success:false,error:'Tài khoản đã có đơn hàng, giao dịch hoặc lịch sử nạp nên không thể xóa.'},{status:409});
+  }
+  if(Number(user.balance)!==0||Number(user.totalDeposited)!==0){
+    return NextResponse.json({success:false,error:'Tài khoản vẫn còn số dư hoặc tổng nạp, không thể xóa.'},{status:409});
+  }
+
+  try{
+    await prisma.user.delete({where:{id:user.id}});
+  }catch{
+    return NextResponse.json({success:false,error:'Không thể xóa tài khoản vì dữ liệu đang được sử dụng.'},{status:409});
+  }
+  return NextResponse.json({success:true});
 }
 
 export async function PATCH(req:Request){

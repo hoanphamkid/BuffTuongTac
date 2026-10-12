@@ -1,7 +1,7 @@
 'use client';
 
 import './services.css';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
 type PackageRow = {
   id: string;
@@ -22,6 +22,32 @@ type PackageRow = {
 };
 
 type AvailabilityTarget = 'platform' | 'service' | 'server';
+type ServiceOption = {
+  id: string;
+  name: string;
+  slug: string;
+  active: boolean;
+  platform: { id: string; name: string; slug: string; icon: string; active: boolean };
+};
+type CreateServerForm = {
+  serviceId: string;
+  name: string;
+  speed: string;
+  min: string;
+  max: string;
+  pricePer1000: string;
+  description: string;
+};
+
+const emptyServerForm: CreateServerForm = {
+  serviceId: '',
+  name: '',
+  speed: '50K/ngày',
+  min: '10',
+  max: '100000',
+  pricePer1000: '0',
+  description: '',
+};
 
 const money = (value: string | number) => new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
 const activeOf = (item: PackageRow) => item.active && item.service.active && item.service.platform.active;
@@ -34,6 +60,7 @@ const availabilityLabel = (item: PackageRow) => {
 
 export default function ServicesPage() {
   const [packages, setPackages] = useState<PackageRow[]>([]);
+  const [serviceCatalog, setServiceCatalog] = useState<ServiceOption[]>([]);
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('ALL');
   const [state, setState] = useState('ALL');
@@ -45,6 +72,10 @@ export default function ServicesPage() {
   const [trialSaving, setTrialSaving] = useState(false);
   const [trialMessage, setTrialMessage] = useState('');
   const [trialError, setTrialError] = useState('');
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateServerForm>(emptyServerForm);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState('');
 
   const load = () => {
     setLoading(true);
@@ -57,6 +88,7 @@ export default function ServicesPage() {
       .then((result) => {
         const next: PackageRow[] = result.data || [];
         setPackages(next);
+        setServiceCatalog(result.services || []);
         if (typeof result.trialEnabled === 'boolean') setTrialEnabled(result.trialEnabled);
         if (typeof result.trialSettingsReady === 'boolean') setTrialSettingsReady(result.trialSettingsReady);
         setSelectedId((current) => current && next.some((item) => item.id === current) ? current : '');
@@ -97,6 +129,10 @@ export default function ServicesPage() {
   }
 
   const platformOptions = useMemo(() => Array.from(new Map(packages.map((item) => [item.service.platform.slug, item.service.platform])).values()), [packages]);
+  const serviceOptions = useMemo(() => serviceCatalog.length ? serviceCatalog : Array.from(new Map(packages.map((item) => [item.service.id, item.service])).values()), [packages, serviceCatalog]);
+  useEffect(() => {
+    if (!createForm.serviceId && serviceOptions[0]) setCreateForm((current) => ({ ...current, serviceId: serviceOptions[0].id }));
+  }, [createForm.serviceId, serviceOptions]);
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return packages.filter((item) => {
@@ -117,6 +153,30 @@ export default function ServicesPage() {
     return item;
   }));
   const activeCount = packages.filter(activeOf).length;
+
+  async function createServer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (creating) return;
+    setCreating(true);
+    setCreateError('');
+    try {
+      const response = await fetch('/api/admin/services', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(createForm),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Không thể thêm máy chủ');
+      setPackages((current) => [...current, result.data]);
+      setSelectedId(result.data.id);
+      setCreateOpen(false);
+      setCreateForm((current) => ({ ...emptyServerForm, serviceId: current.serviceId }));
+    } catch (reason) {
+      setCreateError(reason instanceof Error ? reason.message : 'Không thể thêm máy chủ');
+    } finally {
+      setCreating(false);
+    }
+  }
 
   return (
     <div className="admin-body services-page">
@@ -157,9 +217,24 @@ export default function ServicesPage() {
         <select value={state} onChange={(event) => setState(event.target.value)} aria-label="Lọc trạng thái"><option value="ALL">Tất cả trạng thái</option><option value="ACTIVE">Đang hoạt động</option><option value="INACTIVE">Đang tắt</option></select>
       </div>
 
+      {createOpen && <form className="admin-card server-create-panel" onSubmit={createServer}>
+        <div className="server-create-head"><div><span>SERVER MANAGEMENT / CREATE</span><h3>Thêm máy chủ mới</h3><p>Máy chủ mới sẽ xuất hiện ngay trong danh sách và có thể dùng để tạo đơn.</p></div><button type="button" onClick={() => setCreateOpen(false)} aria-label="Đóng">×</button></div>
+        <div className="server-create-grid">
+          <label className="server-field server-field-wide">Dịch vụ<select value={createForm.serviceId} onChange={(event) => setCreateForm((current) => ({ ...current, serviceId: event.target.value }))} required><option value="">Chọn dịch vụ</option>{serviceOptions.map((item) => <option key={item.id} value={item.id}>{item.platform.name} · {item.name}</option>)}</select></label>
+          <label className="server-field server-field-wide">Tên máy chủ<input value={createForm.name} onChange={(event) => setCreateForm((current) => ({ ...current, name: event.target.value }))} placeholder="Ví dụ: TikTok Likes [SV4]" maxLength={160} required /></label>
+          <label className="server-field">Tốc độ<input value={createForm.speed} onChange={(event) => setCreateForm((current) => ({ ...current, speed: event.target.value }))} placeholder="50K/ngày" maxLength={120} required /></label>
+          <label className="server-field">Tối thiểu<input type="number" min="1" value={createForm.min} onChange={(event) => setCreateForm((current) => ({ ...current, min: event.target.value }))} required /></label>
+          <label className="server-field">Tối đa<input type="number" min="1" value={createForm.max} onChange={(event) => setCreateForm((current) => ({ ...current, max: event.target.value }))} required /></label>
+          <label className="server-field">Giá / 1.000 lượt<input type="number" min="0" value={createForm.pricePer1000} onChange={(event) => setCreateForm((current) => ({ ...current, pricePer1000: event.target.value }))} required /></label>
+          <label className="server-field server-field-wide">Mô tả <textarea value={createForm.description} onChange={(event) => setCreateForm((current) => ({ ...current, description: event.target.value }))} placeholder="Mô tả ngắn về máy chủ (không bắt buộc)" maxLength={500} /></label>
+        </div>
+        {createError && <p className="server-create-error">{createError}</p>}
+        <div className="server-create-actions"><button type="button" className="server-cancel" onClick={() => setCreateOpen(false)}>Hủy</button><button type="submit" className="server-submit" disabled={creating || !serviceOptions.length}>{creating ? 'Đang tạo...' : '＋ Tạo máy chủ'}</button></div>
+      </form>}
+
       <div className={'services-layout ' + (selected ? 'has-selection' : '')}>
         <section className="admin-card services-table-card">
-          <div className="services-table-head"><div><h3>Tất cả gói/server</h3><span>{filtered.length} gói hiển thị · {packages.length} gói trong hệ thống</span></div><span className="services-table-hint">Chọn một gói để chỉnh giá</span></div>
+          <div className="services-table-head"><div><h3>Tất cả gói/server</h3><span>{filtered.length} gói hiển thị · {packages.length} gói trong hệ thống</span></div><div className="services-table-actions"><span className="services-table-hint">Chọn một gói để chỉnh giá</span><button type="button" className="services-add-server" onClick={() => { setCreateOpen((current) => !current); setCreateError(''); }}>＋ Thêm máy chủ</button></div></div>
           <div className="services-table-wrap">
             <table className="admin-table services-table">
               <thead><tr><th>NỀN TẢNG</th><th>DỊCH VỤ</th><th>GÓI / SERVER</th><th>GIỚI HẠN</th><th>GIÁ / 1.000</th><th>TRẠNG THÁI</th><th /></tr></thead>
