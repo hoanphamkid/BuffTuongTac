@@ -60,6 +60,8 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalEntries);
   const currentData = data.slice(startIndex, endIndex);
+  const totalServices = kind === 'services' ? data.reduce((sum, platform) => sum + (platform.services?.length || 0), 0) : 0;
+  const totalServers = kind === 'services' ? data.reduce((sum, platform) => sum + (platform.services || []).reduce((serviceSum: number, service: any) => serviceSum + (service.servers?.length || 0), 0), 0) : 0;
 
   return (
     <div className="card table-card">
@@ -195,6 +197,49 @@ export function DataPage({ kind }: { kind: 'orders' | 'deposits' | 'transactions
             </div>
           </div>
         </>
+      ) : kind === 'services' ? (
+        <div className="services-overview">
+          <div className="services-summary">
+            <div>
+              <span className="services-summary-kicker">DANH MỤC DỊCH VỤ</span>
+              <p><strong>{data.length}</strong> nền tảng <span>·</span> <strong>{totalServices}</strong> dịch vụ <span>·</span> <strong>{totalServers}</strong> server</p>
+            </div>
+            <span className="services-live"><i /> Đang hoạt động</span>
+          </div>
+          <div className="services-grid">
+            {data.map((platform: any) => {
+              const services = platform.services || [];
+              const serverCount = services.reduce((sum: number, service: any) => sum + (service.servers?.length || 0), 0);
+              const platformName = String(platform.name || platform.slug || 'Nền tảng').replace(/^\S+\s+/, '');
+              return (
+                <article className={'service-platform-card service-platform-' + (platform.slug || 'default')} key={platform.id || platform.slug}>
+                  <div className="service-platform-head">
+                    <PlatformLogo platform={{ id: platform.id || platform.slug || 'platform', name: platform.name || '', slug: platform.slug }} />
+                    <div className="service-platform-copy">
+                      <span className="service-platform-kicker">NỀN TẢNG</span>
+                      <h3>{platformName}</h3>
+                      <p>{services.length} dịch vụ <span>·</span> {serverCount} server</p>
+                    </div>
+                    <span className="service-platform-mark" aria-hidden="true">↗</span>
+                  </div>
+                  <div className="service-platform-list">
+                    {services.length ? services.map((service: any) => {
+                      const servers = service.servers || [];
+                      return (
+                        <div className="service-item" key={service.id || service.slug}>
+                          <div className="service-item-title"><i /> <b>{service.name}</b></div>
+                          <div className="service-item-meta"><span>{servers.length} server</span><span>{servers.length ? `Từ ${money(Math.min(...servers.map((server: any) => Number(server.pricePer1000) || 0)))}đ / 1.000` : 'Đang cập nhật'}</span></div>
+                          {servers.length > 0 && <div className="service-server-list">{servers.map((server: any) => <span key={server.id}>{server.name || 'Server'} <b>{money(server.pricePer1000)}đ</b></span>)}</div>}
+                        </div>
+                      );
+                    }) : <div className="services-empty-inline">Chưa có dịch vụ đang hoạt động.</div>}
+                  </div>
+                  <div className="service-platform-footer"><span><i /> Sẵn sàng phục vụ</span><span className="service-platform-cta">Xem dịch vụ <b>→</b></span></div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       ) : (
         <div className="table-scroll">
           <table>
