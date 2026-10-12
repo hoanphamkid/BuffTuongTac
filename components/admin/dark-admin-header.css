@@ -41,6 +41,18 @@
   box-shadow: 0 5px 15px #2b9eaa44;
 }
 
+/* The app-wide globals style every <header>; reset the wallet page heading so
+   it stays part of the dark workspace instead of becoming a white card. */
+.admin .balance-page > .balance-page-head {
+  min-height: 0;
+  height: auto;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
 @media (max-width: 650px) {
   .admin .admin-header-dark {
     background: #151225;
