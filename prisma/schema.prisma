@@ -41,6 +41,10 @@ model User {
   level          String               @default("Thành viên")
   role           Role                 @default(USER)
   lastSeenAt     DateTime?
+  lastLoginAt    DateTime?
+  lastLoginIp    String?
+  lastLoginUserAgent String?
+  lastLoginLocation String?
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
   orders         Order[]

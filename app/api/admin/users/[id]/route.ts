@@ -9,6 +9,7 @@ export async function GET(_:Request,{params}:{params:Promise<{id:string}>}){
     where:{id},
     select:{
       id:true,username:true,email:true,fullName:true,balance:true,totalDeposited:true,role:true,createdAt:true,lastSeenAt:true,
+      lastLoginAt:true,lastLoginIp:true,lastLoginUserAgent:true,lastLoginLocation:true,
       passwordHash:true,
       _count:{select:{orders:true,deposits:true,transactions:true}},
       orders:{

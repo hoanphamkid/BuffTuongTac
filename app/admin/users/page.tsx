@@ -125,9 +125,9 @@ export default function AdminUsers() {
                 <div className="user-tile-head">
                   <h4>Thao tác</h4>
                   <div className="user-tile-actions">
-                    <Link href={'/admin/balance/' + user.id} aria-label="Điều chỉnh số dư" title="Điều chỉnh số dư">↗</Link>
-                    <Link href={'/admin/users/' + user.id} aria-label="Xem chi tiết" title="Xem chi tiết">Ø</Link>
-                    <button type="button" onClick={() => copyId(user.id)} aria-label="Sao chép mã người dùng" title="Sao chép mã người dùng">{copiedId === user.id ? '✓' : 'ϟ'}</button>
+                    <Link href={'/admin/balance/' + user.id} aria-label="Điều chỉnh số dư" title="Điều chỉnh số dư">±</Link>
+                    <Link href={'/admin/users/' + user.id} aria-label="Xem chi tiết" title="Xem chi tiết">◉</Link>
+                    <button type="button" onClick={() => copyId(user.id)} aria-label="Sao chép mã người dùng" title="Sao chép mã người dùng">{copiedId === user.id ? '✓' : '⧉'}</button>
                   </div>
                 </div>
 

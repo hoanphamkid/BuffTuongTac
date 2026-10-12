@@ -11,6 +11,18 @@ export async function POST(req:Request){
   try{
     const u=await prisma.user.findFirst({where:{OR:[{email:d.data.identifier},{username:d.data.identifier}]}});
     if(!u||!verifyPassword(d.data.password,u.passwordHash))return NextResponse.json({success:false,error:'Sai tài khoản hoặc mật khẩu'},{status:401});
+    const forwardedFor=req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+    const ip=forwardedFor||req.headers.get('x-real-ip')||null;
+    const userAgent=req.headers.get('user-agent')||null;
+    const location=[
+      req.headers.get('x-vercel-ip-city'),
+      req.headers.get('x-vercel-ip-country-region'),
+      req.headers.get('x-vercel-ip-country'),
+    ].filter(Boolean).join(', ')||null;
+    await prisma.user.update({
+      where:{id:u.id},
+      data:{lastLoginAt:new Date(),lastLoginIp:ip,lastLoginUserAgent:userAgent,lastLoginLocation:location},
+    });
     const res=NextResponse.json({success:true,data:{id:u.id,username:u.username,role:u.role}});
     res.cookies.set('smm_session',sessionCookie(u.id),{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:60*60*24*30,path:'/'});
     return res;
