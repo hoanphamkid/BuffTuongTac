@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import './dark-admin-header.css';
 
 type NavItem = { label: string; href: string; icon: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -64,6 +65,7 @@ export function AdminLayout({
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const darkHeader = path.startsWith('/admin/users/') || path.startsWith('/admin/balance/');
 
   useEffect(() => setMenuOpen(false), [path]);
 
@@ -127,7 +129,7 @@ export function AdminLayout({
       </aside>
 
       <section className="admin-main">
-        <header className="admin-header">
+        <header className={'admin-header ' + (darkHeader ? 'admin-header-dark' : '')}>
           <div className="admin-header-copy">
             <span>ADMIN CONSOLE / KID SOCIAL</span>
             <h1>{title}</h1>

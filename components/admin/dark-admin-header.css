@@ -1,0 +1,48 @@
+.admin .admin-header-dark {
+  border-bottom-color: #3a3155;
+  background: linear-gradient(110deg, #151225eF, #1d1931eF 58%, #193a43eF);
+  box-shadow: 0 7px 22px #08061166;
+}
+
+.admin .admin-header-dark .admin-header-copy > span {
+  color: #79d8d7;
+}
+
+.admin .admin-header-dark h1 {
+  color: #f6f0ff;
+}
+
+.admin .admin-header-dark p {
+  color: #a99cbd;
+}
+
+.admin .admin-header-dark .admin-live {
+  border-color: #3c766d;
+  background: #173d3a;
+  color: #70e6c5;
+}
+
+.admin .admin-header-dark .admin-refresh,
+.admin .admin-header-dark .bell {
+  border-color: #4b3f68;
+  background: #211c35;
+  color: #d7cced;
+}
+
+.admin .admin-header-dark .admin-refresh:hover,
+.admin .admin-header-dark .bell:hover {
+  border-color: #67d9dd;
+  background: #2b2445;
+  color: #fff;
+}
+
+.admin .admin-header-dark .admin-header-avatar {
+  background: linear-gradient(145deg, #2b9eaa, #7651c9);
+  box-shadow: 0 5px 15px #2b9eaa44;
+}
+
+@media (max-width: 650px) {
+  .admin .admin-header-dark {
+    background: #151225;
+  }
+}
