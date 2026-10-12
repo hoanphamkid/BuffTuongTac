@@ -1,0 +1,117 @@
+/* Unified dark workspace for the admin modules that still use the legacy light cards. */
+.admin .deposits-page,
+.admin .transactions-page,
+.admin .services-page,
+.admin .trial-keys-page,
+.admin .generic-admin-page {
+  --ops-bg: #12101f;
+  --ops-panel: #1a172b;
+  --ops-panel-2: #211b35;
+  --ops-line: #3a3155;
+  --ops-ink: #f6f0ff;
+  --ops-muted: #a99cbd;
+  --ops-cyan: #67d9dd;
+  --ops-mint: #64dfb6;
+  --ops-violet: #b89aff;
+  --ops-amber: #f5c76b;
+  max-width: none;
+  min-height: calc(100vh - 76px);
+  background: radial-gradient(circle at 88% 0%, #3c236455 0, transparent 30%), radial-gradient(circle at 0 72%, #154c5b33 0, transparent 32%), var(--ops-bg);
+  color: var(--ops-ink);
+}
+
+.admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) :is(h1, h2, h3, h4, strong, b) { color: var(--ops-ink); }
+.admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) :is(p, small, span) { color: inherit; }
+
+.admin :is(.deposit-page-head, .transactions-head, .services-intro, .generic-page-head) {
+  border-bottom-color: var(--ops-line);
+}
+.admin :is(.deposit-page-head, .transactions-head, .services-intro, .generic-page-head) :is(h2, .admin-only-title) { color: var(--ops-ink); }
+.admin :is(.deposit-page-head, .transactions-head, .services-intro, .generic-page-head) :is(p, .admin-only-sub, .services-crumb) { color: var(--ops-muted); }
+.admin :is(.deposit-head-tools button, .transactions-head button, .services-refresh, .generic-refresh) { border-color: #564875; background: var(--ops-panel-2); color: #d7cced; }
+.admin :is(.deposit-head-tools button, .transactions-head button, .services-refresh, .generic-refresh):hover { border-color: var(--ops-cyan); background: #2b2445; color: #fff; }
+
+.admin :is(.deposit-summary, .transaction-stats, .services-stats, .generic-stats) :is(.summary-card, .tx-stat, .service-stat, .generic-stat, .total-paid-card) {
+  border-color: var(--ops-line);
+  background: var(--ops-panel);
+  box-shadow: 0 12px 30px #0806114d;
+}
+.admin :is(.summary-card, .tx-stat, .service-stat, .generic-stat, .total-paid-card) :is(span, small) { color: var(--ops-muted); }
+.admin :is(.summary-card, .tx-stat, .service-stat, .generic-stat, .total-paid-card) strong { color: #fff; }
+.admin :is(.summary-card, .tx-stat, .service-stat, .generic-stat, .total-paid-card)::after { border-color: #67d9dd26; }
+
+.admin :is(.deposit-list-card, .deposit-detail, .transactions-card, .transaction-detail, .services-table-card, .service-price-editor, .trial-key-create, .trial-key-new, .trial-key-table-card, .generic-workspace) {
+  border-color: var(--ops-line);
+  border-radius: 14px;
+  background: var(--ops-panel);
+  box-shadow: 0 14px 34px #0806114d;
+}
+
+.admin :is(.list-title, .transaction-tabs, .services-table-head, .trial-key-section-head, .generic-toolbar) {
+  border-color: var(--ops-line);
+  background: linear-gradient(100deg, #1c1830, #201b32);
+}
+.admin :is(.list-title, .services-table-head, .trial-key-section-head, .generic-toolbar) :is(h2, h3, p, span) { color: var(--ops-ink); }
+.admin :is(.list-title, .services-table-head, .trial-key-section-head, .generic-toolbar) :is(p, span) { color: var(--ops-muted); }
+
+.admin :is(.status-tabs, .list-filters, .services-toolbar, .services-platform-tabs) {
+  border-color: var(--ops-line);
+  background: #161326;
+}
+.admin :is(.status-tabs button, .platform-filter-chip) { border-color: transparent; background: #241e39; color: var(--ops-muted); }
+.admin :is(.status-tabs button.active, .platform-filter-chip.active) { background: #304b69; color: #fff; box-shadow: 0 4px 12px #08061166; }
+
+.admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) :is(input, select, textarea) {
+  border-color: #55466f;
+  background: #161326;
+  color: #f2eaff;
+}
+.admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) :is(input, select, textarea)::placeholder { color: #897d9c; }
+.admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) :is(input, select, textarea):focus { border-color: var(--ops-cyan); box-shadow: 0 0 0 3px #67d9dd1c; }
+
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) { color: #ded5eb; }
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) th { border-color: var(--ops-line); background: #211b35; color: #aa9dbc; }
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) td { border-color: #302743; color: #e6ddf3; }
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) tbody tr:hover,
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) tbody tr.selected { background: #211d38; box-shadow: inset 3px 0 var(--ops-cyan); }
+.admin :is(.deposit-table, .transaction-table, .services-table, .trial-key-table, .generic-table) a { color: var(--ops-cyan); }
+
+.admin :is(.deposit-detail, .transaction-detail, .service-price-editor) :is(.detail-body, .tx-detail-id, .order-detail-info, .order-detail-editor, .order-refund-section, .service-editor-info, .service-availability) {
+  border-color: var(--ops-line);
+  background: #171428;
+  color: #e6ddf3;
+}
+.admin :is(.detail-hero, .tx-detail-head, .service-editor-head) { background: linear-gradient(125deg, #1d1932, #294963 72%, #235c61); }
+.admin :is(.detail-hero, .tx-detail-head, .service-editor-head) :is(h3, p, span, button) { color: #fff; }
+.admin :is(.detail-user, .payment-info, .detail-actions, .tx-profile) { border-color: var(--ops-line); background: var(--ops-panel-2); }
+.admin :is(.detail-grid, .tx-info, .service-info) { border-color: #342b49; }
+.admin :is(.detail-grid, .tx-info, .service-info) > span { color: var(--ops-muted); }
+.admin :is(.detail-grid, .tx-info, .service-info) > b { color: #fff; }
+
+.admin :is(.deposit-status, .tx-status, .service-status, .pill) { border: 1px solid transparent; }
+.admin :is(.deposit-status.paid, .tx-status.completed, .service-status.active, .pill.blue) { background: #155c4d; color: #6ce1b9; }
+.admin :is(.deposit-status.pending, .tx-status.pending, .tx-status.processing, .service-status.inactive, .pill.orange) { background: #5d4818; color: var(--ops-amber); }
+.admin :is(.deposit-status.failed, .tx-status.failed, .tx-status.canceled, .pill.red) { background: #65263f; color: #ff9db6; }
+
+.admin :is(.trial-key-primary, .save-balance, .service-save, .mark-paid, .generic-module-empty button) { border: 0; background: linear-gradient(100deg, #226aba, #139485); color: #fff; box-shadow: 0 8px 18px #06162955; }
+.admin :is(.trial-key-primary, .save-balance, .service-save, .mark-paid, .generic-module-empty button):hover { filter: brightness(1.12); }
+.admin :is(.copy-key, .view-button, .cancel-deposit, .service-edit) { border-color: #51456f; background: #211b35; color: #d7cced; }
+.admin :is(.copy-key, .view-button, .cancel-deposit, .service-edit):hover { border-color: var(--ops-cyan); background: #2b2445; color: #fff; }
+
+.admin .generic-module-empty { background: transparent; }
+.admin .generic-module-icon { border-color: #4f4268; background: #211b35; color: var(--ops-cyan); }
+.admin .generic-module-empty :is(h3, p) { color: var(--ops-ink); }
+.admin .generic-module-empty p { color: var(--ops-muted); }
+.admin .generic-id { color: #a99cbd; }
+.admin .generic-delete { border-color: #79415b; background: #3a2132; color: #ffafbf; }
+
+.admin .trial-key-message,
+.admin .admin-notice { border-color: #3c766d; background: #173d3a; color: #70e6c5; }
+.admin .new-key-list button { border-color: #4f4268; background: #211b35; color: #e8def5; }
+.admin .key-code { color: var(--ops-cyan); }
+.admin .services-note { border-color: #3b536c; background: #183b4b; color: #b6dce0; }
+.admin .trial-admin-card { border-color: #4f4268; background: linear-gradient(110deg, #211b35, #183b4b); }
+
+@media (max-width: 900px) {
+  .admin :is(.deposits-page, .transactions-page, .services-page, .trial-keys-page, .generic-admin-page) { padding: 22px 14px 34px; }
+}

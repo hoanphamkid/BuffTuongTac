@@ -3,6 +3,7 @@ import './admin-mobile.css';
 import './admin-refresh.css';
 import './admin-system.css';
 import './admin-pages.css';
+import './admin-workspace-refresh.css';
 import {redirect} from 'next/navigation';
 import {currentUser} from '@/lib/auth';
 import {AdminLayout} from '@/components/admin/AdminLayout';

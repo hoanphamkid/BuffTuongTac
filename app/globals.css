@@ -16,7 +16,7 @@ select {
   display: flex;
   min-height: 100vh;
 }
-aside {
+.customer-shell > aside {
   width: 255px;
   background: #132337;
   color: #b9c6d8;
@@ -95,18 +95,18 @@ aside {
   padding-top: 6px;
   border-top: 1px solid #edf0f5;
 }
-nav {
+.customer-shell nav {
   margin-top: 28px;
   display: grid;
   gap: 5px;
 }
-nav label {
+.customer-shell nav label {
   font-size: 10px;
   letter-spacing: 1px;
   color: #70839b;
   padding: 16px 12px 7px;
 }
-nav button {
+.customer-shell nav button {
   border: 0;
   background: transparent;
   color: #b8c4d3;
@@ -116,8 +116,8 @@ nav button {
   font-size: 13px;
   cursor: pointer;
 }
-nav button:hover,
-nav button.active {
+.customer-shell nav button:hover,
+.customer-shell nav button.active {
   background: #254768;
   color: white;
 }
@@ -129,11 +129,11 @@ nav button.active {
   padding: 0 12px;
   color: #72849b;
 }
-main {
+.customer-shell main {
   flex: 1;
   min-width: 0;
 }
-header {
+.customer-shell header {
   height: 92px;
   background: #fff;
   border-bottom: 1px solid #e1e8f0;
@@ -146,7 +146,7 @@ header {
   font-size: 12px;
   color: #94a4b8;
 }
-h1 {
+.customer-shell h1 {
   margin: 8px 0 0;
   font-size: 22px;
 }
@@ -313,7 +313,7 @@ h1 {
   color: #8090a5;
 }
 @media (max-width: 800px) {
-  aside {
+  .customer-shell > aside {
     width: 72px;
     padding: 14px 8px;
   }
@@ -334,7 +334,7 @@ h1 {
   .side-foot {
     display: none;
   }
-  nav button {
+  .customer-shell nav button {
     font-size: 0;
     text-align: center;
     padding: 14px 5px;
@@ -342,7 +342,7 @@ h1 {
   nav button:first-letter {
     font-size: 16px;
   }
-  header {
+  .customer-shell header {
     padding: 18px;
   }
   .card {

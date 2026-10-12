@@ -9,7 +9,7 @@ body{background:#e8f0ff;background-image:radial-gradient(circle at 8% 10%,#d9c7f
 .shell>aside>nav button{color:#dfd0ef}
 .shell>aside>nav button:hover,.shell>aside>nav button.active{background:#55307d;color:#fff}
 .shell>main{background:#e8f0ff}
-header{background:#f7faff;border-bottom-color:#cfdcf2}
+.customer-shell header{background:#f7faff;border-bottom-color:#cfdcf2}
 .card{border-color:#e7ddf2;box-shadow:0 4px 16px #3c216b12}
 .order .field :is(input,select,textarea):focus{box-shadow:none}
 .primary{position:relative;overflow:hidden;background:linear-gradient(110deg,#172b48,#53308a,#172b48);background-size:220% 100%;animation:button-gradient 5s ease-in-out infinite}
@@ -21,7 +21,7 @@ header{background:#f7faff;border-bottom-color:#cfdcf2}
 @media(max-width:600px){
   body{background-color:#e8f0ff;background-image:radial-gradient(circle at 15% 0%,#d7b9ffb8 0,transparent 38%),radial-gradient(circle at 100% 58%,#a9e8ff99 0,transparent 42%)}
   .shell>main{background:linear-gradient(180deg,#eef4ff 0%,#e9e4ff 52%,#e8f7ff 100%)}
-  header{box-shadow:0 4px 18px #4a2a7818}
+  .customer-shell header{box-shadow:0 4px 18px #4a2a7818}
   .order.card{border-color:#d9cef0;box-shadow:0 8px 24px #47257614}
   .primary{min-height:52px;border-radius:14px;box-shadow:0 8px 18px #31205b38}
   .total{box-shadow:0 6px 18px #10b98118}
